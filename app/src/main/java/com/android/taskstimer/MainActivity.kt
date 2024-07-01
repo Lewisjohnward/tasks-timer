@@ -1,6 +1,8 @@
 package com.android.taskstimer
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -30,7 +32,6 @@ class MainActivity : ComponentActivity() {
         var alarmItem: AlarmItem? = null
 
 
-
         setContent {
             TasksTimerTheme {
                 // A surface container using the 'background' color from the theme
@@ -55,9 +56,31 @@ class MainActivity : ComponentActivity() {
                                 text = "Schedule alarm"
                             )
                         }
+                        Button(
+                            onClick = { controlSound(R.raw.vadaafareinculo) },
+                            shape = RoundedCornerShape(5.dp)
+                        ) {
+                            Text(
+                                text = "Play sound"
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun controlSound(id: Int) {
+        println("hello")
+        var mp: MediaPlayer? = null
+        if (mp == null) {
+            mp = MediaPlayer.create(this, id)
+            Log.d("MainActivity", "ID ${mp!!.audioSessionId}")
+        }
+
+        mp?.start()
+
+        Log.d("MainActivity", "Duration: ${mp!!.duration / 1000} seconds")
+
     }
 }
