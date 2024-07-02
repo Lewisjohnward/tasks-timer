@@ -88,7 +88,7 @@ private fun TimerView(
                 ) {
                     Text(
                         text = item.name,
-                        fontSize = 15.sp,
+                        fontSize = 20.sp,
                         color = Color.White
                     )
                     Row(
@@ -97,13 +97,13 @@ private fun TimerView(
                     ) {
                         Text(
                             text = index.toString(),
-                            fontSize = 10.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight(100),
                             color = Color.White
                         )
                         Text(
-                            text = item.remainingTime,
-                            fontSize = 25.sp,
+                            text = item.displayTime,
+                            fontSize = 45.sp,
                             color = Color.White
                         )
                     }
