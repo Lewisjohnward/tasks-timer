@@ -126,7 +126,7 @@ private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { onEvent(TasksTimerEvent.StartTimer) },
+            onClick = { onEvent(TasksTimerEvent.ToggleTimer) },
             shape = RoundedCornerShape(5.dp)
         ) {
             Icon(

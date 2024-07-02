@@ -57,7 +57,7 @@ class AppViewModel() : ViewModel() {
                 decrementTimer()
 
                 if (_uiState.value.currentTimer >= _uiState.value.timers.size) {
-                    _uiState.value.coroutineId?.cancel()
+                    stopTimer()
                     resetTimer()
                 }
             }
@@ -68,19 +68,31 @@ class AppViewModel() : ViewModel() {
 
     fun onEvent(event: TasksTimerEvent) {
         when (event) {
-            is TasksTimerEvent.StartTimer -> {
-                if (_uiState.value.coroutineId == null) startTimer()
+            is TasksTimerEvent.ToggleTimer -> {
+                if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
             }
+        }
+    }
+
+    private fun stopTimer() {
+        _uiState.value.coroutineId?.cancel()
+        _uiState.update {
+            it.copy(
+                coroutineId = null,
+                running = false
+            )
         }
     }
 
     private fun resetTimer() {
         _uiState.update { currentState ->
             val updatedState =
-                currentState.timers.map { timer -> timer.copy(
-                    remainingTime = timer.presetTime,
-                    displayTime = secondsToMinutes(timer.presetTime.toInt())
-                ) }
+                currentState.timers.map { timer ->
+                    timer.copy(
+                        remainingTime = timer.presetTime,
+                        displayTime = secondsToMinutes(timer.presetTime.toInt())
+                    )
+                }
             currentState.copy(
                 running = false,
                 coroutineId = null,
@@ -117,8 +129,6 @@ class AppViewModel() : ViewModel() {
             )
         }
     }
-
-
 
 
 }
