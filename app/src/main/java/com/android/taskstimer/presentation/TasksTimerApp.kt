@@ -98,9 +98,7 @@ fun TasksTimerApp(
                                     color = Color.White
                                 )
                             }
-
                         }
-
                     }
                     Button(onClick = { onEvent(TasksTimerEvent.StartTimer) }) {
 

@@ -1,4 +1,4 @@
-package com.android.taskstimer
+package com.android.taskstimer.alarm
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -9,7 +9,7 @@ import java.time.ZoneId
 
 class AndroidAlarmScheduler(
     private val context: Context
-) : AlarmScheduler{
+) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 

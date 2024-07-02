@@ -1,7 +1,11 @@
 package com.android.taskstimer.data
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer.MainActivity
+import com.android.taskstimer.alarm.AlarmItem
+import com.android.taskstimer.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +41,8 @@ data class Timer(
     val time: String
 )
 
-class AppViewModel : ViewModel() {
+class AppViewModel() : ViewModel() {
+
 
     private val _uiState = MutableStateFlow(TasksTimer())
     val uiState = _uiState.asStateFlow()

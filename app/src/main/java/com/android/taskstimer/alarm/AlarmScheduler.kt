@@ -1,4 +1,4 @@
-package com.android.taskstimer
+package com.android.taskstimer.alarm
 
 interface AlarmScheduler {
     fun schedule(item: AlarmItem)
