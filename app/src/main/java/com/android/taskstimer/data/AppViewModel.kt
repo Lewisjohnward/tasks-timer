@@ -2,6 +2,7 @@ package com.android.taskstimer.data
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer.data.helpers.secondsToMinutes
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,14 +20,16 @@ data class TasksTimer(
         Timer(
             id = 0,
             name = "Do the dishes",
-            remainingTime = "5",
-            time = "5"
+            remainingTime = "65",
+            displayTime = "01:05",
+            presetTime = "65"
         ),
         Timer(
             id = 1,
             name = "Clean the floor",
-            remainingTime = "5",
-            time = "5"
+            remainingTime = "140",
+            displayTime = "02:20",
+            presetTime = "140"
         ),
     )
 )
@@ -35,7 +38,8 @@ data class Timer(
     val id: Int,
     val name: String,
     val remainingTime: String,
-    val time: String
+    val displayTime: String,
+    val presetTime: String
 )
 
 class AppViewModel() : ViewModel() {
@@ -49,7 +53,7 @@ class AppViewModel() : ViewModel() {
         _uiState.update { it.copy(running = true) }
         val id: Job = viewModelScope.launch {
             while (true) {
-                delay(1000)
+                delay(10)
                 decrementTimer()
 
                 if (_uiState.value.currentTimer >= _uiState.value.timers.size) {
@@ -73,7 +77,12 @@ class AppViewModel() : ViewModel() {
     private fun resetTimer() {
         _uiState.update { currentState ->
             val updatedState =
-                currentState.timers.map { timer -> timer.copy(remainingTime = timer.time) }
+                currentState.timers.map { timer -> timer.copy(
+                    remainingTime = timer.presetTime,
+                    displayTime = secondsToMinutes(timer.presetTime.toInt())
+                ) }
+            println(secondsToMinutes(65))
+            println(updatedState)
             currentState.copy(
                 running = false,
                 coroutineId = null,
@@ -95,7 +104,8 @@ class AppViewModel() : ViewModel() {
             val updatedCurrentTimer = if (updatedTimerValue == 0) currentTimer + 1 else currentTimer
 
             val updatedTimer: Timer = _uiState.value.timers[currentTimer].copy(
-                remainingTime = updatedTimerValue.toString()
+                remainingTime = updatedTimerValue.toString(),
+                displayTime = secondsToMinutes(seconds = updatedTimerValue)
             )
 
             val updatedTimers: List<Timer> =
@@ -109,5 +119,8 @@ class AppViewModel() : ViewModel() {
             )
         }
     }
+
+
+
 
 }
