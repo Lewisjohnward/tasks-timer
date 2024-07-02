@@ -81,8 +81,6 @@ class AppViewModel() : ViewModel() {
                     remainingTime = timer.presetTime,
                     displayTime = secondsToMinutes(timer.presetTime.toInt())
                 ) }
-            println(secondsToMinutes(65))
-            println(updatedState)
             currentState.copy(
                 running = false,
                 coroutineId = null,
