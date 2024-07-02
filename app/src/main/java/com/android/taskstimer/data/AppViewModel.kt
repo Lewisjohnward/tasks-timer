@@ -21,13 +21,13 @@ data class TasksTimer(
     val timers: List<Timer> = listOf(
         Timer(
             id = 0,
-            name = "Timer 1",
+            name = "Do the dishes",
             remainingTime = "5",
             time = "5"
         ),
         Timer(
             id = 1,
-            name = "Timer 2",
+            name = "Clean the floor",
             remainingTime = "5",
             time = "5"
         ),
