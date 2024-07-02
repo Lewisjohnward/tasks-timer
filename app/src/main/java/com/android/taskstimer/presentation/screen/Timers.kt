@@ -1,6 +1,5 @@
 package com.android.taskstimer.presentation.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,12 +110,16 @@ private fun TimerView(
                 }
             }
         }
-        Button(onEvent)
+        Button(running = uiState.running, onEvent = onEvent)
     }
 }
 
 @Composable
-private fun Button(onEvent: (TasksTimerEvent) -> Unit) {
+private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
+    val icon: ImageVector = if (running) Icons.Filled.Menu else Icons.Filled.PlayArrow
+    
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -125,12 +129,14 @@ private fun Button(onEvent: (TasksTimerEvent) -> Unit) {
             onClick = { onEvent(TasksTimerEvent.StartTimer) },
             shape = RoundedCornerShape(5.dp)
         ) {
-            Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null)
+            Icon(
+                imageVector = icon,
+                contentDescription = null
+            )
 
         }
     }
 }
-
 
 
 @Preview()

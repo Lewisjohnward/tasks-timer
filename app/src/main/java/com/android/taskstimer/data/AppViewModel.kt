@@ -1,11 +1,7 @@
 package com.android.taskstimer.data
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.MainActivity
-import com.android.taskstimer.alarm.AlarmItem
-import com.android.taskstimer.alarm.AndroidAlarmScheduler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +12,7 @@ import kotlinx.coroutines.launch
 
 data class TasksTimer(
     val running: Boolean = false,
+    val finished: Boolean = false,
     val coroutineId: Job? = null,
     val currentTimer: Int = 0,
     val timers: List<Timer> = listOf(
@@ -49,34 +46,46 @@ class AppViewModel() : ViewModel() {
 
 
     private fun startTimer() {
+        _uiState.update { it.copy(running = true) }
         val id: Job = viewModelScope.launch {
             while (true) {
-                delay(100)
-                updateState()
+                delay(1000)
+                decrementTimer()
 
                 if (_uiState.value.currentTimer >= _uiState.value.timers.size) {
                     _uiState.value.coroutineId?.cancel()
+                    resetTimer()
                 }
             }
         }
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                coroutineId = id
-            )
-        }
+        _uiState.update { it.copy(coroutineId = id) }
     }
+
 
     fun onEvent(event: TasksTimerEvent) {
         when (event) {
             is TasksTimerEvent.StartTimer -> {
-                startTimer()
+                if (_uiState.value.coroutineId == null) startTimer()
             }
         }
     }
 
+    private fun resetTimer() {
+        _uiState.update { currentState ->
+            val updatedState =
+                currentState.timers.map { timer -> timer.copy(remainingTime = timer.time) }
+            currentState.copy(
+                running = false,
+                coroutineId = null,
+                currentTimer = 0,
+                timers = updatedState
+            )
+        }
 
-    private fun updateState() {
+    }
+
+
+    private fun decrementTimer() {
         _uiState.update { currentState ->
             val currentTimer: Int = _uiState.value.currentTimer
             val currentTimerValue = _uiState.value.timers[currentTimer].remainingTime.toInt()
@@ -89,9 +98,10 @@ class AppViewModel() : ViewModel() {
                 remainingTime = updatedTimerValue.toString()
             )
 
-            val updatedTimers: List<Timer> = _uiState.value.timers.mapIndexed() { index: Int, timer: Timer ->
-                if (index == currentTimer) updatedTimer else timer
-            }
+            val updatedTimers: List<Timer> =
+                _uiState.value.timers.mapIndexed() { index: Int, timer: Timer ->
+                    if (index == currentTimer) updatedTimer else timer
+                }
 
             currentState.copy(
                 timers = updatedTimers,
