@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.presentation.AppViewModel
 import com.android.taskstimer.presentation.TasksTimer
 import com.android.taskstimer.presentation.TasksTimerEvent
 import com.android.taskstimer.presentation.formatTime
@@ -112,6 +111,10 @@ private fun TimerView(
             }
         }
         Button(running = uiState.running, onEvent = onEvent)
+        Button(onClick = {onEvent(TasksTimerEvent.TestDB)}) {
+            Text("add something to DB")
+
+        }
     }
 }
 
@@ -140,10 +143,10 @@ private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
 }
 
 
-@Preview()
-@Composable
-fun TimersPreview() {
-    val viewModel = AppViewModel()
-    val uiState by viewModel.uiState.collectAsState()
-    Timers(uiState = uiState, onEvent = viewModel::onEvent, openDrawer = {})
-}
+//@Preview()
+//@Composable
+//fun TimersPreview() {
+//    val viewModel = AppViewModel()
+//    val uiState by viewModel.uiState.collectAsState()
+//    Timers(uiState = uiState, onEvent = viewModel::onEvent, openDrawer = {})
+//}

@@ -2,10 +2,16 @@ package com.android.taskstimer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer.data.Timer
+import com.android.taskstimer.data.TimersRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,22 +25,16 @@ data class TasksTimer(
         Timer(
             id = 0,
             name = "Do the dishes",
-            remainingTime = "65",
+            presetTime = "65",
         ),
         Timer(
             id = 1,
             name = "Clean the floor",
-            remainingTime = "140",
+            presetTime = "140",
         ),
     )
 )
 
-data class Timer(
-    val id: Int,
-    val name: String,
-    val remainingTime: String,
-    val presetTime: String = remainingTime
-)
 
 fun Timer.formatTime(): String {
     val seconds = remainingTime.toInt()
@@ -57,10 +57,20 @@ fun Timer.formatTime(): String {
     }
 }
 
-class AppViewModel() : ViewModel() {
+class HomeViewModel(private val timersRepository: TimersRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TasksTimer())
     val uiState = _uiState.asStateFlow()
+
+
+    val homeUiState: StateFlow<HomeUiState> =
+        timersRepository.getAllTimersStream().map { HomeUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000L),
+                initialValue = HomeUiState()
+
+            )
 
 
     private fun startTimer() {
@@ -79,11 +89,21 @@ class AppViewModel() : ViewModel() {
         _uiState.update { it.copy(coroutineId = id) }
     }
 
+    private fun saveTimer() {
+        viewModelScope.launch {
+            timersRepository.insertTimer(Timer(name = "test", presetTime = "69"))
+        }
+    }
+
 
     fun onEvent(event: TasksTimerEvent) {
         when (event) {
             is TasksTimerEvent.ToggleTimer -> {
                 if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
+            }
+
+            TasksTimerEvent.TestDB -> {
+                saveTimer()
             }
         }
     }
@@ -131,7 +151,7 @@ class AppViewModel() : ViewModel() {
             )
 
             val updatedTimers: List<Timer> =
-                _uiState.value.timers.mapIndexed() { index: Int, timer: Timer ->
+                _uiState.value.timers.mapIndexed { index: Int, timer: Timer ->
                     if (index == currentTimer) updatedTimer else timer
                 }
 
@@ -144,3 +164,5 @@ class AppViewModel() : ViewModel() {
 
 
 }
+
+data class HomeUiState(val itemList: List<Timer> = listOf())
