@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.data.AppViewModel
 import com.android.taskstimer.data.TasksTimer
 import com.android.taskstimer.data.TasksTimerEvent
+import com.android.taskstimer.data.formatTime
 
 
 @Composable
@@ -102,7 +103,7 @@ private fun TimerView(
                             color = Color.White
                         )
                         Text(
-                            text = item.displayTime,
+                            text = item.formatTime(),
                             fontSize = 45.sp,
                             color = Color.White
                         )

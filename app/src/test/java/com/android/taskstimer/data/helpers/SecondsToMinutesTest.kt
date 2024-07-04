@@ -1,37 +1,40 @@
 package com.android.taskstimer.data.helpers
 
+import com.android.taskstimer.data.Timer
+import com.android.taskstimer.data.formatTime
 import org.junit.Assert
 import org.junit.Test
 
 class SecondsToMinutesTest {
     @Test
     fun formatTest1() {
-        val displayTime = secondsToMinutes(70)
+        val timer = Timer(id = 0, name = "test", remainingTime = "70")
+
         // Expected, Actual
-        Assert.assertEquals("01:10", displayTime)
+        Assert.assertEquals("01:10", timer.formatTime())
     }
     @Test
     fun formatTest2() {
-        val displayTime = secondsToMinutes(45)
+        val timer = Timer(id = 0, name = "test", remainingTime = "45")
         // Expected, Actual
-        Assert.assertEquals("00:45", displayTime)
+        Assert.assertEquals("00:45", timer.formatTime())
     }
     @Test
     fun formatTest3() {
-        val displayTime = secondsToMinutes(10)
+        val timer = Timer(id = 0, name = "test", remainingTime = "10")
         // Expected, Actual
-        Assert.assertEquals("00:10", displayTime)
+        Assert.assertEquals("00:10", timer.formatTime())
     }
     @Test
     fun formatTest4() {
-        val displayTime = secondsToMinutes(1225)
+        val timer = Timer(id = 0, name = "test", remainingTime = "1225")
         // Expected, Actual
-        Assert.assertEquals("20:25", displayTime)
+        Assert.assertEquals("20:25", timer.formatTime())
     }
     @Test
     fun formatTest5() {
-        val displayTime = secondsToMinutes(65)
+        val timer = Timer(id = 0, name = "test", remainingTime = "65")
         // Expected, Actual
-        Assert.assertEquals("01:05", displayTime)
+        Assert.assertEquals("01:05", timer.formatTime())
     }
 }

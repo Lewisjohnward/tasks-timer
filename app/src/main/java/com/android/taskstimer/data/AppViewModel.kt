@@ -2,7 +2,6 @@ package com.android.taskstimer.data
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.data.helpers.secondsToMinutes
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,15 +20,11 @@ data class TasksTimer(
             id = 0,
             name = "Do the dishes",
             remainingTime = "65",
-            displayTime = "01:05",
-            presetTime = "65"
         ),
         Timer(
             id = 1,
             name = "Clean the floor",
             remainingTime = "140",
-            displayTime = "02:20",
-            presetTime = "140"
         ),
     )
 )
@@ -38,12 +33,31 @@ data class Timer(
     val id: Int,
     val name: String,
     val remainingTime: String,
-    val displayTime: String,
-    val presetTime: String
+    val presetTime: String = remainingTime
 )
 
-class AppViewModel() : ViewModel() {
+fun Timer.formatTime(): String {
+    val seconds = remainingTime.toInt()
 
+    if (seconds == 0) {
+        return "00:00"
+    } else if (seconds < 60) {
+        return if (seconds < 10) ("00:0${seconds}")
+        else ("00:${seconds}")
+    } else {
+        val remainingSeconds = seconds % 60
+        val remainingMinutes = (seconds - remainingSeconds) / 60
+
+        val secondsString =
+            if (remainingSeconds < 10) ("0$remainingSeconds") else remainingSeconds.toString()
+        val minutesString =
+            if (remainingMinutes < 10) ("0$remainingMinutes") else remainingMinutes.toString()
+
+        return ("$minutesString:$secondsString")
+    }
+}
+
+class AppViewModel() : ViewModel() {
 
     private val _uiState = MutableStateFlow(TasksTimer())
     val uiState = _uiState.asStateFlow()
@@ -90,7 +104,6 @@ class AppViewModel() : ViewModel() {
                 currentState.timers.map { timer ->
                     timer.copy(
                         remainingTime = timer.presetTime,
-                        displayTime = secondsToMinutes(timer.presetTime.toInt())
                     )
                 }
             currentState.copy(
@@ -115,7 +128,6 @@ class AppViewModel() : ViewModel() {
 
             val updatedTimer: Timer = _uiState.value.timers[currentTimer].copy(
                 remainingTime = updatedTimerValue.toString(),
-                displayTime = secondsToMinutes(seconds = updatedTimerValue)
             )
 
             val updatedTimers: List<Timer> =
