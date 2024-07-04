@@ -6,9 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.android.taskstimer.alarm.AlarmItem
-import com.android.taskstimer.alarm.AndroidAlarmScheduler
-import com.android.taskstimer.data.AppViewModel
+import com.android.taskstimer.presentation.AppViewModel
 import com.android.taskstimer.presentation.TasksTimerApp
 
 class MainActivity : ComponentActivity() {

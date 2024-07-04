@@ -27,10 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.data.AppViewModel
-import com.android.taskstimer.data.TasksTimer
-import com.android.taskstimer.data.TasksTimerEvent
-import com.android.taskstimer.data.formatTime
+import com.android.taskstimer.presentation.AppViewModel
+import com.android.taskstimer.presentation.TasksTimer
+import com.android.taskstimer.presentation.TasksTimerEvent
+import com.android.taskstimer.presentation.formatTime
 
 
 @Composable

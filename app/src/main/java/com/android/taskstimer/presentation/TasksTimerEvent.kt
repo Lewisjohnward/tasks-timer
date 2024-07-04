@@ -1,4 +1,4 @@
-package com.android.taskstimer.data
+package com.android.taskstimer.presentation
 
 sealed interface TasksTimerEvent {
     data object ToggleTimer: TasksTimerEvent

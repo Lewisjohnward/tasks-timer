@@ -15,9 +15,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.taskstimer.data.AppViewModel
-import com.android.taskstimer.data.TasksTimer
-import com.android.taskstimer.data.TasksTimerEvent
 import com.android.taskstimer.presentation.components.NavigationDrawer
 import com.android.taskstimer.presentation.screen.Timers
 import com.android.taskstimer.ui.theme.DarkGray

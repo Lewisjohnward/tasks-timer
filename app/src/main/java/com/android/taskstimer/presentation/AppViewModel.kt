@@ -1,4 +1,4 @@
-package com.android.taskstimer.data
+package com.android.taskstimer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
