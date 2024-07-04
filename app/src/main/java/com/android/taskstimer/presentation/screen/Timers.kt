@@ -111,10 +111,6 @@ private fun TimerView(
             }
         }
         Button(running = uiState.running, onEvent = onEvent)
-        Button(onClick = {onEvent(TasksTimerEvent.TestDB)}) {
-            Text("add something to DB")
-
-        }
     }
 }
 
