@@ -188,7 +188,7 @@ fun TimersPreview() {
         running = false,
         finished = false,
         coroutineId = null,
-        currentTimer = 0,
+        currentTimerIndex = 0,
         timers = listOf()
     ), onEvent = { }, openDrawer = { -> })
 }

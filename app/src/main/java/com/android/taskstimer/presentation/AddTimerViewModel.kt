@@ -14,7 +14,6 @@ class AddTimerViewModel(
     private val _uiState = MutableStateFlow("hello")
     val uiState = _uiState.asStateFlow()
 
-
     fun addTimer(){
         println("add timer")
     }

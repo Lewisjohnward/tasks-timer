@@ -3,12 +3,6 @@ package com.android.taskstimer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import com.android.taskstimer.presentation.AddTimer
-import com.android.taskstimer.presentation.HomeScreen
-import com.android.taskstimer.presentation.TasksTimerApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
