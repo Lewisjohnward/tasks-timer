@@ -14,6 +14,9 @@ object AppViewModelProvider {
         initializer {
             HomeViewModel(tasksTimerApplication().container.timersRepository)
         }
+        initializer {
+            AddTimerViewModel(tasksTimerApplication().container.timersRepository)
+        }
     }
 }
 

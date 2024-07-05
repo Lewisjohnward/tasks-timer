@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.android.taskstimer.presentation.AddTimer
 import com.android.taskstimer.presentation.HomeScreen
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +18,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 //            val uiState by appViewModel.uiState.collectAsState()
-            HomeScreen()
+//            HomeScreen()
+            AddTimer()
         }
     }
 }
