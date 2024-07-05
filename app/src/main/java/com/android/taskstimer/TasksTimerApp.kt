@@ -1,4 +1,4 @@
-package com.android.taskstimer.presentation
+package com.android.taskstimer
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
