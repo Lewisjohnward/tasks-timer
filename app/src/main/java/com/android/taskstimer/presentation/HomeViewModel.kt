@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -57,24 +58,45 @@ fun Timer.formatTime(): String {
     }
 }
 
-class HomeViewModel(private val timersRepository: TimersRepository) : ViewModel() {
+class HomeViewModel(
+    private val timersRepository: TimersRepository
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TasksTimer())
+//    private val _uiState = MutableStateFlow(TasksTimer())
 //    val uiState = _uiState.asStateFlow()
 
 
-    val uiState: StateFlow<TasksTimer> =
-        timersRepository.getAllTimersStream().map { TasksTimer(timers = it) }
+    private val _timers: StateFlow<List<Timer>> =
+        timersRepository.getAllTimersStream().map {it}
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
-                initialValue = TasksTimer()
-
+                emptyList()
             )
-    val test = uiState
+
+    private val _uiState = MutableStateFlow(TasksTimer())
+
+    val uiState = combine(_timers, _uiState) {timers, uiState ->
+        uiState.copy(
+            timers = timers
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), TasksTimer())
 
 
-//    private fun startTimer() {
+
+    private fun startTimer() {
+
+        viewModelScope.launch{
+            while(true) {
+                delay(1000)
+                val currentTimer = uiState.value.timers[uiState.value.currentTimer]
+                val updatedRemainingTime = (currentTimer.remainingTime.toInt() - 1).toString()
+                timersRepository.updateTimer(currentTimer.copy(remainingTime = updatedRemainingTime))
+
+            }
+        }
+
+
 //        _uiState.update { it.copy(running = true) }
 //        val id: Job = viewModelScope.launch {
 //            while (true) {
@@ -88,77 +110,78 @@ class HomeViewModel(private val timersRepository: TimersRepository) : ViewModel(
 //            }
 //        }
 //        _uiState.update { it.copy(coroutineId = id) }
-//    }
-
-    private fun saveTimer() {
-        viewModelScope.launch {
-            timersRepository.insertTimer(Timer(name = "test", presetTime = "69"))
-        }
     }
+
+//    private fun saveTimer() {
+//        viewModelScope.launch {
+//            timersRepository.insertTimer(Timer(name = "test", presetTime = "69"))
+//        }
+//    }
 
 
     fun onEvent(event: TasksTimerEvent) {
         when (event) {
             is TasksTimerEvent.ToggleTimer -> {
-//                if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
+                if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
+                println("Toggle timer")
             }
 
         }
     }
 
-//    private fun stopTimer() {
-//        _uiState.value.coroutineId?.cancel()
-//        _uiState.update {
-//            it.copy(
-//                coroutineId = null,
-//                running = false
-//            )
-//        }
-//    }
+    private fun stopTimer() {
+        _uiState.value.coroutineId?.cancel()
+        _uiState.update {
+            it.copy(
+                coroutineId = null,
+                running = false
+            )
+        }
+    }
 
-//    private fun resetTimer() {
-//        _uiState.update { currentState ->
-//            val updatedState =
-//                currentState.timers.map { timer ->
-//                    timer.copy(
-//                        remainingTime = timer.presetTime,
-//                    )
-//                }
-//            currentState.copy(
-//                running = false,
-//                coroutineId = null,
-//                currentTimer = 0,
-//                timers = updatedState
-//            )
-//        }
-//
-//    }
+    private fun resetTimer() {
+        _uiState.update { currentState ->
+            val updatedState =
+                currentState.timers.map { timer ->
+                    timer.copy(
+                        remainingTime = timer.presetTime,
+                    )
+                }
+            currentState.copy(
+                running = false,
+                coroutineId = null,
+                currentTimer = 0,
+                timers = updatedState
+            )
+        }
+
+    }
 
 
-//    private fun decrementTimer() {
-//        _uiState.update { currentState ->
-//            val currentTimer: Int = _uiState.value.currentTimer
-//            val currentTimerValue = _uiState.value.timers[currentTimer].remainingTime.toInt()
-//
-//            val updatedTimerValue: Int =
-//                if (currentTimerValue - 1 < 0) currentTimerValue else currentTimerValue - 1
-//            val updatedCurrentTimer = if (updatedTimerValue == 0) currentTimer + 1 else currentTimer
-//
-//            val updatedTimer: Timer = _uiState.value.timers[currentTimer].copy(
-//                remainingTime = updatedTimerValue.toString(),
-//            )
-//
-//            val updatedTimers: List<Timer> =
-//                _uiState.value.timers.mapIndexed { index: Int, timer: Timer ->
-//                    if (index == currentTimer) updatedTimer else timer
-//                }
-//
-//            currentState.copy(
-//                timers = updatedTimers,
-//                currentTimer = updatedCurrentTimer
-//            )
-//        }
-//    }
+    private fun decrementTimer() {
+        _uiState.update { currentState ->
+            val currentTimer: Int = _uiState.value.currentTimer
+            val currentTimerValue = _uiState.value.timers[currentTimer].remainingTime.toInt()
+
+            val updatedTimerValue: Int =
+                if (currentTimerValue - 1 < 0) currentTimerValue else currentTimerValue - 1
+            val updatedCurrentTimer = if (updatedTimerValue == 0) currentTimer + 1 else currentTimer
+
+            val updatedTimer: Timer = _uiState.value.timers[currentTimer].copy(
+                remainingTime = updatedTimerValue.toString(),
+            )
+
+            val updatedTimers: List<Timer> =
+                _uiState.value.timers.mapIndexed { index: Int, timer: Timer ->
+                    if (index == currentTimer) updatedTimer else timer
+                }
+
+            currentState.copy(
+                timers = updatedTimers,
+                currentTimer = updatedCurrentTimer
+            )
+        }
+    }
 
 
 }
