@@ -117,8 +117,6 @@ private fun TimerView(
 @Composable
 private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
     val icon: ImageVector = if (running) Icons.Filled.Menu else Icons.Filled.PlayArrow
-    
-
 
     Column(
         modifier = Modifier

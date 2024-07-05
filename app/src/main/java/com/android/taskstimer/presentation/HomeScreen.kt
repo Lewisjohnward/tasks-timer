@@ -23,7 +23,14 @@ import com.android.taskstimer.ui.theme.TasksTimerTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.taskstimer.presentation.navigation.NavigationDestination
 import kotlinx.coroutines.flow.collect
+
+
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val title = "home"
+}
 
 @Composable
 fun HomeScreen(

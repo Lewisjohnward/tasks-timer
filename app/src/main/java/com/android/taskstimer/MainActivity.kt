@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.android.taskstimer.presentation.AddTimer
 import com.android.taskstimer.presentation.HomeScreen
+import com.android.taskstimer.presentation.TasksTimerApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 //            val uiState by appViewModel.uiState.collectAsState()
 //            HomeScreen()
-            AddTimer()
+//            AddTimer()
+            TasksTimerApp()
         }
     }
 }
