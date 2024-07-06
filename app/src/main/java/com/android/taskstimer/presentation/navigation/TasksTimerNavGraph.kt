@@ -3,12 +3,12 @@ package com.android.taskstimer.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.android.taskstimer.presentation.HomeDestination
-import com.android.taskstimer.presentation.HomeScreen
+import com.android.taskstimer.presentation.screens.home.HomeDestination
+import com.android.taskstimer.presentation.screens.home.HomeScreen
+import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
+import com.android.taskstimer.presentation.screens.timers.TimerAddScreen
 
 
 @Composable
@@ -18,18 +18,15 @@ fun TasksTimerNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route,
+        startDestination = TimerAddDestination.route,
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen()
         }
-//        composable(route = ItemEntryDestination.route) {
-//            ItemEntryScreen(
-//                navigateBack = { navController.popBackStack() },
-//                onNavigateUp = { navController.navigateUp() }
-//            )
-//        }
+        composable(route = TimerAddDestination.route) {
+            TimerAddScreen { navController.popBackStack() }
+        }
 //        composable(
 //            route = ItemDetailsDestination.routeWithArgs,
 //            arguments = listOf(navArgument(ItemDetailsDestination.itemIdArg) {
