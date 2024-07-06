@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import com.android.taskstimer.presentation.components.NavigationDrawer
 import com.android.taskstimer.presentation.screens.Timers
-import com.android.taskstimer.ui.theme.DarkGray
+import com.android.taskstimer.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.ui.theme.TasksTimerTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,7 +48,7 @@ fun HomeScreen(
         Surface(
             modifier = Modifier
                 .fillMaxSize(),
-            color = DarkGray
+            color = BackgroundDarkGray
         )
         {
             Column {
