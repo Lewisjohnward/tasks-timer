@@ -3,6 +3,7 @@ package com.android.taskstimer.presentation.screens.timers
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -15,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.presentation.navigation.NavigationDestination
@@ -37,18 +39,22 @@ object TimerAddDestination : NavigationDestination {
 
 @Composable
 fun TimerAddScreen(navigateBack: () -> Boolean) {
-    Surface(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        color = BackgroundDarkGray
-    ) {
-        Column(
-            modifier = Modifier.padding(top = 40.dp, start = 10.dp, end = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+        containerColor = BackgroundDarkGray
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier.padding(innerPadding),
         ) {
-            NameInput()
-            TimeInput()
+            Column(
+                modifier = Modifier.padding(top = 40.dp, start = 10.dp, end = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                NameInput()
+                TimeInput()
+            }
         }
     }
 }
@@ -58,7 +64,7 @@ fun TimeInput() {
     val weight: Float = 1 / 3f
 
     Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Input(weight = weight, unit = "H")
         Input(weight = weight, unit = "M")
@@ -109,7 +115,8 @@ private fun RowScope.Input(weight: Float, unit: String) {
 @Composable
 fun NameInput() {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         BasicTextField(
             value = "My awesome new timer",
@@ -131,4 +138,10 @@ fun NameInput() {
                 .fillMaxWidth()
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimerAddScreenPreview() {
+    TimerAddScreen(navigateBack = { true })
 }
