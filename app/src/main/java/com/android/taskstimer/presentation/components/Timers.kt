@@ -46,30 +46,7 @@ fun Timers(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Header(openDrawer)
         TimerView(uiState, onEvent)
-    }
-}
-
-@Composable
-private fun Header(openDrawer: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Button(
-            onClick = { openDrawer() },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-            )
-        ) {
-            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu icon")
-        }
-        Text(
-            text = "Super timer name",
-            fontSize = 25.sp,
-            color = Color.White
-        )
     }
 }
 

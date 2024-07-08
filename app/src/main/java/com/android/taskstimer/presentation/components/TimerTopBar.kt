@@ -10,27 +10,34 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerTopBar(
     modifier: Modifier = Modifier,
     title: String = "Top bar",
-    canNavigateBack: Boolean = true,
+    displayIcon: Boolean = true,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateBack: () -> Unit = {}
+    iconOnclick: () -> Unit = {},
+    icon: ImageVector = Icons.Filled.ArrowBack
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(title) },
+        title = {
+            Text(
+                text = title,
+                fontSize = 25.sp
+            )
+        },
         modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateBack) {
+            if (displayIcon) {
+                IconButton(onClick = iconOnclick) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowBack,
+                        imageVector = icon,
                         contentDescription = "Back button"
                     )
                 }
