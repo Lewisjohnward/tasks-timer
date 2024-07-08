@@ -1,5 +1,6 @@
-package com.android.taskstimer.presentation
+package com.android.taskstimer.presentation.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.data.Timer
@@ -9,10 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,7 +50,7 @@ fun Timer.resetTimer(): Timer {
 }
 
 class HomeViewModel(
-    private val timersRepository: TimersRepository
+    private val timersRepository: TimersRepository,
 ) : ViewModel() {
 
     private val _timers: Flow<List<Timer>> = timersRepository.getAllTimersStream()
@@ -116,9 +114,9 @@ class HomeViewModel(
 //        }
 //    }
 
-    fun onEvent(event: TasksTimerEvent) {
+    fun onEvent(event: HomeScreenEvent) {
         when (event) {
-            is TasksTimerEvent.ToggleTimer -> {
+            is HomeScreenEvent.ToggleTimer -> {
                 if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
                 println("Toggle timer")
             }

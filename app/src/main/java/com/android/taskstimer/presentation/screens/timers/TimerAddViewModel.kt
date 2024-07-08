@@ -1,4 +1,4 @@
-package com.android.taskstimer.presentation
+package com.android.taskstimer.presentation.screens.timers
 
 import androidx.lifecycle.ViewModel
 import com.android.taskstimer.data.TimersRepository
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 
 
-class AddTimerViewModel(
+class TimerAddViewModel(
     private val timersRepository: TimersRepository
 ): ViewModel(){
     private val _uiState = MutableStateFlow("hello")

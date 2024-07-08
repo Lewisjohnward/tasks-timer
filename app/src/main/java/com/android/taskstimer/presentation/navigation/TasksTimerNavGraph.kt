@@ -18,7 +18,7 @@ fun TasksTimerNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = TimerAddDestination.route,
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {

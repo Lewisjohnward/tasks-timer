@@ -1,4 +1,4 @@
-package com.android.taskstimer.presentation.screens
+package com.android.taskstimer.presentation.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,15 +31,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.data.Timer
-import com.android.taskstimer.presentation.TasksTimer
-import com.android.taskstimer.presentation.TasksTimerEvent
-import com.android.taskstimer.presentation.formatTime
+import com.android.taskstimer.presentation.screens.home.TasksTimer
+import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
+import com.android.taskstimer.presentation.screens.home.formatTime
 
 
 @Composable
 fun Timers(
     uiState: TasksTimer,
-    onEvent: (TasksTimerEvent) -> Unit,
+    onEvent: (HomeScreenEvent) -> Unit,
     openDrawer: () -> Unit
 ) {
     Column(
@@ -77,7 +77,7 @@ private fun Header(openDrawer: () -> Unit) {
 @Composable
 private fun TimerView(
     uiState: TasksTimer,
-    onEvent: (TasksTimerEvent) -> Unit
+    onEvent: (HomeScreenEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -157,7 +157,7 @@ fun TimerComposable(timer: Timer, index: Int) {
 }
 
 @Composable
-private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
+private fun Button(onEvent: (HomeScreenEvent) -> Unit, running: Boolean) {
     val icon: ImageVector = if (running) Icons.Filled.Menu else Icons.Filled.PlayArrow
 
     Column(
@@ -166,7 +166,7 @@ private fun Button(onEvent: (TasksTimerEvent) -> Unit, running: Boolean) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { onEvent(TasksTimerEvent.ToggleTimer) },
+            onClick = { onEvent(HomeScreenEvent.ToggleTimer) },
             shape = RoundedCornerShape(5.dp)
         ) {
             Icon(

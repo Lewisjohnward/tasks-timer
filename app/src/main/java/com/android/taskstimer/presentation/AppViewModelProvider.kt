@@ -6,16 +6,23 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.android.taskstimer.TasksTimerApplication
+import com.android.taskstimer.presentation.screens.home.HomeViewModel
+import com.android.taskstimer.presentation.screens.timers.TimerAddViewModel
+
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(tasksTimerApplication().container.timersRepository)
+            HomeViewModel(
+                timersRepository = tasksTimerApplication().container.timersRepository
+            )
         }
         initializer {
-            AddTimerViewModel(tasksTimerApplication().container.timersRepository)
+            TimerAddViewModel(
+                timersRepository = tasksTimerApplication().container.timersRepository
+            )
         }
     }
 }

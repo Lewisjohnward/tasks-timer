@@ -33,18 +33,13 @@ import com.android.taskstimer.presentation.navigation.NavigationDestination
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
 
 object TimerAddDestination : NavigationDestination {
-    override val route = "home"
+    override val route = "timeradd"
     override val title = ""
 }
 
 @Composable
 fun TimerAddScreen(navigateBack: () -> Boolean) {
 
-//    val localStyle = LocalTextStyle.current
-//    val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current))
-//    BasicTextField(
-//        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-//    )
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -57,8 +52,6 @@ fun TimerAddScreen(navigateBack: () -> Boolean) {
         ) {
             NameInput()
             TimeInput()
-
-
         }
     }
 }

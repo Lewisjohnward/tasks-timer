@@ -15,15 +15,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import com.android.taskstimer.presentation.components.NavigationDrawer
-import com.android.taskstimer.presentation.screens.Timers
+import com.android.taskstimer.presentation.components.Timers
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.ui.theme.TasksTimerTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.taskstimer.presentation.AppViewModelProvider
-import com.android.taskstimer.presentation.HomeViewModel
-import com.android.taskstimer.presentation.TasksTimerEvent
 import com.android.taskstimer.presentation.navigation.NavigationDestination
 
 
@@ -37,7 +35,7 @@ fun HomeScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onEvent: (TasksTimerEvent) -> Unit = viewModel::onEvent
+    onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
