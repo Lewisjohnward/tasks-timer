@@ -1,6 +1,5 @@
 package com.android.taskstimer.presentation.screens.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.data.Timer
