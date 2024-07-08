@@ -20,7 +20,7 @@ fun TimerTopBar(
     title: String = "Top bar",
     canNavigateBack: Boolean = true,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateUp: () -> Unit = {}
+    navigateBack: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
@@ -28,7 +28,7 @@ fun TimerTopBar(
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back button"

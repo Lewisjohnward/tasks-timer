@@ -42,12 +42,16 @@ object TimerAddDestination : NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerAddScreen(navigateBack: () -> Boolean) {
+fun TimerAddScreen(navigateBack: () -> Unit) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
         containerColor = BackgroundDarkGray,
-        topBar = { TimerTopBar() }
+        topBar = {
+            TimerTopBar(
+                navigateBack = navigateBack
+            )
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier.padding(innerPadding),

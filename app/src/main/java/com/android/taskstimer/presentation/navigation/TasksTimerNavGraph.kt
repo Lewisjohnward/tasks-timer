@@ -25,7 +25,9 @@ fun TasksTimerNavHost(
             HomeScreen()
         }
         composable(route = TimerAddDestination.route) {
-            TimerAddScreen { navController.popBackStack() }
+            TimerAddScreen(
+                navigateBack = { navController.popBackStack() },
+            )
         }
 //        composable(
 //            route = ItemDetailsDestination.routeWithArgs,
