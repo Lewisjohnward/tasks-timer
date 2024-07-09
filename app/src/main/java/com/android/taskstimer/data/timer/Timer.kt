@@ -1,4 +1,4 @@
-package com.android.taskstimer.data
+package com.android.taskstimer.data.timer
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

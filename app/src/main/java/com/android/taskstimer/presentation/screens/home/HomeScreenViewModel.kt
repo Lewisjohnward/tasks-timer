@@ -2,8 +2,10 @@ package com.android.taskstimer.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.data.Timer
-import com.android.taskstimer.data.TimersRepository
+import com.android.taskstimer.data.board.Board
+import com.android.taskstimer.data.board.BoardsRepository
+import com.android.taskstimer.data.timer.Timer
+import com.android.taskstimer.data.timer.TimersRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -50,6 +52,7 @@ fun Timer.resetTimer(): Timer {
 
 class HomeViewModel(
     private val timersRepository: TimersRepository,
+    private val boardsRepository: BoardsRepository,
 ) : ViewModel() {
 
     private val _timers: Flow<List<Timer>> = timersRepository.getAllTimersStream()
@@ -105,6 +108,13 @@ class HomeViewModel(
 
     init {
 //        addTimer()
+//        addBoard()
+    }
+
+    private fun addBoard(){
+        viewModelScope.launch{
+            boardsRepository.insertBoard(Board())
+        }
     }
 
     fun addTimer() {

@@ -1,7 +1,7 @@
 package com.android.taskstimer.presentation.screens.timers
 
 import androidx.lifecycle.ViewModel
-import com.android.taskstimer.data.TimersRepository
+import com.android.taskstimer.data.timer.TimersRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 

@@ -1,5 +1,6 @@
-package com.android.taskstimer.data
+package com.android.taskstimer.data.timer
 
+import com.android.taskstimer.data.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 interface TimersRepository {

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.data.Timer
+import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
 import com.android.taskstimer.presentation.screens.home.TasksTimer
 import com.android.taskstimer.presentation.screens.home.formatTime

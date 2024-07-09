@@ -1,5 +1,8 @@
-package com.android.taskstimer.data
+package com.android.taskstimer.data.timer
 
+import com.android.taskstimer.data.timer.Timer
+import com.android.taskstimer.data.timer.TimerDao
+import com.android.taskstimer.data.timer.TimersRepository
 import kotlinx.coroutines.flow.Flow
 
 class OfflineTimersRepository(private val timerDao: TimerDao) : TimersRepository {

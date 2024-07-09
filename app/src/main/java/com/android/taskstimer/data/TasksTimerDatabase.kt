@@ -4,11 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.android.taskstimer.data.board.Board
+import com.android.taskstimer.data.board.BoardDao
+import com.android.taskstimer.data.timer.Timer
+import com.android.taskstimer.data.timer.TimerDao
 
-@Database(entities = [Timer::class], version = 1, exportSchema = false)
+@Database(entities = [Timer::class, Board::class], version = 1, exportSchema = false)
 abstract class TasksTimerDatabase : RoomDatabase() {
 
     abstract fun timerDao(): TimerDao
+    abstract fun boardDao(): BoardDao
 
     companion object {
         @Volatile
