@@ -3,6 +3,7 @@ package com.android.taskstimer
 import android.app.Application
 import com.android.taskstimer.data.AppContainer
 import com.android.taskstimer.data.AppDataContainer
+import com.android.taskstimer.mediaPlayer.Mp
 
 class TasksTimerApplication : Application() {
 
@@ -14,5 +15,6 @@ class TasksTimerApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppDataContainer(this)
+        Mp.setContext(this)
     }
 }

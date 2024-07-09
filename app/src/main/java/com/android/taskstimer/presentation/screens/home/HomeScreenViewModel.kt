@@ -91,6 +91,11 @@ class HomeViewModel(
         val updatedCurrentTimerIndex: Int =
             if (updatedRemainingTime == 0) currentTimerIndex + 1 else currentTimerIndex
 
+//        if(updatedRemainingTime == 0) {
+//            stopTimer()
+//            playAlarm(callback = {startTimer()})
+//        }
+
         _uiState.update { it.copy(currentTimerIndex = updatedCurrentTimerIndex) }
 
         viewModelScope.launch {
@@ -98,26 +103,41 @@ class HomeViewModel(
         }
     }
 
-//    init {
+    init {
 //        addTimer()
-//    }
-//
-//    fun addTimer() {
-//        viewModelScope.launch {
-//            timersRepository.insertTimer(
-//                Timer(
-//                    name = "Learn about services",
-//                    presetTime = "845",
-//                )
-//            )
-//        }
-//    }
+    }
+
+    fun addTimer() {
+        viewModelScope.launch {
+            timersRepository.insertTimer(
+                Timer(
+                    name = "Learn about services",
+                    presetTime = "105",
+                )
+            )
+        }
+        viewModelScope.launch {
+            timersRepository.insertTimer(
+                Timer(
+                    name = "Develop awesome app",
+                    presetTime = "185",
+                )
+            )
+        }
+        viewModelScope.launch {
+            timersRepository.insertTimer(
+                Timer(
+                    name = "Reflect on day",
+                    presetTime = "345",
+                )
+            )
+        }
+    }
 
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
             is HomeScreenEvent.ToggleTimer -> {
                 if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
-                println("Toggle timer")
             }
 
         }
@@ -149,4 +169,6 @@ class HomeViewModel(
             )
         }
     }
+
+
 }
