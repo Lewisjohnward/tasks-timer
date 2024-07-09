@@ -18,9 +18,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
+
+private data class DrawerItem(
+    val text: String,
+    val icon: ImageVector = Icons.Filled.CheckCircle,
+    val selected: Boolean = false,
+    val onClick: () -> Unit = {}
+)
+
+
+@Composable
+private fun NavDrawerItem(
+    item: DrawerItem
+) {
+    NavigationDrawerItem(
+        label = { Text(text = item.text) },
+        icon = { Icon(imageVector = item.icon, contentDescription = null) },
+        selected = item.selected,
+        shape = RoundedCornerShape(0.dp),
+        onClick = { item.onClick() },
+        colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = Color.Red,
+            unselectedContainerColor = Color.Transparent,
+            unselectedIconColor = Color.White,
+            unselectedTextColor = Color.White,
+        )
+    )
+}
 
 @Composable
 fun NavigationDrawer() {
@@ -38,30 +66,7 @@ fun NavigationDrawer() {
                 color = Color(0x99FFFFFF),
                 fontWeight = FontWeight.Bold
             )
-            NavigationDrawerItem(
-                label = { Text(text = "Stopwatch") },
-                icon = { Icon(imageVector = Icons.Filled.CheckCircle, contentDescription = null) },
-                selected = false,
-                shape = RoundedCornerShape(0.dp),
-                onClick = { /*TODO*/ },
-                colors = NavigationDrawerItemDefaults.colors(
-                    selectedContainerColor = Color.Red,
-                    unselectedContainerColor = Color.Transparent,
-//                selectedIconColor =,
-                    unselectedIconColor = Color.White,
-//                selectedTextColor =,
-                    unselectedTextColor = Color.White,
-//                selectedBadgeColor =,
-//                unselectedBadgeColor =
-                )
-            )
-            NavigationDrawerItem(
-                label = { Text(text = "Simple Timer") },
-                icon = { Icon(imageVector = Icons.Filled.CheckCircle, contentDescription = null) },
-                selected = true,
-                shape = RoundedCornerShape(0.dp),
-                onClick = { /*TODO*/ }
-            )
+            NavDrawerItem(item = DrawerItem(text = "Simple Timer", onClick = {}))
         }
         Spacer(
             modifier = Modifier
@@ -76,23 +81,7 @@ fun NavigationDrawer() {
                 color = Color(0x99FFFFFF),
                 fontWeight = FontWeight.Bold
             )
-            NavigationDrawerItem(
-                label = { Text(text = "Basic productivity") },
-                icon = { Icon(imageVector = Icons.Filled.CheckCircle, contentDescription = null) },
-                selected = false,
-                shape = RoundedCornerShape(0.dp),
-                onClick = { /*TODO*/ },
-                colors = NavigationDrawerItemDefaults.colors(
-                    selectedContainerColor = Color.Red,
-                    unselectedContainerColor = Color.Transparent,
-//                selectedIconColor =,
-                    unselectedIconColor = Color.White,
-//                selectedTextColor =,
-                    unselectedTextColor = Color.White,
-//                selectedBadgeColor =,
-//                unselectedBadgeColor =
-                )
-            )
+            NavDrawerItem(item = DrawerItem(text = "Basic Productivity", onClick = {}))
         }
         Spacer(
             modifier = Modifier
