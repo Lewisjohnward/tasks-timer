@@ -35,7 +35,6 @@ import com.android.taskstimer.presentation.screens.home.formatTime
 fun Timers(
     uiState: TasksTimer,
     onEvent: (HomeScreenEvent) -> Unit,
-    openDrawer: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -133,5 +132,5 @@ fun TimersPreview() {
         coroutineId = null,
         currentTimerIndex = 0,
         timers = listOf()
-    ), onEvent = { }, openDrawer = { -> })
+    ), onEvent = { })
 }

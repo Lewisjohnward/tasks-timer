@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -21,7 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.android.taskstimer.data.board.Board
+import com.android.taskstimer.presentation.screens.board.BoardDestination
 import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimerDestination
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
 
@@ -53,7 +56,8 @@ private fun NavDrawerItem(
 }
 
 @Composable
-fun NavigationDrawer(navController: NavController) {
+fun NavigationDrawer(boards: List<Board>, navigateToBoard: (String) -> Unit) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth(0.8f)
@@ -68,7 +72,11 @@ fun NavigationDrawer(navController: NavController) {
                 color = Color(0x99FFFFFF),
                 fontWeight = FontWeight.Bold
             )
-            NavDrawerItem(item = DrawerItem(text = "Simple Timer", onClick = {navController.navigate(SimpleTimerDestination.route)}))
+            NavDrawerItem(
+                item = DrawerItem(
+                    text = "Simple Timer",
+                    onClick = {})
+            )
         }
         Spacer(
             modifier = Modifier
@@ -76,14 +84,17 @@ fun NavigationDrawer(navController: NavController) {
                 .height(1.dp)
                 .background(Color.Gray)
         )
-        Column {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "Boards",
-                color = Color(0x99FFFFFF),
-                fontWeight = FontWeight.Bold
-            )
-            NavDrawerItem(item = DrawerItem(text = "Basic Productivity", onClick = {}))
+        LazyColumn {
+            item {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = "Boards",
+                    color = Color(0x99FFFFFF),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            items(boards) {board ->
+                NavDrawerItem(item = DrawerItem(text = board.name, onClick = {navigateToBoard(board.name)})) }
         }
         Spacer(
             modifier = Modifier
@@ -94,3 +105,9 @@ fun NavigationDrawer(navController: NavController) {
     }
 }
 
+//HomeScreen(
+//navigateToItemEntry = { navController.navigate(ItemEntryDestination.route) },
+//navigateToItemUpdate = {
+//    navController.navigate("${ItemDetailsDestination.route}/${it}")
+//}
+//)

@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Timer(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val board: String,
     val name: String,
     val presetTime: String,
     val remainingTime: String = presetTime

@@ -3,12 +3,14 @@ package com.android.taskstimer.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.android.taskstimer.presentation.screens.board.Board
+import com.android.taskstimer.presentation.screens.board.BoardDestination
 import com.android.taskstimer.presentation.screens.home.HomeDestination
 import com.android.taskstimer.presentation.screens.home.HomeScreen
-import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimer
-import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimerDestination
 import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
 import com.android.taskstimer.presentation.screens.timers.TimerAddScreen
 
@@ -25,41 +27,28 @@ fun TasksTimerNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navController = navController
+                navigateToBoard = {
+                    navController.navigate("${BoardDestination.route}/${it}")
+                },
+                navigateToAddTimer = { navController.navigate(TimerAddDestination.route) }
             )
+        }
+        composable(
+            route = BoardDestination.routeWithArgs,
+            // "board/itemId"
+            arguments = listOf(navArgument(BoardDestination.boardName) {
+                // "itemId"
+                type = NavType.StringType
+            })
+        ) {
+            Board()
         }
 
-        composable(route = SimpleTimerDestination.route) {
-            SimpleTimer(
-                navController = navController
-            )
-        }
         composable(route = TimerAddDestination.route) {
             TimerAddScreen(
                 navigateBack = { navController.popBackStack() },
             )
         }
-//        composable(
-//            route = ItemDetailsDestination.routeWithArgs,
-//            arguments = listOf(navArgument(ItemDetailsDestination.itemIdArg) {
-//                type = NavType.IntType
-//            })
-//        ) {
-//            ItemDetailsScreen(
-//                navigateToEditItem = { navController.navigate("${ItemEditDestination.route}/$it") },
-//                navigateBack = { navController.navigateUp() }
-//            )
-//        }
-//        composable(
-//            route = ItemEditDestination.routeWithArgs,
-//            arguments = listOf(navArgument(ItemEditDestination.itemIdArg) {
-//                type = NavType.IntType
-//            })
-//        ) {
-//            ItemEditScreen(
-//                navigateBack = { navController.popBackStack() },
-//                onNavigateUp = { navController.navigateUp() }
-//            )
-//        }
     }
 }
+

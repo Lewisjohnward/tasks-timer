@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import com.android.taskstimer.data.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -14,4 +16,7 @@ interface BoardDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(board: Board)
+
+    @Query("SELECT * FROM timers WHERE board=:boardName")
+    fun getBoardsWithTimers(boardName: String): Flow<List<Timer>>
 }

@@ -3,6 +3,7 @@ package com.android.taskstimer.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.data.board.Board
+import com.android.taskstimer.data.board.BoardWithTimers
 import com.android.taskstimer.data.board.BoardsRepository
 import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.data.timer.TimersRepository
@@ -22,7 +23,9 @@ data class TasksTimer(
     val finished: Boolean = false,
     val coroutineId: Job? = null,
     val currentTimerIndex: Int = 0,
-    val timers: List<Timer> = listOf()
+    val timers: List<Timer> = listOf(),
+    val boardWithTimers: List<BoardWithTimers> = listOf(),
+    val boards: List<Board> = listOf()
 )
 
 fun Timer.formatTime(): String {
@@ -56,15 +59,19 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val _timers: Flow<List<Timer>> = timersRepository.getAllTimersStream()
+    private val _boards: Flow<List<Board>> = boardsRepository.getAllBoardsStream()
 
     private val _uiState = MutableStateFlow(TasksTimer())
 
-    val uiState = combine(_timers, _uiState) { timers, uiState ->
-        uiState.copy(
-            timers = timers
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), TasksTimer())
 
+    val uiState =
+        combine(_timers, _uiState, _boards) { timers, uiState, boards ->
+            uiState.copy(
+                timers = timers,
+                boards = boards
+
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), TasksTimer())
 
     private fun startTimer() {
         if (uiState.value.running) stopTimer()
@@ -111,9 +118,12 @@ class HomeViewModel(
 //        addBoard()
     }
 
-    private fun addBoard(){
-        viewModelScope.launch{
-            boardsRepository.insertBoard(Board())
+    private fun addBoard() {
+        viewModelScope.launch {
+            boardsRepository.insertBoard(Board(name = "Basic productivity"))
+        }
+        viewModelScope.launch {
+            boardsRepository.insertBoard(Board(name = "House work"))
         }
     }
 
@@ -122,6 +132,7 @@ class HomeViewModel(
             timersRepository.insertTimer(
                 Timer(
                     name = "Learn about services",
+                    board = "Basic productivity",
                     presetTime = "105",
                 )
             )
@@ -130,6 +141,7 @@ class HomeViewModel(
             timersRepository.insertTimer(
                 Timer(
                     name = "Develop awesome app",
+                    board = "Basic productivity",
                     presetTime = "185",
                 )
             )
@@ -138,7 +150,17 @@ class HomeViewModel(
             timersRepository.insertTimer(
                 Timer(
                     name = "Reflect on day",
+                    board = "Basic productivity",
                     presetTime = "345",
+                )
+            )
+        }
+        viewModelScope.launch {
+            timersRepository.insertTimer(
+                Timer(
+                    name = "Clean the floor",
+                    board = "House work",
+                    presetTime = "105",
                 )
             )
         }
@@ -149,7 +171,6 @@ class HomeViewModel(
             is HomeScreenEvent.ToggleTimer -> {
                 if (_uiState.value.coroutineId == null) startTimer() else stopTimer()
             }
-
         }
     }
 

@@ -2,7 +2,6 @@ package com.android.taskstimer.presentation.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,11 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.android.taskstimer.presentation.components.NavigationDrawer
 import com.android.taskstimer.presentation.components.Timers
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
-import com.android.taskstimer.ui.theme.TasksTimerTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.android.taskstimer.R
 import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.AppViewModelProvider
@@ -59,10 +56,6 @@ data class FakeTasksTimer(
 )
 
 
-
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -70,17 +63,22 @@ fun HomeScreen(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent,
-    navController: NavController
+    navigateToBoard: (String) -> Unit,
+    navigateToAddTimer: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
+
     fun openDrawer() {
         coroutineScope.launch { drawerState.open() }
     }
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerShape = RectangleShape) {
-                NavigationDrawer(navController = navController)
+                NavigationDrawer(
+                    navigateToBoard = navigateToBoard,
+                    boards = uiState.boards
+                )
             }
         },
         drawerState = drawerState,
@@ -103,7 +101,7 @@ fun HomeScreen(
                         containerColor = Color(0xFF629D61),
                         shape = RoundedCornerShape(50.dp),
                         onClick = {
-                            navController.navigate(TimerAddDestination.route)
+                            navigateToAddTimer()
                         }
                     ) {
                         Image(
@@ -120,7 +118,6 @@ fun HomeScreen(
                     Timers(
                         uiState = uiState,
                         onEvent = onEvent,
-                        openDrawer = { openDrawer() }
                     )
                 }
             }
