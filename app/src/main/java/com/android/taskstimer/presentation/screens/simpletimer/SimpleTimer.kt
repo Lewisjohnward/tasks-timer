@@ -1,4 +1,4 @@
-package com.android.taskstimer.presentation.screens.home
+package com.android.taskstimer.presentation.screens.simpletimer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -16,10 +16,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,56 +26,43 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.android.taskstimer.presentation.components.NavigationDrawer
-import com.android.taskstimer.presentation.components.Timers
-import com.android.taskstimer.ui.theme.BackgroundDarkGray
-import com.android.taskstimer.ui.theme.TasksTimerTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.android.taskstimer.R
-import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.AppViewModelProvider
+import com.android.taskstimer.presentation.components.NavigationDrawer
 import com.android.taskstimer.presentation.components.TimerTopBar
+import com.android.taskstimer.presentation.components.Timers
 import com.android.taskstimer.presentation.navigation.NavigationDestination
+import com.android.taskstimer.presentation.screens.home.HomeDestination
+import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
+import com.android.taskstimer.presentation.screens.home.HomeViewModel
 import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
-import kotlinx.coroutines.Job
+import com.android.taskstimer.ui.theme.BackgroundDarkGray
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-
-object HomeDestination : NavigationDestination {
-    override val route = "home"
-    override val title = "Tasks Timer Home"
+object SimpleTimerDestination : NavigationDestination {
+    override val route = "simpleTimer"
+    override val title = "Simple Timer"
 }
-
-
-data class FakeTasksTimer(
-    val running: Boolean = false,
-    val finished: Boolean = false,
-    val coroutineId: Job? = null,
-    val currentTimerIndex: Int = 0,
-    val timers: List<Timer> = listOf()
-)
-
-
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun SimpleTimer(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent,
+//    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+//    onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent,
     navController: NavController
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+
     fun openDrawer() {
         coroutineScope.launch { drawerState.open() }
     }
+
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerShape = RectangleShape) {
@@ -98,30 +84,9 @@ fun HomeScreen(
                         icon = Icons.Filled.Menu
                     )
                 },
-                floatingActionButton = {
-                    FloatingActionButton(
-                        containerColor = Color(0xFF629D61),
-                        shape = RoundedCornerShape(50.dp),
-                        onClick = {
-                            navController.navigate(TimerAddDestination.route)
-                        }
-                    ) {
-                        Image(
-                            modifier = Modifier.size(30.dp),
-                            painter = painterResource(R.drawable.timer_add),
-                            contentDescription = "Add timer",
-                            colorFilter = ColorFilter.tint(Color.White)
-                        )
-
-                    }
-                }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    Timers(
-                        uiState = uiState,
-                        onEvent = onEvent,
-                        openDrawer = { openDrawer() }
-                    )
+                    Text(text = "Simple timer")
                 }
             }
         }

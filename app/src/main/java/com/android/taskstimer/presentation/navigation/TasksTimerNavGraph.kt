@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.android.taskstimer.presentation.screens.home.HomeDestination
 import com.android.taskstimer.presentation.screens.home.HomeScreen
+import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimer
+import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimerDestination
 import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
 import com.android.taskstimer.presentation.screens.timers.TimerAddScreen
 
@@ -22,7 +24,15 @@ fun TasksTimerNavHost(
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
-            HomeScreen { navController.navigate(TimerAddDestination.route) }
+            HomeScreen(
+                navController = navController
+            )
+        }
+
+        composable(route = SimpleTimerDestination.route) {
+            SimpleTimer(
+                navController = navController
+            )
         }
         composable(route = TimerAddDestination.route) {
             TimerAddScreen(

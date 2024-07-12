@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.android.taskstimer.presentation.screens.simpletimer.SimpleTimerDestination
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
 
 private data class DrawerItem(
@@ -51,7 +53,7 @@ private fun NavDrawerItem(
 }
 
 @Composable
-fun NavigationDrawer() {
+fun NavigationDrawer(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.8f)
@@ -66,7 +68,7 @@ fun NavigationDrawer() {
                 color = Color(0x99FFFFFF),
                 fontWeight = FontWeight.Bold
             )
-            NavDrawerItem(item = DrawerItem(text = "Simple Timer", onClick = {}))
+            NavDrawerItem(item = DrawerItem(text = "Simple Timer", onClick = {navController.navigate(SimpleTimerDestination.route)}))
         }
         Spacer(
             modifier = Modifier
