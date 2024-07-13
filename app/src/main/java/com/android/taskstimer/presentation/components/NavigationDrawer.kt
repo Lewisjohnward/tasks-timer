@@ -49,7 +49,7 @@ private fun NavDrawerItem(
         onClick = {
             item.onClick()
             closeDrawer()
-                  },
+        },
         colors = NavigationDrawerItemDefaults.colors(
             selectedContainerColor = Color.Red,
             unselectedContainerColor = Color.Transparent,
@@ -103,7 +103,6 @@ fun NavigationDrawer(
                 )
             }
             itemsIndexed(boards) { index, board ->
-
 
 
                 NavDrawerItem(

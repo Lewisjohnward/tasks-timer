@@ -27,9 +27,9 @@ fun TasksTimerNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToBoard = {
-                    navController.navigate("${BoardDestination.route}/${it}")
-                },
+//                navigateToBoard = {
+//                    navController.navigate("${BoardDestination.route}/${it}")
+//                },
                 navigateToAddTimer = { navController.navigate(TimerAddDestination.route) }
             )
         }

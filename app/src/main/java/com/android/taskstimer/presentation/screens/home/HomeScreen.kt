@@ -1,8 +1,11 @@
 package com.android.taskstimer.presentation.screens.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +18,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -61,8 +65,6 @@ fun HomeScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onEvent: (HomeScreenEvent) -> Unit = {},
-    navigateToBoard: (String) -> Unit,
     navigateToAddTimer: () -> Unit,
 ) {
 
@@ -77,13 +79,14 @@ fun HomeScreen(
     }
 
 
+
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(
                 drawerShape = RectangleShape
             ) {
                 NavigationDrawer(
-                    closeDrawer = {closeDrawer()} ,
+                    closeDrawer = { closeDrawer() },
                     onEvent = viewModel::onEvent,
                     boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board }
                 )
@@ -97,13 +100,14 @@ fun HomeScreen(
                 containerColor = BackgroundDarkGray,
                 topBar = {
                     TimerTopBar(
-                        title = HomeDestination.title,
+                        title = uiState.currentBoardName,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
                         icon = Icons.Filled.Menu
                     )
                 },
+
                 floatingActionButton = {
                     FloatingActionButton(
                         containerColor = Color(0xFF629D61),
@@ -125,8 +129,8 @@ fun HomeScreen(
                 Box(modifier = Modifier.padding(innerPadding)) {
                     if (uiState.boardsWithTimers.isNotEmpty())
                         Timers(
-                            timers = uiState.boardsWithTimers[uiState.currentBoard].timers,
-                            onEvent = onEvent,
+                            timers = uiState.currentBoard,
+                            onEvent = viewModel::onEvent,
                         )
                 }
             }
