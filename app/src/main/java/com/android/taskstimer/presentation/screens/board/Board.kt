@@ -23,11 +23,11 @@ object BoardDestination : NavigationDestination {
 fun Board(
     viewModel: BoardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
-    println(uiState.value.timers)
-    LazyColumn {
-        items(uiState.value.timers) { timer ->
-            Text( text = timer.name)
-        }
-    }
+//    val uiState = viewModel.uiState.collectAsState()
+//    println(uiState.value.timers)
+//    LazyColumn {
+//        items(uiState.value.timers) { timer ->
+//            Text( text = timer.name)
+//        }
+//    }
 }

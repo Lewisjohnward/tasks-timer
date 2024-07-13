@@ -7,5 +7,5 @@ interface BoardsRepository {
     fun getAllBoardsStream(): Flow<List<Board>>
     suspend fun insertBoard(board: Board)
 
-    fun getBoardsWithTimers(boardName: String): Flow<List<Timer>>
+    fun getBoardsWithTimers(): Flow<List<BoardsWithTimers>>
 }

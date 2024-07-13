@@ -14,6 +14,11 @@ data class Board(
     val name: String,
 )
 
-data class BoardWithTimers(
-    @Embedded val timer: Timer,
+data class BoardsWithTimers(
+    @Embedded val board: Board,
+    @Relation(
+        parentColumn = "name",
+        entityColumn = "board"
+    )
+    val timers: List<Timer>
 )

@@ -7,5 +7,5 @@ class OfflineBoardsRepository(private val boardDao: BoardDao) : BoardsRepository
     override fun getAllBoardsStream(): Flow<List<Board>> = boardDao.getAllBoards()
     override suspend fun insertBoard(board: Board) = boardDao.insert(board)
 
-    override fun getBoardsWithTimers(boardName: String): Flow<List<Timer>> = boardDao.getBoardsWithTimers(boardName)
+    override fun getBoardsWithTimers(): Flow<List<BoardsWithTimers>> = boardDao.getBoardsWithTimers()
 }

@@ -27,27 +27,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
-import com.android.taskstimer.presentation.screens.home.TasksTimer
+import com.android.taskstimer.presentation.screens.home.UiState
 import com.android.taskstimer.presentation.screens.home.formatTime
 
 
 @Composable
 fun Timers(
-    uiState: TasksTimer,
+    timers: List<Timer>,
     onEvent: (HomeScreenEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        TimerView(uiState, onEvent)
+        TimerView(timers, onEvent)
     }
 }
 
 
 @Composable
 private fun TimerView(
-    uiState: TasksTimer,
+    timers: List<Timer>,
     onEvent: (HomeScreenEvent) -> Unit
 ) {
     Column(
@@ -62,11 +62,11 @@ private fun TimerView(
                 .padding(25.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            itemsIndexed(uiState.timers) { index, timer ->
+            itemsIndexed(timers) { index, timer ->
                 TimerComposable(timer = timer, index = index)
             }
         }
-        Button(running = uiState.running, onEvent = onEvent)
+        Button(running = false, onEvent = onEvent)
     }
 }
 
@@ -120,17 +120,4 @@ private fun Button(onEvent: (HomeScreenEvent) -> Unit, running: Boolean) {
 
         }
     }
-}
-
-
-@Preview()
-@Composable
-fun TimersPreview() {
-    Timers(uiState = TasksTimer(
-        running = false,
-        finished = false,
-        coroutineId = null,
-        currentTimerIndex = 0,
-        timers = listOf()
-    ), onEvent = { })
 }

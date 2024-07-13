@@ -37,7 +37,6 @@ import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.AppViewModelProvider
 import com.android.taskstimer.presentation.components.TimerTopBar
 import com.android.taskstimer.presentation.navigation.NavigationDestination
-import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
 import kotlinx.coroutines.Job
 
 
@@ -62,22 +61,31 @@ fun HomeScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent,
+    onEvent: (HomeScreenEvent) -> Unit = {},
     navigateToBoard: (String) -> Unit,
     navigateToAddTimer: () -> Unit,
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState(UiState())
 
     fun openDrawer() {
         coroutineScope.launch { drawerState.open() }
     }
+
+    fun closeDrawer() {
+        coroutineScope.launch { drawerState.close() }
+    }
+
+
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet(drawerShape = RectangleShape) {
+            ModalDrawerSheet(
+                drawerShape = RectangleShape
+            ) {
                 NavigationDrawer(
-                    navigateToBoard = navigateToBoard,
-                    boards = uiState.boards
+                    closeDrawer = {closeDrawer()} ,
+                    onEvent = viewModel::onEvent,
+                    boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board }
                 )
             }
         },
@@ -115,10 +123,11 @@ fun HomeScreen(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    Timers(
-                        uiState = uiState,
-                        onEvent = onEvent,
-                    )
+                    if (uiState.boardsWithTimers.isNotEmpty())
+                        Timers(
+                            timers = uiState.boardsWithTimers[uiState.currentBoard].timers,
+                            onEvent = onEvent,
+                        )
                 }
             }
         }
