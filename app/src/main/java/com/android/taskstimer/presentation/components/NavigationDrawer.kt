@@ -1,9 +1,9 @@
 package com.android.taskstimer.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,17 +13,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.taskstimer.data.board.Board
 import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
@@ -41,29 +47,42 @@ private fun NavDrawerItem(
     closeDrawer: () -> Unit = {},
     item: DrawerItem,
 ) {
-    NavigationDrawerItem(
-        label = { Text(text = item.text) },
-        icon = { Icon(imageVector = item.icon, contentDescription = null) },
-        selected = item.selected,
-        shape = RoundedCornerShape(0.dp),
-        onClick = {
-            item.onClick()
-            closeDrawer()
-        },
-        colors = NavigationDrawerItemDefaults.colors(
-            selectedContainerColor = Color.Red,
-            unselectedContainerColor = Color.Transparent,
-            unselectedIconColor = Color.White,
-            unselectedTextColor = Color.White,
+    Row(
+        modifier = Modifier.padding(end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        NavigationDrawerItem(
+            modifier = Modifier.weight(0.8f),
+            label = { Text(text = item.text) },
+            icon = { Icon(imageVector = item.icon, contentDescription = null) },
+            selected = item.selected,
+            shape = RoundedCornerShape(0.dp),
+            onClick = {
+                item.onClick()
+                closeDrawer()
+            },
+            colors = NavigationDrawerItemDefaults.colors(
+                selectedContainerColor = Color.Red,
+                unselectedContainerColor = Color.Transparent,
+                unselectedIconColor = Color.White,
+                unselectedTextColor = Color.White,
+            )
         )
-    )
+        Icon(
+            imageVector = Icons.Filled.List,
+            contentDescription = null,
+            tint = Color.White
+        )
+    }
 }
 
 @Composable
 fun NavigationDrawer(
     boards: List<Board>,
     onEvent: (HomeScreenEvent) -> Unit,
-    closeDrawer: () -> Unit
+    closeDrawer: () -> Unit,
+    rearrangeEnabled: Boolean
 ) {
 
     Column(
@@ -77,8 +96,9 @@ fun NavigationDrawer(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = "Menu",
-                color = Color(0x99FFFFFF),
-                fontWeight = FontWeight.Bold
+                color = Color(0x77FFFFFF),
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp
             )
             NavDrawerItem(
                 item = DrawerItem(
@@ -95,12 +115,25 @@ fun NavigationDrawer(
         )
         LazyColumn {
             item {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = "Boards",
-                    color = Color(0x99FFFFFF),
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(16.dp),
+                        text = "Boards",
+                        color = Color(0x99FFFFFF),
+                        fontWeight = FontWeight.Bold
+                    )
+                    TextButton(onClick = { onEvent(HomeScreenEvent.ToggleRearrangeBoards) }) {
+                        Text(
+                            text = if (rearrangeEnabled) "Done" else "Edit",
+                            color = Color(0xFFFF9B88)
+                        )
+
+                    }
+                }
             }
             itemsIndexed(boards) { index, board ->
 
@@ -113,6 +146,16 @@ fun NavigationDrawer(
                     )
                 )
             }
+            if (rearrangeEnabled) item {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = null,
+                        tint = Color(0x44FFFFFF)
+                    )
+
+                }
+            }
         }
         Spacer(
             modifier = Modifier
@@ -120,12 +163,12 @@ fun NavigationDrawer(
                 .height(1.dp)
                 .background(Color.Gray)
         )
+        NavDrawerItem(
+            item = DrawerItem(
+                text = "Settings",
+                onClick = {}
+            )
+        )
+
     }
 }
-
-//HomeScreen(
-//navigateToItemEntry = { navController.navigate(ItemEntryDestination.route) },
-//navigateToItemUpdate = {
-//    navController.navigate("${ItemDetailsDestination.route}/${it}")
-//}
-//)

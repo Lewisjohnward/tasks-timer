@@ -26,6 +26,8 @@ data class UiState(
     val coroutineId: Job? = null,
     val currentTimerIndex: Int = 0,
 
+    val rearrangeBoards: Boolean = false,
+
 
     val currentBoardName: String = "",
     val currentBoard: List<Timer> = listOf(),
@@ -157,6 +159,11 @@ class HomeViewModel(
                     )
                 }
             }
+
+             is HomeScreenEvent.ToggleRearrangeBoards -> {
+                _uiState.update { it.copy(rearrangeBoards = !it.rearrangeBoards) }
+            }
+
         }
     }
 
