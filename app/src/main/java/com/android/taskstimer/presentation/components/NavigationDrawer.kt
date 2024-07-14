@@ -57,6 +57,7 @@ private data class DrawerItem(
 private fun NavDrawerItem(
     closeDrawer: () -> Unit = {},
     item: DrawerItem,
+    handle: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.padding(end = 16.dp),
@@ -64,7 +65,7 @@ private fun NavDrawerItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NavigationDrawerItem(
-            modifier = Modifier.weight(0.8f),
+            modifier = Modifier.weight(1f),
             label = { Text(text = item.text) },
             icon = { Icon(imageVector = item.icon, contentDescription = null) },
             selected = item.selected,
@@ -80,11 +81,9 @@ private fun NavDrawerItem(
                 unselectedTextColor = Color.White,
             )
         )
-        Icon(
-            imageVector = Icons.Filled.List,
-            contentDescription = null,
-            tint = Color.White
-        )
+        Row(modifier = Modifier.weight(0.1f)) {
+            handle()
+        }
     }
 }
 
@@ -128,33 +127,37 @@ fun NavigationDrawer(
                     .height(1.dp)
                     .background(Color.Gray)
             )
-            LazyColumn {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = "Boards",
-                            color = Color(0x99FFFFFF),
-                            fontWeight = FontWeight.Bold
-                        )
-                        TextButton(onClick = { onEvent(HomeScreenEvent.ToggleRearrangeBoards) }) {
-                            Text(
-                                text = if (rearrangeEnabled) "Done" else "Edit",
-                                color = Color(0xFFFF9B88)
-                            )
-
-                        }
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = "Boards",
+                    color = Color(0x99FFFFFF),
+                    fontWeight = FontWeight.Bold
+                )
+                TextButton(onClick = { onEvent(HomeScreenEvent.ToggleRearrangeBoards) }) {
+                    Text(
+                        text = if (rearrangeEnabled) "Done" else "Edit",
+                        color = Color(0xFFFF9B88)
+                    )
                 }
+            }
+            LazyColumn(modifier = Modifier.weight(0.5f)) {
+
                 itemsIndexed(boards) { index, board ->
-
-
                     NavDrawerItem(
                         closeDrawer = closeDrawer,
+                        handle = {
+                            if (rearrangeEnabled)
+                                Icon(
+                                    imageVector = Icons.Filled.List,
+                                    contentDescription = "Drag handle",
+                                    tint = Color.White
+                                )
+                        },
                         item = DrawerItem(
                             text = board.name,
                             onClick = { onEvent(HomeScreenEvent.SelectBoard(index)) }
@@ -186,6 +189,7 @@ fun NavigationDrawer(
                         }
                     }
                 }
+
             }
             Spacer(
                 modifier = Modifier
@@ -199,6 +203,7 @@ fun NavigationDrawer(
                     onClick = {}
                 )
             )
+
             if (inputDialogVisible)
                 InputDialog(
                     onEvent = onEvent,
