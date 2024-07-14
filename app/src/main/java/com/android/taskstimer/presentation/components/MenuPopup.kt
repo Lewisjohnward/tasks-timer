@@ -24,6 +24,7 @@ import com.android.taskstimer.ui.theme.BackgroundDarkGray
 
 @Composable
 fun MenuPopup(dismiss: () -> Unit) {
+    // TODO: Wire up logic
     Popup(
         alignment = Alignment.TopEnd,
         offset = IntOffset(1, 20),
