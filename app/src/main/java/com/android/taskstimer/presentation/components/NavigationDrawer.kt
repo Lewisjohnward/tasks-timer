@@ -147,13 +147,22 @@ fun NavigationDrawer(
                 )
             }
             if (rearrangeEnabled) item {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = null,
-                        tint = Color(0x44FFFFFF)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null,
+                            tint = Color(0x44FFFFFF)
+                        )
+                    }
+                    Text(
+                        text = "Add",
+                        color = Color(0x44FFFFFF),
+                        fontWeight = FontWeight.Bold
                     )
-
                 }
             }
         }
