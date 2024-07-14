@@ -76,7 +76,6 @@ class HomeViewModel(
 
     val uiState: StateFlow<UiState> =
         combine(_boardsWithTimers, _uiState) { boardsWithTimers, uiState ->
-            println(boardsWithTimers)
             uiState.copy(
                 boardsWithTimers = boardsWithTimers,
 
@@ -94,75 +93,12 @@ class HomeViewModel(
         )
 
 
-    init {
-//        addTimer()
-//        addBoard()
-    }
 
     private fun addBoard(name: String) {
         viewModelScope.launch {
             boardsRepository.insertBoard(Board(name = name))
         }
     }
-
-    private fun addTimer(timer: Timer) {
-        viewModelScope.launch {
-            timersRepository.insertTimer(timer)
-        }
-    }
-
-//        viewModelScope.launch {
-//            boardsRepository.insertBoard(Board(name = "House work"))
-//        }
-//        }
-
-//    private fun addBoard() {
-//        viewModelScope.launch {
-//            boardsRepository.insertBoard(Board(name = "Basic productivity"))
-//        }
-//        viewModelScope.launch {
-//            boardsRepository.insertBoard(Board(name = "House work"))
-//        }
-//    }
-
-//    fun addTimer() {
-//        viewModelScope.launch {
-//            timersRepository.insertTimer(
-//                Timer(
-//                    name = "Learn about services",
-//                    board = "Basic productivity",
-//                    presetTime = "105",
-//                )
-//            )
-//        }
-//        viewModelScope.launch {
-//            timersRepository.insertTimer(
-//                Timer(
-//                    name = "Develop awesome app",
-//                    board = "Basic productivity",
-//                    presetTime = "185",
-//                )
-//            )
-//        }
-//        viewModelScope.launch {
-//            timersRepository.insertTimer(
-//                Timer(
-//                    name = "Reflect on day",
-//                    board = "Basic productivity",
-//                    presetTime = "345",
-//                )
-//            )
-//        }
-//        viewModelScope.launch {
-//            timersRepository.insertTimer(
-//                Timer(
-//                    name = "Clean the floor",
-//                    board = "House work",
-//                    presetTime = "105",
-//                )
-//            )
-//        }
-//    }
 
     fun onEvent(event: HomeScreenEvent) {
         when (event) {

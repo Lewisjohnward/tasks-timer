@@ -7,8 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.android.taskstimer.presentation.screens.board.Board
-import com.android.taskstimer.presentation.screens.board.BoardDestination
 import com.android.taskstimer.presentation.screens.home.HomeDestination
 import com.android.taskstimer.presentation.screens.home.HomeScreen
 import com.android.taskstimer.presentation.screens.timers.TimerAddDestination
@@ -27,32 +25,11 @@ fun TasksTimerNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-//                navigateToBoard = {
-//                    navController.navigate("${BoardDestination.route}/${it}")
-//                },
                 navigateToAddTimer = {
                     navController.navigate("${TimerAddDestination.route}/${it}")
                 }
-//                        navigateToAddTimer = { navController.navigate(TimerAddDestination.route) }
             )
         }
-//        composable(
-//            route = BoardDestination.routeWithArgs,
-//            // "board/itemId"
-//            arguments = listOf(navArgument(BoardDestination.boardName) {
-//                // "itemId"
-//                type = NavType.StringType
-//            })
-//        ) {
-//            Board()
-//        }
-//object BoardDestination : NavigationDestination {
-//    override val route = "board"
-//    override val title = "board"
-//    const val boardName = "boardName"
-//    val routeWithArgs = "$route/{$boardName}"
-//}
-
         composable(
             route = TimerAddDestination.routeWithArgs,
             arguments = listOf(navArgument(name = "boardId"){type = NavType.IntType})

@@ -15,16 +15,14 @@ class TimerAddViewModel(
     private val timersRepository: TimersRepository
 ) : ViewModel() {
     private val boardId: Int = checkNotNull(savedStateHandle[TimerAddDestination.boardIdArg])
-    private val _uiState = MutableStateFlow("hello")
+    private val _uiState = MutableStateFlow("Put uiState here")
     val uiState = _uiState.asStateFlow()
 
 
-    fun addTimer(timer: Timer) {
+    private fun addTimer(timer: Timer) {
         viewModelScope.launch {
             timersRepository.insertTimer(timer)
         }
-        println("add timer")
-        println(boardId)
     }
 
     fun onEvent(event: TimerAddEvent) {
@@ -36,7 +34,6 @@ class TimerAddViewModel(
                     presetTime = "143",
                 )
                 addTimer(dummyData)
-//                addTimer(event.timer)
 
             }
         }
