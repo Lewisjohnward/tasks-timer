@@ -30,21 +30,33 @@ fun TasksTimerNavHost(
 //                navigateToBoard = {
 //                    navController.navigate("${BoardDestination.route}/${it}")
 //                },
-                navigateToAddTimer = { navController.navigate(TimerAddDestination.route) }
+                navigateToAddTimer = {
+                    navController.navigate("${TimerAddDestination.route}/${it}")
+                }
+//                        navigateToAddTimer = { navController.navigate(TimerAddDestination.route) }
             )
         }
-        composable(
-            route = BoardDestination.routeWithArgs,
-            // "board/itemId"
-            arguments = listOf(navArgument(BoardDestination.boardName) {
-                // "itemId"
-                type = NavType.StringType
-            })
-        ) {
-            Board()
-        }
+//        composable(
+//            route = BoardDestination.routeWithArgs,
+//            // "board/itemId"
+//            arguments = listOf(navArgument(BoardDestination.boardName) {
+//                // "itemId"
+//                type = NavType.StringType
+//            })
+//        ) {
+//            Board()
+//        }
+//object BoardDestination : NavigationDestination {
+//    override val route = "board"
+//    override val title = "board"
+//    const val boardName = "boardName"
+//    val routeWithArgs = "$route/{$boardName}"
+//}
 
-        composable(route = TimerAddDestination.route) {
+        composable(
+            route = TimerAddDestination.routeWithArgs,
+            arguments = listOf(navArgument(name = "boardId"){type = NavType.IntType})
+        ) {
             TimerAddScreen(
                 navigateBack = { navController.popBackStack() },
             )

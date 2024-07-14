@@ -30,6 +30,7 @@ data class UiState(
 
 
     val currentBoardName: String = "",
+    val currentBoardId: Int = 0,
     val currentBoard: List<Timer> = listOf(),
 
     val currentBoardIndex: Int = 0,
@@ -75,13 +76,15 @@ class HomeViewModel(
 
     val uiState: StateFlow<UiState> =
         combine(_boardsWithTimers, _uiState) { boardsWithTimers, uiState ->
+            println(boardsWithTimers)
             uiState.copy(
                 boardsWithTimers = boardsWithTimers,
 
                 // TODO: Clean this up into it's own data class let's not pollute the uiState
                 // TODO: Sort out display if user has no boards/timers
                 currentBoard = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].timers else listOf(),
-                currentBoardName = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else ""
+                currentBoardName = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else "",
+                currentBoardId = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.id else 0
 
             )
         }.stateIn(

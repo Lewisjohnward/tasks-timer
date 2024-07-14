@@ -1,5 +1,6 @@
 package com.android.taskstimer.presentation.screens.timers
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,35 +14,55 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.taskstimer.R
+import com.android.taskstimer.presentation.AppViewModelProvider
+import com.android.taskstimer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.presentation.components.TimerTopBar
 import com.android.taskstimer.presentation.navigation.NavigationDestination
+import com.android.taskstimer.presentation.screens.home.HomeViewModel
 import com.android.taskstimer.ui.theme.BackgroundDarkGray
 
 object TimerAddDestination : NavigationDestination {
-    override val route = "timeradd"
-    override val title = ""
+    override val route = "timer_add"
+    override val title = "Add timer"
+    const val boardIdArg = "boardId"
+    val routeWithArgs = "$route/{$boardIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerAddScreen(navigateBack: () -> Unit) {
+fun TimerAddScreen(
+    navigateBack: () -> Unit,
+    viewModel: TimerAddViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val onEvent = viewModel::onEvent
+
+
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -49,6 +70,19 @@ fun TimerAddScreen(navigateBack: () -> Unit) {
         topBar = {
             TimerTopBar(
                 iconOnclick = navigateBack
+            )
+        },
+        floatingActionButton = {
+            FloatingActionBtn(
+                onClick = {onEvent(TimerAddEvent.AddTimer)},
+                icon = {
+                    Image(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add timer",
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
             )
         }
     ) { innerPadding ->

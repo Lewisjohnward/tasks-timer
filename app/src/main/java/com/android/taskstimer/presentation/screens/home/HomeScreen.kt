@@ -44,6 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.taskstimer.R
 import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.AppViewModelProvider
+import com.android.taskstimer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.presentation.components.InputDialog
 import com.android.taskstimer.presentation.components.TimerTopBar
 import com.android.taskstimer.presentation.navigation.NavigationDestination
@@ -71,10 +72,11 @@ fun HomeScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToAddTimer: () -> Unit,
+    navigateToAddTimer: (Int) -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState(UiState())
+    val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
     fun openDrawer() {
         coroutineScope.launch { drawerState.open() }
@@ -88,7 +90,7 @@ fun HomeScreen(
         drawerContent = {
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
-                onEvent = viewModel::onEvent,
+                onEvent = onEvent,
                 boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
                 rearrangeEnabled = uiState.rearrangeBoards
             )
@@ -110,21 +112,18 @@ fun HomeScreen(
                 },
 
                 floatingActionButton = {
-                    FloatingActionButton(
-                        containerColor = Color(0xFF629D61),
-                        shape = RoundedCornerShape(50.dp),
-                        onClick = {
-                            navigateToAddTimer()
-                        }
-                    ) {
-                        Image(
-                            modifier = Modifier.size(30.dp),
-                            painter = painterResource(R.drawable.timer_add),
-                            contentDescription = "Add timer",
-                            colorFilter = ColorFilter.tint(Color.White)
-                        )
+                    FloatingActionBtn(onClick =  {navigateToAddTimer(uiState.currentBoardId)} ,
+                        icon = {
+                            Image(
+                                modifier = Modifier.size(30.dp),
+                                painter = painterResource(R.drawable.timer_add),
+                                contentDescription = "Add timer",
+                                colorFilter = ColorFilter.tint(Color.White)
+                            )
 
-                    }
+                        }
+                    )
+
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {

@@ -24,6 +24,7 @@ object AppViewModelProvider {
         }
         initializer {
             TimerAddViewModel(
+                this.createSavedStateHandle(),
                 timersRepository = tasksTimerApplication().container.timersRepository
             )
         }
