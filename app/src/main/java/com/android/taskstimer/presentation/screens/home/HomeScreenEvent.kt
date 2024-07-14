@@ -5,4 +5,6 @@ sealed interface HomeScreenEvent {
     data class SelectBoard(val boardIndex: Int): HomeScreenEvent
 
     data object ToggleRearrangeBoards: HomeScreenEvent
+
+
 }

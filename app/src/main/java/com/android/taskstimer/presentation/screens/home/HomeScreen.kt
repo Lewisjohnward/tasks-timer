@@ -44,6 +44,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.taskstimer.R
 import com.android.taskstimer.data.timer.Timer
 import com.android.taskstimer.presentation.AppViewModelProvider
+import com.android.taskstimer.presentation.components.InputDialog
 import com.android.taskstimer.presentation.components.TimerTopBar
 import com.android.taskstimer.presentation.navigation.NavigationDestination
 import kotlinx.coroutines.Job
@@ -85,16 +86,12 @@ fun HomeScreen(
 
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet(
-                drawerShape = RectangleShape
-            ) {
-                NavigationDrawer(
-                    closeDrawer = { closeDrawer() },
-                    onEvent = viewModel::onEvent,
-                    boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
-                    rearrangeEnabled = uiState.rearrangeBoards
-                )
-            }
+            NavigationDrawer(
+                closeDrawer = { closeDrawer() },
+                onEvent = viewModel::onEvent,
+                boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
+                rearrangeEnabled = uiState.rearrangeBoards
+            )
         },
         drawerState = drawerState,
         content = {
