@@ -81,7 +81,7 @@ class HomeViewModel(
                 // TODO: Clean this up into it's own data class let's not pollute the uiState
                 // TODO: Sort out display if user has no boards/timers
                 currentBoard = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].timers else listOf(),
-                currentBoardName = if(boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else ""
+                currentBoardName = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else ""
 
             )
         }.stateIn(
@@ -96,53 +96,70 @@ class HomeViewModel(
 //        addBoard()
     }
 
-    private fun addBoard() {
+    private fun addBoard(name: String) {
         viewModelScope.launch {
-            boardsRepository.insertBoard(Board(name = "Basic productivity"))
-        }
-        viewModelScope.launch {
-            boardsRepository.insertBoard(Board(name = "House work"))
+            boardsRepository.insertBoard(Board(name = name))
         }
     }
 
-    fun addTimer() {
+    private fun addTimer(timer: Timer) {
         viewModelScope.launch {
-            timersRepository.insertTimer(
-                Timer(
-                    name = "Learn about services",
-                    board = "Basic productivity",
-                    presetTime = "105",
-                )
-            )
-        }
-        viewModelScope.launch {
-            timersRepository.insertTimer(
-                Timer(
-                    name = "Develop awesome app",
-                    board = "Basic productivity",
-                    presetTime = "185",
-                )
-            )
-        }
-        viewModelScope.launch {
-            timersRepository.insertTimer(
-                Timer(
-                    name = "Reflect on day",
-                    board = "Basic productivity",
-                    presetTime = "345",
-                )
-            )
-        }
-        viewModelScope.launch {
-            timersRepository.insertTimer(
-                Timer(
-                    name = "Clean the floor",
-                    board = "House work",
-                    presetTime = "105",
-                )
-            )
+            timersRepository.insertTimer(timer)
         }
     }
+
+//        viewModelScope.launch {
+//            boardsRepository.insertBoard(Board(name = "House work"))
+//        }
+//        }
+
+//    private fun addBoard() {
+//        viewModelScope.launch {
+//            boardsRepository.insertBoard(Board(name = "Basic productivity"))
+//        }
+//        viewModelScope.launch {
+//            boardsRepository.insertBoard(Board(name = "House work"))
+//        }
+//    }
+
+//    fun addTimer() {
+//        viewModelScope.launch {
+//            timersRepository.insertTimer(
+//                Timer(
+//                    name = "Learn about services",
+//                    board = "Basic productivity",
+//                    presetTime = "105",
+//                )
+//            )
+//        }
+//        viewModelScope.launch {
+//            timersRepository.insertTimer(
+//                Timer(
+//                    name = "Develop awesome app",
+//                    board = "Basic productivity",
+//                    presetTime = "185",
+//                )
+//            )
+//        }
+//        viewModelScope.launch {
+//            timersRepository.insertTimer(
+//                Timer(
+//                    name = "Reflect on day",
+//                    board = "Basic productivity",
+//                    presetTime = "345",
+//                )
+//            )
+//        }
+//        viewModelScope.launch {
+//            timersRepository.insertTimer(
+//                Timer(
+//                    name = "Clean the floor",
+//                    board = "House work",
+//                    presetTime = "105",
+//                )
+//            )
+//        }
+//    }
 
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
@@ -160,8 +177,12 @@ class HomeViewModel(
                 }
             }
 
-             is HomeScreenEvent.ToggleRearrangeBoards -> {
+            is HomeScreenEvent.ToggleRearrangeBoards -> {
                 _uiState.update { it.copy(rearrangeBoards = !it.rearrangeBoards) }
+            }
+
+            is HomeScreenEvent.CreateBoard -> {
+                addBoard(event.name)
             }
 
         }

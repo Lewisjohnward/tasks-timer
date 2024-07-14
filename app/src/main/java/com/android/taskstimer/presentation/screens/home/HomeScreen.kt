@@ -95,8 +95,6 @@ fun HomeScreen(
         },
         drawerState = drawerState,
         content = {
-
-
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize(),

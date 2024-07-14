@@ -1,7 +1,6 @@
 package com.android.taskstimer.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
@@ -165,7 +163,7 @@ fun NavigationDrawer(
                 }
                 if (rearrangeEnabled) item {
                     Button(
-                        onClick = {inputDialogVisible = true},
+                        onClick = { inputDialogVisible = true },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent
                         ),
@@ -201,7 +199,12 @@ fun NavigationDrawer(
                     onClick = {}
                 )
             )
-            if (inputDialogVisible) InputDialog(cancel = { inputDialogVisible = false })
+            if (inputDialogVisible)
+                InputDialog(
+                    onEvent = onEvent,
+                    cancel = { inputDialogVisible = false }
+
+                )
         }
     }
 }

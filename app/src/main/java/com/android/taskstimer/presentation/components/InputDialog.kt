@@ -19,13 +19,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import com.android.taskstimer.presentation.screens.home.HomeScreenEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputDialog(
     myNewBoardName: String = "My awesome new board name",
-    cancel: () -> Unit = {}
+    cancel: () -> Unit = {},
+    onEvent: (HomeScreenEvent) -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = {},
@@ -40,7 +42,7 @@ fun InputDialog(
             Column {
                 TextField(value = myNewBoardName, onValueChange = {})
                 Row {
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = { onEvent(HomeScreenEvent.CreateBoard(myNewBoardName)) }) {
                         Text(text = "confirm")
                     }
                     Button(onClick = { cancel() }) {
