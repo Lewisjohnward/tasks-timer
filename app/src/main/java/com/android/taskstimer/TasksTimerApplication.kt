@@ -1,9 +1,7 @@
 package com.android.taskstimer
 
 import android.app.Application
-import com.android.taskstimer.data.AppContainer
-import com.android.taskstimer.data.AppDataContainer
-import com.android.taskstimer.mediaPlayer.Mp
+import com.android.taskstimer._other.mediaPlayer.Mp
 
 class TasksTimerApplication : Application() {
 

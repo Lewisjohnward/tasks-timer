@@ -1,7 +1,7 @@
 package com.android.taskstimer.data.helpers
 
-import com.android.taskstimer.data.timer.Timer
-import com.android.taskstimer.presentation.screens.home.formatTime
+import com.android.taskstimer.core.data.timer.Timer
+import com.android.taskstimer.tasks_timer.presentation.formatTime
 import org.junit.Assert
 import org.junit.Test
 
