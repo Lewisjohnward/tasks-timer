@@ -1,11 +1,9 @@
-package com.android.taskstimer.core.data.board
+package com.android.taskstimer.core.data.local.board
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
-import com.android.taskstimer.core.data.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 @Dao

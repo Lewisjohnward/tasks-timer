@@ -1,4 +1,4 @@
-package com.android.taskstimer.core.data.timer
+package com.android.taskstimer.core.data.local.timer
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.android.taskstimer.core.data.timer.Timer
+import com.android.taskstimer.core.data.local.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 @Dao

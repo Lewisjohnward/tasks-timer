@@ -1,4 +1,4 @@
-package com.android.taskstimer.core.data.timer
+package com.android.taskstimer.core.data.local.timer
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

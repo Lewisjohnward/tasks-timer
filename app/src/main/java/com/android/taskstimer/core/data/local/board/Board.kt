@@ -1,10 +1,10 @@
-package com.android.taskstimer.core.data.board
+package com.android.taskstimer.core.data.local.board
 
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import com.android.taskstimer.core.data.timer.Timer
+import com.android.taskstimer.core.data.local.timer.Timer
 
 
 @Entity(tableName = "boards")

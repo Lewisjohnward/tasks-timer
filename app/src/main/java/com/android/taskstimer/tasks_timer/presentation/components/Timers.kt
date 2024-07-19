@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.core.data.timer.Timer
+import com.android.taskstimer.core.data.local.timer.Timer
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.formatTime
 

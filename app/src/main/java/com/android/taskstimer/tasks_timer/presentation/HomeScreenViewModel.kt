@@ -2,11 +2,12 @@ package com.android.taskstimer.tasks_timer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.core.data.board.Board
-import com.android.taskstimer.core.data.board.BoardsRepository
-import com.android.taskstimer.core.data.board.BoardsWithTimers
-import com.android.taskstimer.core.data.timer.Timer
-import com.android.taskstimer.core.data.timer.TimersRepository
+import com.android.taskstimer.core.data.local.board.Board
+import com.android.taskstimer.core.domain.repository.BoardsRepository
+import com.android.taskstimer.core.data.local.board.BoardsWithTimers
+import com.android.taskstimer.core.data.local.timer.Timer
+import com.android.taskstimer.core.domain.repository.TimersRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 data class UiState(
@@ -62,7 +64,8 @@ fun Timer.resetTimer(): Timer {
     return this.copy(remainingTime = presetTime)
 }
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val timersRepository: TimersRepository,
     private val boardsRepository: BoardsRepository,
 ) : ViewModel() {

@@ -3,14 +3,17 @@ package com.android.taskstimer.edit_timer.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.core.data.timer.Timer
-import com.android.taskstimer.core.data.timer.TimersRepository
+import com.android.taskstimer.core.data.local.timer.Timer
+import com.android.taskstimer.core.domain.repository.TimersRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class TimerAddViewModel(
+@HiltViewModel
+class TimerAddViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val timersRepository: TimersRepository
 ) : ViewModel() {

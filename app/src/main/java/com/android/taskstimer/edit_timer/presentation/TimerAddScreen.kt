@@ -35,8 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.taskstimer.core.di.AppViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
@@ -53,7 +52,7 @@ object TimerAddDestination : NavigationDestination {
 @Composable
 fun TimerAddScreen(
     navigateBack: () -> Unit,
-    viewModel: TimerAddViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: TimerAddViewModel = hiltViewModel()
 ) {
     val onEvent = viewModel::onEvent
 

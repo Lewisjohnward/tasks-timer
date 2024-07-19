@@ -26,10 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.taskstimer.R
-import com.android.taskstimer.core.data.timer.Timer
-import com.android.taskstimer.core.di.AppViewModelProvider
+import com.android.taskstimer.core.data.local.timer.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
@@ -62,7 +62,7 @@ data class FakeTasksTimer(
 fun HomeScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: HomeViewModel = hiltViewModel(),
     navigateToAddTimer: (Int) -> Unit,
 ) {
 

@@ -1,6 +1,6 @@
-package com.android.taskstimer.core.data.timer
+package com.android.taskstimer.core.domain.repository
 
-import com.android.taskstimer.core.data.timer.Timer
+import com.android.taskstimer.core.data.local.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 interface TimersRepository {
