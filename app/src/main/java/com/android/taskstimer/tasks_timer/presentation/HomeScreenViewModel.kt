@@ -2,11 +2,15 @@ package com.android.taskstimer.tasks_timer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Update
 import com.android.taskstimer.core.data.local.board.Board
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.data.local.board.BoardsWithTimers
 import com.android.taskstimer.core.data.local.timer.Timer
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import com.android.taskstimer.tasks_timer.domain.use_case.GetAllBoardsWithTimers
+import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
+import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -66,12 +70,13 @@ fun Timer.resetTimer(): Timer {
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val timersRepository: TimersRepository,
-    private val boardsRepository: BoardsRepository,
+    private val updateTimer: UpdateTimer,
+    private val getAllBoardsWithTimers: GetAllBoardsWithTimers,
+    private val insertBoard: InsertBoard
 ) : ViewModel() {
     //
     private val _boardsWithTimers: Flow<List<BoardsWithTimers>> =
-        boardsRepository.getBoardsWithTimers()
+        getAllBoardsWithTimers.invoke()
 
     private val _uiState = MutableStateFlow(UiState())
 
@@ -98,7 +103,7 @@ class HomeViewModel @Inject constructor(
 
     private fun addBoard(name: String) {
         viewModelScope.launch {
-            boardsRepository.insertBoard(Board(name = name))
+            insertBoard.invoke(Board(name = name))
         }
     }
 
@@ -166,7 +171,7 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(currentTimerIndex = updatedCurrentTimerIndex) }
 
         viewModelScope.launch {
-            timersRepository.updateTimer(currentTimer.copy(remainingTime = updatedRemainingTime.toString()))
+            updateTimer.invoke(currentTimer.copy(remainingTime = updatedRemainingTime.toString()))
         }
     }
 
@@ -185,7 +190,7 @@ class HomeViewModel @Inject constructor(
             uiState.value.currentBoard.map { timer -> timer.copy(remainingTime = timer.presetTime) }
         resetTimers.forEach { timer: Timer ->
             viewModelScope.launch {
-                timersRepository.updateTimer(timer.resetTimer())
+                updateTimer.invoke(timer.resetTimer())
             }
         }
         _uiState.update {

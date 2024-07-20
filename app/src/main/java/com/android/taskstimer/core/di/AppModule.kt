@@ -7,6 +7,9 @@ import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
 import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import com.android.taskstimer.tasks_timer.domain.use_case.GetAllBoardsWithTimers
+import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
+import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +45,30 @@ object AppModule {
         tasksTimerDb: TasksTimerDatabase
     ): BoardsRepository{
         return BoardsRepositoryImpl(tasksTimerDb)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetAllBoardsUseCase(
+        boardsRepository: BoardsRepository
+    ): GetAllBoardsWithTimers {
+        return GetAllBoardsWithTimers(boardsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideInsertBoard(
+        boardsRepository: BoardsRepository
+    ): InsertBoard {
+        return InsertBoard(boardsRepository)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideUpdateTimer(
+        timersRepository: TimersRepository
+    ): UpdateTimer {
+        return UpdateTimer(timersRepository)
     }
 }
