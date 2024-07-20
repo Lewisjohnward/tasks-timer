@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.taskstimer.R
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
@@ -72,6 +71,7 @@ fun HomeScreen(
     var menuOpen: Boolean by remember { mutableStateOf(false) }
 
     fun openDrawer() {
+        viewModel.onEvent(HomeScreenEvent.EditBoards(false))
         coroutineScope.launch { drawerState.open() }
     }
 
@@ -85,7 +85,7 @@ fun HomeScreen(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
                 boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
-                rearrangeEnabled = uiState.rearrangeBoards
+                editBoards = uiState.editBoards
             )
         },
         drawerState = drawerState,

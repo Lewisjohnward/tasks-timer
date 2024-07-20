@@ -92,7 +92,7 @@ fun NavigationDrawer(
     boards: List<BoardItem> = listOf(),
     onEvent: (HomeScreenEvent) -> Unit = {},
     closeDrawer: () -> Unit = {},
-    rearrangeEnabled: Boolean = true
+    editBoards: Boolean = true
 ) {
 
     var inputDialogVisible by remember { mutableStateOf(false) }
@@ -138,9 +138,9 @@ fun NavigationDrawer(
                     color = Color(0x99FFFFFF),
                     fontWeight = FontWeight.Bold
                 )
-                TextButton(onClick = { onEvent(HomeScreenEvent.ToggleRearrangeBoards) }) {
+                TextButton(onClick = { onEvent(HomeScreenEvent.EditBoards(!editBoards)) }) {
                     Text(
-                        text = if (rearrangeEnabled) "Done" else "Edit",
+                        text = if (editBoards) "Done" else "Edit",
                         color = Color(0xFFFF9B88)
                     )
                 }
@@ -151,7 +151,7 @@ fun NavigationDrawer(
                     NavDrawerItem(
                         closeDrawer = closeDrawer,
                         handle = {
-                            if (rearrangeEnabled)
+                            if (editBoards)
                                 Icon(
                                     imageVector = Icons.Filled.List,
                                     contentDescription = "Drag handle",
@@ -164,7 +164,7 @@ fun NavigationDrawer(
                         )
                     )
                 }
-                if (rearrangeEnabled) item {
+                if (editBoards) item {
                     Button(
                         onClick = { inputDialogVisible = true },
                         colors = ButtonDefaults.buttonColors(

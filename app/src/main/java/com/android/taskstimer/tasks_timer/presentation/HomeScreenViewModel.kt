@@ -28,7 +28,7 @@ data class UiState(
     val coroutineId: Job? = null,
     val currentTimerIndex: Int = 0,
 
-    val rearrangeBoards: Boolean = false,
+    val editBoards: Boolean = false,
 
 
     val currentBoardName: String = "",
@@ -120,8 +120,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-            is HomeScreenEvent.ToggleRearrangeBoards -> {
-                _uiState.update { it.copy(rearrangeBoards = !it.rearrangeBoards) }
+            is HomeScreenEvent.EditBoards -> {
+                _uiState.update { it.copy(editBoards = event.edit) }
             }
 
             is HomeScreenEvent.CreateBoard -> {
