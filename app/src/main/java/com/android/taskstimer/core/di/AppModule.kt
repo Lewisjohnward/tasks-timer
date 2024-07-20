@@ -7,6 +7,7 @@ import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
 import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetAllBoardsWithTimers
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
@@ -70,5 +71,14 @@ object AppModule {
         timersRepository: TimersRepository
     ): UpdateTimer {
         return UpdateTimer(timersRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAddTimer(
+        timersRepository: TimersRepository,
+        boardsRepository: BoardsRepository
+    ): AddTimer {
+        return AddTimer(timersRepository, boardsRepository)
     }
 }
