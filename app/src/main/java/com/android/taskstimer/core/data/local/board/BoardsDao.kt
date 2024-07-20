@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 interface BoardDao {
 
     @Query("SELECT * from boards ORDER BY id ASC")
-    fun getAllBoards(): Flow<List<Board>>
+    fun getAllBoards(): Flow<List<BoardEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(board: Board)
+    suspend fun insert(board: BoardEntity)
 
     @Query("SELECT * FROM boards")
-    fun getBoardsWithTimers(): Flow<List<BoardsWithTimers>>
+    fun getBoardsWithTimers(): Flow<List<BoardsWithTimersEntity>>
 }

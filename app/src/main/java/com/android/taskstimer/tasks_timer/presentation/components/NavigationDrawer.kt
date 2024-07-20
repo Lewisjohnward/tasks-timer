@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.core.data.local.board.Board
+import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 
@@ -89,7 +89,7 @@ private fun NavDrawerItem(
 
 @Composable
 fun NavigationDrawer(
-    boards: List<Board> = listOf(),
+    boards: List<BoardItem> = listOf(),
     onEvent: (HomeScreenEvent) -> Unit = {},
     closeDrawer: () -> Unit = {},
     rearrangeEnabled: Boolean = true

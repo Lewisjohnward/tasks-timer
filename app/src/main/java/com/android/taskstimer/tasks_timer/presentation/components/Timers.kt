@@ -24,14 +24,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.core.data.local.timer.Timer
+import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.formatTime
 
 
 @Composable
 fun Timers(
-    timers: List<Timer>,
+    timers: List<TimerItem>,
     onEvent: (HomeScreenEvent) -> Unit,
 ) {
     Column(
@@ -45,7 +45,7 @@ fun Timers(
 
 @Composable
 private fun TimerView(
-    timers: List<Timer>,
+    timers: List<TimerItem>,
     onEvent: (HomeScreenEvent) -> Unit
 ) {
     Column(
@@ -69,7 +69,7 @@ private fun TimerView(
 }
 
 @Composable
-fun TimerComposable(timer: Timer, index: Int) {
+fun TimerComposable(timer: TimerItem, index: Int) {
     Column(
         modifier = Modifier
             .height(100.dp)

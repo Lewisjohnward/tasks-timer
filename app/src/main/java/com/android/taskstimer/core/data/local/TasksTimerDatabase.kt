@@ -1,17 +1,15 @@
 package com.android.taskstimer.core.data.local
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.android.taskstimer.core.data.local.board.Board
 import com.android.taskstimer.core.data.local.board.BoardDao
-import com.android.taskstimer.core.data.local.timer.Timer
+import com.android.taskstimer.core.data.local.board.BoardEntity
 import com.android.taskstimer.core.data.local.timer.TimerDao
+import com.android.taskstimer.core.data.local.timer.TimerEntity
 
 
- @Database(
-     entities = [Timer::class, Board::class],
+@Database(
+     entities = [TimerEntity::class, BoardEntity::class],
      version = 1,
      exportSchema = false
  )

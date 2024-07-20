@@ -3,7 +3,7 @@ package com.android.taskstimer.edit_timer.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer.core.data.local.timer.Timer
+import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ class TimerAddViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
 
-    private fun addTimer(timer: Timer) {
+    private fun addTimer(timer: TimerItem) {
         viewModelScope.launch {
             timersRepository.insertTimer(timer)
         }
@@ -31,7 +31,7 @@ class TimerAddViewModel @Inject constructor(
     fun onEvent(event: TimerAddEvent) {
         when (event) {
             is TimerAddEvent.AddTimer -> {
-                val dummyData = Timer(
+                val dummyData = TimerItem(
                     boardId = boardId,
                     name = "My banging new timer",
                     presetTime = "143",

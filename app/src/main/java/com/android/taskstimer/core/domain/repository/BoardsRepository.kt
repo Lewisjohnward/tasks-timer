@@ -1,12 +1,12 @@
 package com.android.taskstimer.core.domain.repository
 
-import com.android.taskstimer.core.data.local.board.Board
-import com.android.taskstimer.core.data.local.board.BoardsWithTimers
+import com.android.taskstimer.core.domain.model.BoardItem
+import com.android.taskstimer.core.domain.model.BoardsWithTimersItem
 import kotlinx.coroutines.flow.Flow
 
 interface BoardsRepository {
-    fun getAllBoardsStream(): Flow<List<Board>>
-    suspend fun insertBoard(board: Board)
+    fun getAllBoardsStream(): Flow<List<BoardItem>>
+    suspend fun insertBoard(board: BoardItem)
 
-    fun getBoardsWithTimers(): Flow<List<BoardsWithTimers>>
+    fun getBoardsWithTimers(): Flow<List<BoardsWithTimersItem>>
 }

@@ -6,26 +6,25 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.android.taskstimer.core.data.local.timer.Timer
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TimerDao {
 
     @Query("SELECT * from timers ORDER BY id ASC")
-    fun getAllTimers(): Flow<List<Timer>>
+    fun getAllTimers(): Flow<List<TimerEntity>>
 
     @Query("SELECT * from timers WHERE id = :id")
-    fun getTimer(id: Int): Flow<Timer>
+    fun getTimer(id: Int): Flow<TimerEntity>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(timer: Timer)
+    suspend fun insert(timer: TimerEntity)
 
     @Update
-    suspend fun update(timer: Timer)
+    suspend fun update(timer: TimerEntity)
 
     @Delete
-    suspend fun delete(timer: Timer)
+    suspend fun delete(timer: TimerEntity)
 }
