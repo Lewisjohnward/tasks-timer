@@ -14,7 +14,4 @@ interface BoardDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(board: BoardEntity)
-
-    @Query("SELECT * FROM boards")
-    fun getBoardsWithTimers(): Flow<List<BoardsWithTimersEntity>>
 }

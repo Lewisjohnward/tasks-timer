@@ -15,6 +15,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToAddTimer: (Int) -> Unit,
 ) {
+    LaunchedEffect(true) {
+        viewModel.loadTimers()
+    }
 
     val uiState: UiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
@@ -84,7 +88,7 @@ fun HomeScreen(
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
-                boards = uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
+                boards = listOf(),//uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
                 editBoards = uiState.editBoards
             )
         },
@@ -122,11 +126,11 @@ fun HomeScreen(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    if (uiState.boardsWithTimers.isNotEmpty())
-                        Timers(
-                            timers = uiState.currentBoard,
-                            onEvent = onEvent,
-                        )
+//                    if (uiState.boardsWithTimers.isNotEmpty())
+//                        Timers(
+//                            timers = uiState.currentBoard,
+//                            onEvent = onEvent,
+//                        )
                 }
             }
             if (menuOpen) MenuPopup { menuOpen = false }

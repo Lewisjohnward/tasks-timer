@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.BoardsWithTimersItem
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.tasks_timer.domain.use_case.GetAllBoardsWithTimers
+import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -36,7 +37,6 @@ data class UiState(
     val currentBoard: List<TimerItem> = listOf(),
 
     val currentBoardIndex: Int = 0,
-    val boardsWithTimers: List<BoardsWithTimersItem> = listOf()
 )
 
 
@@ -68,35 +68,46 @@ fun TimerItem.resetTimer(): TimerItem {
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
-    private val getAllBoardsWithTimers: GetAllBoardsWithTimers,
-    private val insertBoard: InsertBoard
+    private val insertBoard: InsertBoard,
+    private val getTimers: GetTimers
 ) : ViewModel() {
     //
-    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
-        getAllBoardsWithTimers.invoke()
+//    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
+//        getAllBoardsWithTimers.invoke()
 
     private val _uiState = MutableStateFlow(UiState())
+    val uiState = _uiState.asStateFlow()
+
+    fun loadTimers(){
+        viewModelScope.launch {
+            val timers = getTimers.invoke(1)
+            println(timers)
+        }
+    }
 
 
-    val uiState: StateFlow<UiState> =
-        combine(_boardsWithTimers, _uiState) { boardsWithTimers, uiState ->
-            uiState.copy(
-                boardsWithTimers = boardsWithTimers,
-
-                // TODO: Clean this up into it's own data class let's not pollute the uiState
-                // TODO: Sort out display if user has no boards/timers
-                currentBoard = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].timers else listOf(),
-                currentBoardName = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else "",
-                currentBoardId = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.id else 0
-
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = UiState()
-        )
 
 
+
+//    val uiState: StateFlow<UiState> =
+//        combine(_boardsWithTimers, _uiState) { boardsWithTimers, uiState ->
+//            uiState.copy(
+//                boardsWithTimers = boardsWithTimers,
+//
+//                // TODO: Clean this up into it's own data class let's not pollute the uiState
+//                // TODO: Sort out display if user has no boards/timers
+//                currentBoard = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].timers else listOf(),
+//                currentBoardName = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.name else "",
+//                currentBoardId = if (boardsWithTimers.isNotEmpty()) boardsWithTimers[uiState.currentBoardIndex].board.id else 0
+//
+//            )
+//        }.stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(5_000L),
+//            initialValue = UiState()
+//        )
+//
+//
 
     private fun addBoard(name: String) {
         viewModelScope.launch {
@@ -113,9 +124,9 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.SelectBoard -> {
                 _uiState.update {
                     it.copy(
-                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
-                        currentBoardIndex = event.boardIndex,
-                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
+//                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
+//                        currentBoardIndex = event.boardIndex,
+//                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
                     )
                 }
             }

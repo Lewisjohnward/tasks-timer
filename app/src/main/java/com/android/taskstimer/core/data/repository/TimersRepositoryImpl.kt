@@ -15,8 +15,8 @@ class TimersRepositoryImpl(
     override fun getAllTimersStream(): Flow<List<TimerItem>> =
         timerDao.getAllTimers().map { it -> it.map { it.toTimerItem() } }
 
-    override fun getTimerStream(id: Int): Flow<TimerItem?> =
-        timerDao.getTimer(id).map { it -> it.toTimerItem() }
+    override suspend fun getTimers(id: Int): List<TimerItem> =
+        timerDao.getTimers(id).map { it.toTimerItem() }
 
     override suspend fun insertTimer(timer: TimerItem) = timerDao.insert(timer.toTimerEntityForInsert())
 

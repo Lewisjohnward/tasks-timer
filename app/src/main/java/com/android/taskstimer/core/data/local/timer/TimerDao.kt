@@ -14,8 +14,8 @@ interface TimerDao {
     @Query("SELECT * from timers ORDER BY id ASC")
     fun getAllTimers(): Flow<List<TimerEntity>>
 
-    @Query("SELECT * from timers WHERE id = :id")
-    fun getTimer(id: Int): Flow<TimerEntity>
+    @Query("SELECT * from timers WHERE board_id = :boardId")
+    suspend fun getTimers(boardId: Int): List<TimerEntity>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
     // existing Item into the database Room ignores the conflict.

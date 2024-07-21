@@ -7,6 +7,4 @@ import kotlinx.coroutines.flow.Flow
 interface BoardsRepository {
     fun getAllBoardsStream(): Flow<List<BoardItem>>
     suspend fun insertBoard(board: BoardItem)
-
-    fun getBoardsWithTimers(): Flow<List<BoardsWithTimersItem>>
 }
