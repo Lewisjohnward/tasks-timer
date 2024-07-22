@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -147,7 +148,7 @@ fun NavigationDrawer(
             }
             LazyColumn(modifier = Modifier.weight(0.5f)) {
 
-                itemsIndexed(boards) { index, board ->
+                items(boards) {board ->
                     NavDrawerItem(
                         closeDrawer = closeDrawer,
                         handle = {
@@ -160,7 +161,7 @@ fun NavigationDrawer(
                         },
                         item = DrawerItem(
                             text = board.name,
-                            onClick = { onEvent(HomeScreenEvent.SelectBoard(index)) }
+                            onClick = { onEvent(HomeScreenEvent.SelectBoard(board)) }
                         )
                     )
                 }

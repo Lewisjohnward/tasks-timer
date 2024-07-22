@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface BoardDao {
 
     @Query("SELECT * from boards ORDER BY id ASC")
-    fun getAllBoards(): Flow<List<BoardEntity>>
+    suspend fun getAllBoards(): List<BoardEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(board: BoardEntity)

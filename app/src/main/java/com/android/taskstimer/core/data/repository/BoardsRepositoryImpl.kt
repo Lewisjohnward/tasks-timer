@@ -13,8 +13,8 @@ class BoardsRepositoryImpl(
 ) : BoardsRepository {
 
     private val boardDao = tasksTimerDb.boardDao
-    override fun getAllBoardsStream(): Flow<List<BoardItem>> =
-        boardDao.getAllBoards().map { it -> it.map { it.toBoardItem() } }
+    override suspend fun getAllBoards(): List<BoardItem> =
+        boardDao.getAllBoards().map { it.toBoardItem()  }
 
     override suspend fun insertBoard(board: BoardItem) =
         boardDao.insert(board.toBoardEntityForInsert())

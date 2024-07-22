@@ -66,7 +66,7 @@ fun HomeScreen(
     navigateToAddTimer: (Int) -> Unit,
 ) {
     LaunchedEffect(true) {
-        viewModel.loadTimers()
+        viewModel.loadBoards()
     }
 
     val uiState: UiState by viewModel.uiState.collectAsState()
@@ -88,7 +88,7 @@ fun HomeScreen(
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
-                boards = listOf(),//uiState.boardsWithTimers.map { boardWithTimers -> boardWithTimers.board },
+                boards = uiState.boards,
                 editBoards = uiState.editBoards
             )
         },
@@ -100,7 +100,7 @@ fun HomeScreen(
                 containerColor = BackgroundDarkGray,
                 topBar = {
                     TimerTopBar(
-                        title = uiState.currentBoardName,
+                        title = uiState.selectedBoard.name,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
@@ -111,7 +111,7 @@ fun HomeScreen(
                 },
 
                 floatingActionButton = {
-                    FloatingActionBtn(onClick = { navigateToAddTimer(uiState.currentBoardId) },
+                    FloatingActionBtn(onClick = { navigateToAddTimer(uiState.selectedBoard.id) },
                         icon = {
                             Image(
                                 modifier = Modifier.size(30.dp),
@@ -126,11 +126,11 @@ fun HomeScreen(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-//                    if (uiState.boardsWithTimers.isNotEmpty())
-//                        Timers(
-//                            timers = uiState.currentBoard,
-//                            onEvent = onEvent,
-//                        )
+                    if (uiState.timers.isNotEmpty())
+                        Timers(
+                            timers = uiState.timers,
+                            onEvent = onEvent,
+                        )
                 }
             }
             if (menuOpen) MenuPopup { menuOpen = false }

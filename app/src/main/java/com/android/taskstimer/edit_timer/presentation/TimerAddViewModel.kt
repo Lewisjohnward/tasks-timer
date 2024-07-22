@@ -24,6 +24,7 @@ class TimerAddViewModel @Inject constructor(
 
 
     private fun addTimer(timer: TimerItem) {
+        println(timer)
         viewModelScope.launch {
             addTimer.invoke(timer)
         }

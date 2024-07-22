@@ -3,21 +3,15 @@ package com.android.taskstimer.tasks_timer.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
-import com.android.taskstimer.core.domain.model.BoardsWithTimersItem
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +28,10 @@ data class UiState(
 
     val currentBoardName: String = "",
     val currentBoardId: Int = 0,
-    val currentBoard: List<TimerItem> = listOf(),
+
+    val boards: List<BoardItem> = listOf(),
+    val timers: List<TimerItem> = listOf(),
+    val selectedBoard: BoardItem = BoardItem(name = "untitled"),
 
     val currentBoardIndex: Int = 0,
 )
@@ -69,7 +66,8 @@ fun TimerItem.resetTimer(): TimerItem {
 class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
     private val insertBoard: InsertBoard,
-    private val getTimers: GetTimers
+    private val getTimers: GetTimers,
+    private val getBoards: GetBoards
 ) : ViewModel() {
     //
 //    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
@@ -78,18 +76,42 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    fun loadTimers(){
+
+    // Maybe call get tasks?
+    fun loadBoards() {
+        println("hello loading board")
         viewModelScope.launch {
-            val timers = getTimers.invoke(1)
-            println(timers)
+            val boards = getBoards.invoke()
+            _uiState.update { it.copy(boards = boards) }
+            if (boards.isNotEmpty()) {
+                val timers = getTimers(boardId = boards[0].id)
+                _uiState.update {
+                    it.copy(
+                        timers = timers,
+                        selectedBoard = boards[0]
+                    )
+                }
+            }
         }
     }
 
+    fun loadTimers() {
+        println("hello")
+//        viewModelScope.launch {
+//            val timers = getTimers.invoke(1)
+//            println(timers)
+//        }
+    }
+
+//    fun loadBoards(){
+//        viewModelScope.launch {
+//            val boards =
+//            println(timers)
+//        }
+//    }
 
 
-
-
-//    val uiState: StateFlow<UiState> =
+    //    val uiState: StateFlow<UiState> =
 //        combine(_boardsWithTimers, _uiState) { boardsWithTimers, uiState ->
 //            uiState.copy(
 //                boardsWithTimers = boardsWithTimers,
@@ -108,26 +130,36 @@ class HomeViewModel @Inject constructor(
 //        )
 //
 //
-
-    private fun addBoard(name: String) {
-        viewModelScope.launch {
-            insertBoard.invoke(BoardItem(name = name))
-        }
-    }
-
+//
+//    private fun addBoard(name: String) {
+//        viewModelScope.launch {
+//            insertBoard.invoke(BoardItem(name = name))
+//        }
+//    }
+//
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
             is HomeScreenEvent.ToggleTimer -> {
-                if (uiState.value.coroutineId == null) startTimer() else stopTimer()
+//                if (uiState.value.coroutineId == null) startTimer() else stopTimer()
             }
 
             is HomeScreenEvent.SelectBoard -> {
-                _uiState.update {
-                    it.copy(
+                val selectedBoard = event.board
+                viewModelScope.launch {
+                    val timers = getTimers(boardId = selectedBoard.id)
+                    _uiState.update {
+                        it.copy(
+                            timers = timers,
+                            selectedBoard = selectedBoard
+                        )
+
+//                        it.copy(
 //                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
 //                        currentBoardIndex = event.boardIndex,
 //                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
-                    )
+//                        )
+                    }
+
                 }
             }
 
@@ -136,79 +168,79 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.CreateBoard -> {
-                addBoard(event.name)
+//                addBoard(event.name)
             }
 
         }
     }
-
-
-    private fun startTimer() {
-        if (uiState.value.running) stopTimer()
-        else _uiState.update { it.copy(coroutineId = launchTimer()) }
-    }
-
-    private fun launchTimer(): Job {
-        return viewModelScope.launch {
-            while (true) {
-                delay(10)
-                decrementTimer()
-                if (uiState.value.currentTimerIndex >= uiState.value.currentBoard.size) {
-                    stopTimer()
-                    resetTimer()
-                }
-            }
-        }
-    }
-
-    private fun decrementTimer() {
-        val currentTimerIndex = uiState.value.currentTimerIndex
-        val currentTimer = uiState.value.currentBoard[uiState.value.currentTimerIndex]
-        val currentTimerValue = currentTimer.remainingTime.toInt()
-        val updatedRemainingTime: Int =
-            if (currentTimerValue - 1 < 0) currentTimerValue else currentTimerValue - 1
-
-        val updatedCurrentTimerIndex: Int =
-            if (updatedRemainingTime == 0) currentTimerIndex + 1 else currentTimerIndex
-
-//        if(updatedRemainingTime == 0) {
-//            stopTimer()
-//            playAlarm(callback = {startTimer()})
+//
+//
+//    private fun startTimer() {
+//        if (uiState.value.running) stopTimer()
+//        else _uiState.update { it.copy(coroutineId = launchTimer()) }
+//    }
+//
+//    private fun launchTimer(): Job {
+//        return viewModelScope.launch {
+//            while (true) {
+//                delay(10)
+//                decrementTimer()
+//                if (uiState.value.currentTimerIndex >= uiState.value.currentBoard.size) {
+//                    stopTimer()
+//                    resetTimer()
+//                }
+//            }
 //        }
-
-        _uiState.update { it.copy(currentTimerIndex = updatedCurrentTimerIndex) }
-
-        viewModelScope.launch {
-            updateTimer.invoke(currentTimer.copy(remainingTime = updatedRemainingTime.toString()))
-        }
-    }
-
-    private fun stopTimer() {
-        uiState.value.coroutineId?.cancel()
-        _uiState.update {
-            it.copy(
-                coroutineId = null,
-                running = false
-            )
-        }
-    }
-
-    private fun resetTimer() {
-        val resetTimers: List<TimerItem> =
-            uiState.value.currentBoard.map { timer -> timer.copy(remainingTime = timer.presetTime) }
-        resetTimers.forEach { timer: TimerItem ->
-            viewModelScope.launch {
-                updateTimer.invoke(timer.resetTimer())
-            }
-        }
-        _uiState.update {
-            it.copy(
-                running = false,
-                coroutineId = null,
-                currentTimerIndex = 0,
-            )
-        }
-    }
-
+//    }
+//
+//    private fun decrementTimer() {
+//        val currentTimerIndex = uiState.value.currentTimerIndex
+//        val currentTimer = uiState.value.currentBoard[uiState.value.currentTimerIndex]
+//        val currentTimerValue = currentTimer.remainingTime.toInt()
+//        val updatedRemainingTime: Int =
+//            if (currentTimerValue - 1 < 0) currentTimerValue else currentTimerValue - 1
+//
+//        val updatedCurrentTimerIndex: Int =
+//            if (updatedRemainingTime == 0) currentTimerIndex + 1 else currentTimerIndex
+//
+////        if(updatedRemainingTime == 0) {
+////            stopTimer()
+////            playAlarm(callback = {startTimer()})
+////        }
+//
+//        _uiState.update { it.copy(currentTimerIndex = updatedCurrentTimerIndex) }
+//
+//        viewModelScope.launch {
+//            updateTimer.invoke(currentTimer.copy(remainingTime = updatedRemainingTime.toString()))
+//        }
+//    }
+//
+//    private fun stopTimer() {
+//        uiState.value.coroutineId?.cancel()
+//        _uiState.update {
+//            it.copy(
+//                coroutineId = null,
+//                running = false
+//            )
+//        }
+//    }
+//
+//    private fun resetTimer() {
+//        val resetTimers: List<TimerItem> =
+//            uiState.value.currentBoard.map { timer -> timer.copy(remainingTime = timer.presetTime) }
+//        resetTimers.forEach { timer: TimerItem ->
+//            viewModelScope.launch {
+//                updateTimer.invoke(timer.resetTimer())
+//            }
+//        }
+//        _uiState.update {
+//            it.copy(
+//                running = false,
+//                coroutineId = null,
+//                currentTimerIndex = 0,
+//            )
+//        }
+//    }
+//
 
 }
