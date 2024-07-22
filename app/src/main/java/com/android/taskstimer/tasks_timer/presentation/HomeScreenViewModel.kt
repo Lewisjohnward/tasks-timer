@@ -174,6 +174,9 @@ class HomeViewModel @Inject constructor(
                 loadBoards()
             }
 
+            is HomeScreenEvent.DeleteBoard -> {
+                println("delete board ${event.board}")
+            }
         }
     }
 //

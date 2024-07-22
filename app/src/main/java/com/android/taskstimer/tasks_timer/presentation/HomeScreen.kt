@@ -30,13 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.core.presentation.navigation.NavigationDestination
+import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.tasks_timer.presentation.components.Timers
-import com.android.taskstimer.core.presentation.navigation.NavigationDestination
-import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -133,7 +133,10 @@ fun HomeScreen(
                         )
                 }
             }
-            if (menuOpen) MenuPopup { menuOpen = false }
+            if (menuOpen) MenuPopup(
+                dismiss = { menuOpen = false },
+                deleteBoard = {onEvent(HomeScreenEvent.DeleteBoard(uiState.selectedBoard))}
+            )
         }
     )
 }

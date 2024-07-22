@@ -23,7 +23,10 @@ import androidx.compose.ui.window.PopupProperties
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 
 @Composable
-fun MenuPopup(dismiss: () -> Unit) {
+fun MenuPopup(
+    dismiss: () -> Unit,
+    deleteBoard: () -> Unit
+) {
     // TODO: Wire up logic
     Popup(
         alignment = Alignment.TopEnd,
@@ -45,11 +48,12 @@ fun MenuPopup(dismiss: () -> Unit) {
                 defaultElevation = 5.dp
             )
         ) {
-            MenuPopupItem(icon = Icons.Filled.Edit, text = "Rename Board")
+            MenuPopupItem(icon = Icons.Filled.Edit, text = "Rename Board", onClick = {})
             MenuPopupItem(
                 text = "Delete Board",
                 contentsColor = Color(0xFFFF5447),
-                icon = Icons.Filled.Delete
+                icon = Icons.Filled.Delete,
+                onClick = deleteBoard
             )
         }
     }
@@ -60,11 +64,11 @@ fun MenuPopup(dismiss: () -> Unit) {
 fun MenuPopupItem(
     text: String,
     contentsColor: Color = Color.White,
-    icon: ImageVector
-
+    icon: ImageVector,
+    onClick: () -> Unit
 ) {
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
