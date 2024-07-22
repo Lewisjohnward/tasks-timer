@@ -6,7 +6,7 @@ import com.android.taskstimer.core.domain.repository.BoardsRepository
 class InsertBoard(
     private val boardsRepository: BoardsRepository
 ) {
-    suspend fun invoke(board: BoardItem){
+    suspend operator fun invoke(board: BoardItem){
         boardsRepository.insertBoard(board)
     }
 }

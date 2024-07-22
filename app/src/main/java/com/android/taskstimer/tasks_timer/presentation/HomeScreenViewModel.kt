@@ -168,7 +168,10 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.CreateBoard -> {
-//                addBoard(event.name)
+                viewModelScope.launch {
+                    insertBoard(BoardItem(name = event.name))
+                }
+                loadBoards()
             }
 
         }
