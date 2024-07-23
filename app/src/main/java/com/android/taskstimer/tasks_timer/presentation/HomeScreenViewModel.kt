@@ -1,11 +1,10 @@
 package com.android.taskstimer.tasks_timer.presentation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
@@ -69,7 +68,8 @@ class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
     private val insertBoard: InsertBoard,
     private val getTimers: GetTimers,
-    private val getBoards: GetBoards
+    private val getBoards: GetBoards,
+    private val deleteBoard: DeleteBoard
 ) : ViewModel() {
     //
 //    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
@@ -187,11 +187,17 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeScreenEvent.DialogConfirm -> {
-                println("confirm")
+                // DELETE BOARD
+                viewModelScope.launch {
+                    deleteBoard.invoke(_uiState.value.selectedBoard)
+                }
+                loadBoards()
+                // DELETE TIMERS IN BOARD
+                _uiState.update { it.copy(displayDialog = null) }
             }
 
             HomeScreenEvent.DialogCancel -> {
-                _uiState.update{it.copy(displayDialog = null)}
+                _uiState.update { it.copy(displayDialog = null) }
             }
         }
     }

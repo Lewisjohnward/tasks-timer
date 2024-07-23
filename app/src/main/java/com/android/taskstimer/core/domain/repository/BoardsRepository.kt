@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface BoardsRepository {
     suspend fun getAllBoards(): List<BoardItem>
     suspend fun insertBoard(board: BoardItem)
+
+    suspend fun deleteBoard(board: BoardItem)
 }

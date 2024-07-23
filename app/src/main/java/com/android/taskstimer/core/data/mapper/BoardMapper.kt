@@ -10,6 +10,13 @@ fun BoardItem.toBoardEntityForInsert(): BoardEntity {
     )
 }
 
+fun BoardItem.toBoardEntityForDelete(): BoardEntity {
+    return BoardEntity(
+        name = name,
+        id = id
+    )
+}
+
 fun BoardEntity.toBoardItem(): BoardItem {
     return BoardItem(
         name = name,
