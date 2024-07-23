@@ -36,10 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
-import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
+import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
 object TimerAddDestination : NavigationDestination {
     override val route = "timer_add"
@@ -70,7 +70,10 @@ fun TimerAddScreen(
         },
         floatingActionButton = {
             FloatingActionBtn(
-                onClick = {onEvent(TimerAddEvent.AddTimer)},
+                onClick = {
+                    onEvent(TimerAddEvent.AddTimer)
+                    navigateBack()
+                },
                 icon = {
                     Image(
                         modifier = Modifier.size(30.dp),

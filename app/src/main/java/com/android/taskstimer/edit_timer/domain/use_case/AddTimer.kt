@@ -11,6 +11,11 @@ class AddTimer(
     private val boardsRepository: BoardsRepository
 ) {
     suspend fun invoke(timer: TimerItem){
+        if(boardsRepository.getAllBoards().isEmpty()){
+            boardsRepository.insertBoard(board = BoardItem(name = "Untitled"))
+            val untitledBoard = boardsRepository.getAllBoards()[0]
+            timersRepository.insertTimer(timer.copy(boardId = untitledBoard.id))
+        }
         timersRepository.insertTimer(timer)
     }
 }

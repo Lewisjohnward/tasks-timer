@@ -61,9 +61,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDeleteBoard(
-        boardsRepository: BoardsRepository
+        boardsRepository: BoardsRepository,
+        timersRepository: TimersRepository
     ): DeleteBoard {
-        return DeleteBoard(boardsRepository)
+        return DeleteBoard(boardsRepository, timersRepository)
     }
 
 

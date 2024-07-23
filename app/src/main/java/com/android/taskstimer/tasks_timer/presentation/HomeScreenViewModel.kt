@@ -84,6 +84,7 @@ class HomeViewModel @Inject constructor(
         println("hello loading board")
         viewModelScope.launch {
             val boards = getBoards.invoke()
+            println(boards)
             _uiState.update { it.copy(boards = boards) }
             if (boards.isNotEmpty()) {
                 val timers = getTimers(boardId = boards[0].id)
@@ -93,6 +94,11 @@ class HomeViewModel @Inject constructor(
                         selectedBoard = boards[0]
                     )
                 }
+            } else {
+                _uiState.update { it.copy(
+                    selectedBoard = BoardItem(name = "Untitled"),
+                    timers = listOf()
+                ) }
             }
         }
     }
@@ -172,8 +178,8 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.CreateBoard -> {
                 viewModelScope.launch {
                     insertBoard(BoardItem(name = event.name))
+                    loadBoards()
                 }
-                loadBoards()
             }
 
             is HomeScreenEvent.DeleteBoard -> {
@@ -187,12 +193,10 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeScreenEvent.DialogConfirm -> {
-                // DELETE BOARD
                 viewModelScope.launch {
                     deleteBoard.invoke(_uiState.value.selectedBoard)
+                    loadBoards()
                 }
-                loadBoards()
-                // DELETE TIMERS IN BOARD
                 _uiState.update { it.copy(displayDialog = null) }
             }
 

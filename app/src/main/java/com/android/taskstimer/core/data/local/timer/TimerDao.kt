@@ -27,4 +27,8 @@ interface TimerDao {
 
     @Delete
     suspend fun delete(timer: TimerEntity)
+
+    @Query("DELETE from timers WHERE board_id = :boardId")
+    suspend fun deleteAllTimersFromBoard(boardId: Int)
+
 }

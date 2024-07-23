@@ -23,4 +23,11 @@ class TimersRepositoryImpl(
 //    override suspend fun deleteTimer(timer: Timer) = timerDao.delete(timer)
 
     override suspend fun updateTimer(timer: TimerItem) = timerDao.update(timer.toTimerEntityForInsert())
+    override suspend fun deleteTimer(timer: TimerItem) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAllTimersFromBoard(boardId: Int) {
+        return timerDao.deleteAllTimersFromBoard(boardId)
+    }
 }
