@@ -1,5 +1,7 @@
 package com.android.taskstimer.tasks_timer.presentation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
@@ -25,15 +27,15 @@ data class UiState(
 
     val editBoards: Boolean = false,
 
-
-    val currentBoardName: String = "",
-    val currentBoardId: Int = 0,
+    val displayDialog: ConfirmDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
     val timers: List<TimerItem> = listOf(),
     val selectedBoard: BoardItem = BoardItem(name = "untitled"),
 
-    val currentBoardIndex: Int = 0,
+//    val currentBoardIndex: Int = 0,
+//    val currentBoardName: String = "",
+//    val currentBoardId: Int = 0,
 )
 
 
@@ -139,7 +141,7 @@ class HomeViewModel @Inject constructor(
 //
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
-            is HomeScreenEvent.ToggleTimer -> {
+            HomeScreenEvent.ToggleTimer -> {
 //                if (uiState.value.coroutineId == null) startTimer() else stopTimer()
             }
 
@@ -175,7 +177,21 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.DeleteBoard -> {
-                println("delete board ${event.board}")
+                _uiState.update {
+                    it.copy(
+                        displayDialog = ConfirmDialog(
+                            message = "Are you sure you want to delete this board?",
+                        )
+                    )
+                }
+            }
+
+            HomeScreenEvent.DialogConfirm -> {
+                println("confirm")
+            }
+
+            HomeScreenEvent.DialogCancel -> {
+                _uiState.update{it.copy(displayDialog = null)}
             }
         }
     }

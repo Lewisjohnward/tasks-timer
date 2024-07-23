@@ -32,6 +32,7 @@ import com.android.taskstimer.R
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
@@ -137,6 +138,11 @@ fun HomeScreen(
                 dismiss = { menuOpen = false },
                 deleteBoard = {onEvent(HomeScreenEvent.DeleteBoard(uiState.selectedBoard))}
             )
+            if(uiState.displayDialog != null)
+                ConfirmDialog(
+                    confirm = {onEvent(HomeScreenEvent.DialogConfirm)},
+                    cancel = {onEvent(HomeScreenEvent.DialogCancel)},
+                )
         }
     )
 }
