@@ -208,7 +208,7 @@ fun NavigationDrawer(
             if (inputDialogVisible)
                 InputDialog(
                     onEvent = onEvent,
-                    cancel = { inputDialogVisible = false }
+                    close = { inputDialogVisible = false }
 
                 )
         }

@@ -38,7 +38,7 @@ import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 @Composable
 fun InputDialog(
     myNewBoardName: String = "My awesome new board",
-    cancel: () -> Unit = {},
+    close: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {}
 ) {
 
@@ -89,13 +89,16 @@ fun InputDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = { onEvent(HomeScreenEvent.CreateBoard(input)) }) {
+                    TextButton(onClick = {
+                        onEvent(HomeScreenEvent.CreateBoard(input))
+                        close()
+                    }) {
                         Text(
                             text = "confirm",
                             color = Color(0xFFFF9B88)
                         )
                     }
-                    TextButton(onClick = { cancel() }) {
+                    TextButton(onClick = { close() }) {
                         Text(
                             text = "Cancel",
                             color = Color(0xFFFF9B88)
