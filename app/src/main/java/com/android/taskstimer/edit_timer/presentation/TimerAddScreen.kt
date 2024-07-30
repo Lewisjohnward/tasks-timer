@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.edit_timer.presentation.components.NumPad
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
@@ -52,15 +53,11 @@ object TimerAddDestination : NavigationDestination {
 @Composable
 fun TimerAddScreen(
     navigateBack: () -> Unit,
-    viewModel: TimerAddViewModel = hiltViewModel()
+//    viewModel: TimerAddViewModel = hiltViewModel()
 ) {
-    val onEvent = viewModel::onEvent
-
-
+//    val onEvent = viewModel::onEvent
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
         containerColor = BackgroundDarkGray,
         topBar = {
             TimerTopBar(
@@ -71,7 +68,7 @@ fun TimerAddScreen(
         floatingActionButton = {
             FloatingActionBtn(
                 onClick = {
-                    onEvent(TimerAddEvent.AddTimer)
+//                    onEvent(TimerAddEvent.AddTimer)
                     navigateBack()
                 },
                 icon = {
@@ -89,12 +86,15 @@ fun TimerAddScreen(
             modifier = Modifier.padding(innerPadding),
         ) {
             Column(
-                modifier = Modifier.padding(top = 40.dp, start = 10.dp, end = 10.dp),
+                modifier = Modifier
+                    .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 NameInput()
                 TimeInput()
+                NumPad()
             }
         }
     }
@@ -184,5 +184,5 @@ fun NameInput() {
 @Preview(showBackground = true)
 @Composable
 fun TimerAddScreenPreview() {
-    TimerAddScreen(navigateBack = { true })
+    TimerAddScreen(navigateBack = { true },  )
 }
