@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.edit_timer.presentation.components.NumPad
@@ -85,20 +84,28 @@ fun TimerAddScreen(
         Box(
             modifier = Modifier.padding(innerPadding),
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 40.dp, start = 10.dp, end = 10.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                NameInput()
-                TimeInput()
-                NumPad()
-            }
+            Content()
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Content() {
+
+    Column(
+        modifier = Modifier
+            .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        NameInput()
+        TimeInput()
+        NumPad()
+    }
+}
+
 
 @Composable
 fun TimeInput() {
@@ -184,5 +191,5 @@ fun NameInput() {
 @Preview(showBackground = true)
 @Composable
 fun TimerAddScreenPreview() {
-    TimerAddScreen(navigateBack = { true },  )
+    TimerAddScreen(navigateBack = { true })
 }
