@@ -77,14 +77,13 @@ fun TimerAddScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             Column(
                 modifier = Modifier
-                    .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+                    .padding(top = 80.dp, start = 10.dp, end = 10.dp)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(120.dp)
             ) {
-
                 NameInput()
-                TimeInput()
+                    TimeInput()
             }
         }
     }
