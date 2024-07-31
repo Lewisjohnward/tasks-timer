@@ -40,7 +40,7 @@ private val keys: List<Key> =
         Key(key = "8"),
         Key(key = "9"),
         Key(
-            key = "Start",
+            key = "Add",
             color = Color(0xFF729656)
         ),
         Key(key = "0"),
