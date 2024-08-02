@@ -81,10 +81,8 @@ class HomeViewModel @Inject constructor(
 
     // Maybe call get tasks?
     fun loadBoards() {
-        println("hello loading board")
         viewModelScope.launch {
             val boards = getBoards.invoke()
-            println(boards)
             _uiState.update { it.copy(boards = boards) }
             if (boards.isNotEmpty()) {
                 val timers = getTimers(boardId = boards[0].id)
