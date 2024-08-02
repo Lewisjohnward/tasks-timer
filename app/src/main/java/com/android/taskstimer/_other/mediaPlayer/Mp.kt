@@ -1,5 +1,6 @@
 package com.android.taskstimer._other.mediaPlayer
 
+import android.content.Context
 import android.media.MediaPlayer
 import com.android.taskstimer.R
 import com.android.taskstimer.TasksTimerApplication
@@ -10,17 +11,16 @@ object Mp {
 
     fun setContext(tasksTimerApplication: TasksTimerApplication) {
         ctx = tasksTimerApplication
-
     }
 
 
-    fun play(callback: () -> Unit){
+    fun play(context: Context){
         var mp: MediaPlayer? = null
         if (mp == null){
-            mp = MediaPlayer.create(ctx, R.raw.alarm)
+            mp = MediaPlayer.create(context, R.raw.alarm)
         }
         mp?.start()
 
-        mp?.setOnCompletionListener { callback() }
+//        mp?.setOnCompletionListener { callback() }
     }
 }
