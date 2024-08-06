@@ -1,21 +1,16 @@
 package com.android.taskstimer._other.service
 
+import android.annotation.SuppressLint
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.android.taskstimer.R
 import com.android.taskstimer._other.mediaPlayer.Mp
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.core.presentation.MainActivity
+import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +36,7 @@ class TasksTimerService : LifecycleService() {
 
         // Intent Extras
         const val SERVICE_ACTION = "STOPWATCH_ACTION"
+        var test = "Stopped"
     }
 
 
@@ -50,12 +46,18 @@ class TasksTimerService : LifecycleService() {
     private var isFgService: Boolean = false
 
 
-    @Inject
-    lateinit var getTimers: GetTimers
     lateinit var updateTimer: UpdateTimer
-    private lateinit var notificationManager: NotificationManager
 
     private lateinit var context: Context
+
+    @Inject
+    lateinit var getTimers: GetTimers
+
+    @Inject
+    lateinit var notificationManager: NotificationManagerCompat
+
+    @Inject
+    lateinit var notification: NotificationCompat.Builder
 
 
     ////
@@ -97,18 +99,6 @@ class TasksTimerService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        getNotificationManager()
-//
-//        val action = intent?.getStringExtra(STOPWATCH_ACTION)!!
-//
-//        Log.d("Stopwatch", "onStartCommand Action: $action")
-//
-
-//
-//        return START_STICKY
         val action = intent?.getStringExtra(SERVICE_ACTION)
         when (action) {
             START_TASKS_TIMER -> startTasksTimer()
@@ -118,91 +108,48 @@ class TasksTimerService : LifecycleService() {
             MOVE_TO_FOREGROUND -> moveToForeground()
             MOVE_TO_BACKGROUND -> moveToBackground()
         }
-
-
-        println("onStartCommand")
-        println(intent)
-//        when (intent.action) {
-//            is "start" -> start()
-//            is "stop" -> stopSelf()
-//        }
-//        scopeTest()
-//        getTimers()
-//        updateNotification()
-//        startTimer()
         return super.onStartCommand(intent, flags, startId)
     }
 
     private fun moveToForeground() {
-        if(activeTimer == null) return
+        if (activeTimer == null) return
         isFgService = true
         startForeground(1, buildNotification())
     }
 
-    private fun moveToBackground(){
-        if(activeTimer == null) return
+    private fun moveToBackground() {
+        if (activeTimer == null) return
         isFgService = false
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
 
-
-//    private fun getNotificationManager() {
-//        notificationManager = ContextCompat.getSystemService(
-//            this,
-//            NotificationManager::class.java
-//        ) as NotificationManager
-//    }
-
     private fun startTasksTimer() {
         lifecycleScope.launch {
             timers = getTimers(boardId = 0)
             if (timers.isEmpty()) return@launch
-//            println(timers)
             if (activeTimer != null) return@launch
+            test = "running"
             activeTimer = Timer()
             var timeElapsed = 0
             println(timers)
 
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
-//                val stopwatchIntent = Intent()
-//                stopwatchIntent.action = "STOPWATCH_TICK"
-
                     decrementTime()
                     if (remainingTimeIsZero()) {
                         if (currentTimer < timers.size - 1) {
                             currentTimer++
                         } else stopTimer()
                     }
-
                     println(timers)
-//                testBoard[currentTimer] = testBoard[currentTimer].copy(remainingTime = (testBoard[currentTimer].remainingTime.toInt() - 1).toString())
-//                lifecycleScope.launch {
-//                    updateTimer.invoke(updatedTimer)
-//                }
-//                printTimers()
-
-//                updateTimer()
-
-//                println(timeElapsed)
-//                timeElapsed++
-//
-//                stopwatchIntent.putExtra("TIME_ELAPSED", timeElapsed)
-//                sendBroadcast(stopwatchIntent)
-                    if(isFgService) updateNotification()
+                    if (isFgService) updateNotification()
 
                     if (timeElapsed == 5) Mp.play(context)
                     if (timeElapsed == 6) stopTimer()
                 }
             }, 0, 1000)
 
-        }
-    }
-
-    private fun printTimers() {
-        lifecycleScope.launch {
-            println(getTimers(boardId = 0))
         }
     }
 
@@ -224,6 +171,8 @@ class TasksTimerService : LifecycleService() {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    // TODO: HANDLE PERMISSIONS
     private fun updateNotification() {
         notificationManager.notify(
             1,
@@ -232,42 +181,12 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
-//        val title = if (isStopWatchRunning) {
-//            "Stopwatch is running!"
-//        } else {
-//            "Stopwatch is paused!"
-//        }
-//
-//        val hours: Int = timeElapsed.div(60).div(60)
-//        val minutes: Int = timeElapsed.div(60)
-//        val seconds: Int = timeElapsed.rem(60)
-
-        val intent = Intent(this, MainActivity::class.java)
-        val pIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-        )
-        println("Building notification")
-
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("${timers[currentTimer].name} ${currentTimer}/${timers.size}")
-            .setOngoing(true)
-            .setContentText(
-                timers[currentTimer].remainingTime.toString()
-//                "${"%02d".format(hours)}:${"%02d".format(minutes)}:${
-//                    "%02d".format(
-//                        seconds
-//                    )
-//                }"
-            )
-            .setColorized(true)
-            .setShowWhen(false)
-            .setColor(Color.parseColor("#BEAEE2"))
-            .setSmallIcon(R.drawable.timer_add)
-            .setOnlyAlertOnce(true)
-            .setContentIntent(pIntent)
-            .setAutoCancel(true)
+        val initialTime = timers[currentTimer].presetTime.toInt()
+        val elapsedTime = initialTime - timers[currentTimer].remainingTime.toInt()
+        return notification
+            .setContentTitle("${timers[currentTimer].name} -${currentTimer}/${timers.size}")
+            .setContentText(timers[currentTimer].formatTime())
+            .setProgress(initialTime, elapsedTime, false)
             .build()
     }
-
 }

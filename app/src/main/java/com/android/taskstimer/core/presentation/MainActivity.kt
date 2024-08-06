@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.android.taskstimer._other.service.TasksTimerService
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
                 )
                 startService(intent)
             }) {
+                Text(text = TasksTimerService.test)
             }
         }
     }
