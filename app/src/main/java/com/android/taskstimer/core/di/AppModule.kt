@@ -10,7 +10,7 @@ import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
-import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
+import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.Module
@@ -38,7 +38,7 @@ object AppModule {
     @Singleton
     fun providesTimersRepository(
         tasksTimerDb: TasksTimerDatabase
-    ): TimersRepository{
+    ): TimersRepository {
         return TimersRepositoryImpl(tasksTimerDb)
     }
 
@@ -46,7 +46,7 @@ object AppModule {
     @Singleton
     fun provideBoardsRepository(
         tasksTimerDb: TasksTimerDatabase
-    ): BoardsRepository{
+    ): BoardsRepository {
         return BoardsRepositoryImpl(tasksTimerDb)
     }
 
@@ -70,11 +70,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetTimers(
+    fun provideGetTimersFlow(
         timersRepository: TimersRepository
-    ): GetTimers {
-        return GetTimers(timersRepository)
+    ): GetTimersFlow {
+        return GetTimersFlow(timersRepository)
     }
+
+//    @Provides
+//    @Singleton
+//    fun provideGetTimers(
+//        timersRepository: TimersRepository,
+//    ): GetTimers {
+//        return GetTimers(timersRepository)
+//    }
+
     @Provides
     @Singleton
     fun provideInsertBoard(

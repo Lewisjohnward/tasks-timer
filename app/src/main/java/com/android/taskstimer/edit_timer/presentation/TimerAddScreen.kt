@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.edit_timer.presentation.components.NameInput
@@ -39,7 +40,7 @@ object TimerAddDestination : NavigationDestination {
 @Composable
 fun TimerAddScreen(
     navigateBack: () -> Unit,
-//    viewModel: TimerAddViewModel = hiltViewModel()
+    viewModel: TimerAddViewModel = hiltViewModel()
 ) {
 //    val onEvent = viewModel::onEvent
 
@@ -83,7 +84,7 @@ fun TimerAddScreen(
                 verticalArrangement = Arrangement.spacedBy(120.dp)
             ) {
                 NameInput()
-                    TimeInput()
+                TimeInput()
             }
         }
     }

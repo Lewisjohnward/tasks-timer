@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 )
                 startService(intent)
             }) {
-                Text(text = TasksTimerService.test)
+                Text(text = "start service")
             }
         }
     }

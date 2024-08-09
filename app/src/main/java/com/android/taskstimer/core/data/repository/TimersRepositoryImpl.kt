@@ -15,14 +15,20 @@ class TimersRepositoryImpl(
     override fun getAllTimersStream(): Flow<List<TimerItem>> =
         timerDao.getAllTimers().map { it -> it.map { it.toTimerItem() } }
 
+    override fun getTimersFlow(boardId: Int): Flow<List<TimerItem>> =
+        timerDao.getTimersFlow(boardId).map { it -> it.map { it.toTimerItem() } }
+
     override suspend fun getTimers(boardId: Int): List<TimerItem> =
         timerDao.getTimers(boardId).map { it.toTimerItem() }
 
-    override suspend fun insertTimer(timer: TimerItem) = timerDao.insert(timer.toTimerEntityForInsert())
+    override suspend fun insertTimer(timer: TimerItem) =
+        timerDao.insert(timer.toTimerEntityForInsert())
 
 //    override suspend fun deleteTimer(timer: Timer) = timerDao.delete(timer)
 
-    override suspend fun updateTimer(timer: TimerItem) = timerDao.update(timer.toTimerEntityForInsert())
+    override suspend fun updateTimer(timer: TimerItem) =
+        timerDao.update(timer.toTimerEntityForInsert())
+
     override suspend fun deleteTimer(timer: TimerItem) {
         TODO("Not yet implemented")
     }

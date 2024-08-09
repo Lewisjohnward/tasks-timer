@@ -1,18 +1,23 @@
 package com.android.taskstimer.tasks_timer.presentation
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
-import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
+import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,7 +50,7 @@ data class UiState(
 class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
     private val insertBoard: InsertBoard,
-    private val getTimers: GetTimers,
+    private val getTimersFlow: GetTimersFlow,
     private val getBoards: GetBoards,
     private val deleteBoard: DeleteBoard
 ) : ViewModel() {
@@ -53,31 +58,52 @@ class HomeViewModel @Inject constructor(
 //    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
 //        getAllBoardsWithTimers.invoke()
 
+//    val uiState = _uiState.asStateFlow()
+
+    private val _timers = getTimersFlow.invoke(boardId = 0)
     private val _uiState = MutableStateFlow(UiState())
-    val uiState = _uiState.asStateFlow()
+
+    val uiState =
+        combine(_timers, _uiState){timers, uiState ->
+            uiState.copy(
+                timers = timers
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = UiState()
+        )
+
+
+//        .combine()
+//        .stateIn
+//        .filterNotNull()
+
+
+
 
 
     // Maybe call get tasks?
-    fun loadBoards() {
-        viewModelScope.launch {
-            val boards = getBoards.invoke()
-            _uiState.update { it.copy(boards = boards) }
-            if (boards.isNotEmpty()) {
-                val timers = getTimers(boardId = boards[0].id)
-                _uiState.update {
-                    it.copy(
-                        timers = timers,
-                        selectedBoard = boards[0]
-                    )
-                }
-            } else {
-                _uiState.update { it.copy(
-                    selectedBoard = BoardItem(name = "Untitled"),
-                    timers = listOf()
-                ) }
-            }
-        }
-    }
+//    fun loadBoards() {
+//        viewModelScope.launch {
+//            val boards = getBoards.invoke()
+//            _uiState.update { it.copy(boards = boards) }
+//            if (boards.isNotEmpty()) {
+//                val timers = getTimers(boardId = boards[0].id)
+//                _uiState.update {
+//                    it.copy(
+//                        timers = timers,
+//                        selectedBoard = boards[0]
+//                    )
+//                }
+//            } else {
+//                _uiState.update { it.copy(
+//                    selectedBoard = BoardItem(name = "Untitled"),
+//                    timers = listOf()
+//                ) }
+//            }
+//        }
+//    }
 
     fun loadTimers() {
         println("hello")
@@ -128,23 +154,24 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.SelectBoard -> {
-                val selectedBoard = event.board
-                viewModelScope.launch {
-                    val timers = getTimers(boardId = selectedBoard.id)
-                    _uiState.update {
-                        it.copy(
-                            timers = timers,
-                            selectedBoard = selectedBoard
-                        )
-
+//                val intent = Intent(this, TasksTimerService::class.java)
+//                val selectedBoard = event.board
+//                viewModelScope.launch {
+//                    val timers = getTimers(boardId = selectedBoard.id)
+//                    _uiState.update {
 //                        it.copy(
-//                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
-//                        currentBoardIndex = event.boardIndex,
-//                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
+//                            timers = timers,
+//                            selectedBoard = selectedBoard
 //                        )
-                    }
+//
+////                        it.copy(
+////                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
+////                        currentBoardIndex = event.boardIndex,
+////                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
+////                        )
+//                    }
 
-                }
+//                }
             }
 
             is HomeScreenEvent.EditBoards -> {
@@ -154,7 +181,7 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.CreateBoard -> {
                 viewModelScope.launch {
                     insertBoard(BoardItem(name = event.name))
-                    loadBoards()
+//                    loadBoards()
                 }
             }
 
@@ -171,7 +198,7 @@ class HomeViewModel @Inject constructor(
             HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
                     deleteBoard.invoke(_uiState.value.selectedBoard)
-                    loadBoards()
+//                    loadBoards()
                 }
                 _uiState.update { it.copy(displayDialog = null) }
             }

@@ -66,9 +66,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToAddTimer: (Int) -> Unit,
 ) {
-    LaunchedEffect(true) {
-        viewModel.loadBoards()
-    }
+//    LaunchedEffect(true) {
+//        viewModel.loadBoards()
+//    }
 
     val uiState: UiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent

@@ -2,13 +2,12 @@ package com.android.taskstimer.tasks_timer.domain.use_case
 
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import kotlinx.coroutines.flow.Flow
 
-class GetTimers(
+class GetTimersFlow(
     private val timersRepository: TimersRepository,
 ) {
-    suspend operator fun invoke(boardId: Int): List<TimerItem> {
-        return timersRepository.getTimers(boardId = boardId)
+    operator fun invoke(boardId: Int): Flow<List<TimerItem>> {
+        return timersRepository.getTimersFlow(boardId = boardId)
     }
-
-
 }

@@ -9,11 +9,19 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.android.taskstimer._other.mediaPlayer.Mp
+import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
-import com.android.taskstimer.tasks_timer.domain.use_case.GetTimers
+import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
@@ -43,6 +51,7 @@ class TasksTimerService : LifecycleService() {
     var currentTimer = 0
     private var activeTimer: Timer? = null
     private lateinit var timers: List<TimerItem>
+    private lateinit var timersTest: Flow<List<TimerItem>>
     private var isFgService: Boolean = false
 
 
@@ -50,8 +59,8 @@ class TasksTimerService : LifecycleService() {
 
     private lateinit var context: Context
 
-    @Inject
-    lateinit var getTimers: GetTimers
+//    @Inject
+//    lateinit var getTimers: GetTimers
 
     @Inject
     lateinit var notificationManager: NotificationManagerCompat
@@ -99,18 +108,21 @@ class TasksTimerService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        println("Intent recieved")
         val action = intent?.getStringExtra(SERVICE_ACTION)
+        println(action)
         when (action) {
             START_TASKS_TIMER -> startTasksTimer()
-//            PAUSE -> pauseStopwatch()
-//            RESET -> resetStopwatch()
-//            GET_STATUS -> sendStatus()
+////            PAUSE -> pauseStopwatch()
+////            RESET -> resetStopwatch()
+////            GET_STATUS -> sendStatus()
             MOVE_TO_FOREGROUND -> moveToForeground()
             MOVE_TO_BACKGROUND -> moveToBackground()
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
+    //
     private fun moveToForeground() {
         if (activeTimer == null) return
         isFgService = true
@@ -124,9 +136,18 @@ class TasksTimerService : LifecycleService() {
     }
 
 
+
+
+    @Inject
+    lateinit var timersRepo: TimersRepository
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun startTasksTimer() {
+        println("Start tasks timer")
         lifecycleScope.launch {
-            timers = getTimers(boardId = 0)
+            println("hello?")
+            println(timersRepo.getTimers(0))
+            timers = timersRepo.getTimers(0)
+
             if (timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
             test = "running"
@@ -148,12 +169,13 @@ class TasksTimerService : LifecycleService() {
                     if (timeElapsed == 5) Mp.play(context)
                     if (timeElapsed == 6) stopTimer()
                 }
-            }, 0, 1000)
+            }, 0, 100)
 
         }
     }
 
-
+    //
+//
     private fun stopTimer() {
         activeTimer?.cancel()
         activeTimer = null

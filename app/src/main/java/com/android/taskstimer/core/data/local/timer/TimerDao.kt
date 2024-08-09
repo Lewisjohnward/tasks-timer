@@ -15,6 +15,9 @@ interface TimerDao {
     fun getAllTimers(): Flow<List<TimerEntity>>
 
     @Query("SELECT * from timers WHERE board_id = :boardId")
+    fun getTimersFlow(boardId: Int): Flow<List<TimerEntity>>
+
+    @Query("SELECT * from timers WHERE board_id = :boardId")
     suspend fun getTimers(boardId: Int): List<TimerEntity>
 
     // Specify the conflict strategy as IGNORE, when the user tries to add an
