@@ -13,6 +13,8 @@ interface TimersRepository {
 
     suspend fun updateTimer(timer: TimerItem)
 
+    suspend fun updateTimers(timers: List<TimerItem>)
+
     suspend fun deleteTimer(timer: TimerItem)
 
     suspend fun deleteAllTimersFromBoard(boardId: Int)

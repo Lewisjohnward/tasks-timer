@@ -28,17 +28,17 @@ class MainActivity : ComponentActivity() {
 //            val uiState by appViewModel.uiState.collectAsState()
 //            HomeScreen()
 //            AddTimer()
-//            TasksTimerApp()
-            Button(onClick = {
-                val intent = Intent(this, TasksTimerService::class.java)
-                intent.putExtra(
-                    TasksTimerService.SERVICE_ACTION,
-                    TasksTimerService.START_TASKS_TIMER
-                )
-                startService(intent)
-            }) {
-                Text(text = "start service")
-            }
+            TasksTimerApp()
+//            Button(onClick = {
+//                val intent = Intent(this, TasksTimerService::class.java)
+//                intent.putExtra(
+//                    TasksTimerService.SERVICE_ACTION,
+//                    TasksTimerService.START_TASKS_TIMER
+//                )
+//                startService(intent)
+//            }) {
+//                Text(text = "start service")
+//            }
         }
     }
 

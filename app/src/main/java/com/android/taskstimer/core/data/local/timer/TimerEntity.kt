@@ -12,5 +12,5 @@ data class TimerEntity(
     val boardId: Int,
     val name: String,
     val presetTime: String,
-    val remainingTime: String = presetTime
+    val remainingTime: String
 )

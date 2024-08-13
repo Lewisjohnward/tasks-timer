@@ -8,7 +8,7 @@ data class TimerItem(
     val boardId: Int,
     val name: String,
     val presetTime: String,
-    val remainingTime: String = presetTime
+    val remainingTime: String
 )
 
 fun TimerItem.formatTime(): String {

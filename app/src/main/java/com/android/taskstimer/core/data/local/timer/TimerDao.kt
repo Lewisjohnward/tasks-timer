@@ -28,6 +28,9 @@ interface TimerDao {
     @Update
     suspend fun update(timer: TimerEntity)
 
+    @Update
+    suspend fun updateTimers(timers: List<TimerEntity>)
+
     @Delete
     suspend fun delete(timer: TimerEntity)
 

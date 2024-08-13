@@ -8,15 +8,26 @@ fun TimerItem.toTimerEntityForInsert(): TimerEntity{
         boardId = boardId,
         name = name,
         presetTime = presetTime,
-        remainingTime = presetTime
+        remainingTime = remainingTime
+    )
+}
+
+fun TimerItem.toTimerEntityForUpdate(): TimerEntity{
+    return TimerEntity(
+        id = id,
+        boardId = boardId,
+        name = name,
+        presetTime = presetTime,
+        remainingTime = remainingTime
     )
 }
 
 fun TimerEntity.toTimerItem(): TimerItem{
     return TimerItem(
+        id = id,
         boardId= boardId,
         name = name,
         presetTime = presetTime,
-        remainingTime = presetTime
+        remainingTime = remainingTime
     )
 }

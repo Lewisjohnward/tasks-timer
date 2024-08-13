@@ -37,6 +37,7 @@ class TimerAddViewModel @Inject constructor(
                     boardId = boardId,
                     name = "My banging new timer",
                     presetTime = "143",
+                    remainingTime = "143"
                 )
                 addTimer(dummyData)
 

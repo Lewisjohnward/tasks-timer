@@ -9,19 +9,14 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.android.taskstimer._other.mediaPlayer.Mp
-import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
+import com.android.taskstimer.core.domain.model.resetTimer
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
@@ -44,63 +39,24 @@ class TasksTimerService : LifecycleService() {
 
         // Intent Extras
         const val SERVICE_ACTION = "STOPWATCH_ACTION"
-        var test = "Stopped"
     }
 
 
     var currentTimer = 0
     private var activeTimer: Timer? = null
     private lateinit var timers: List<TimerItem>
-    private lateinit var timersTest: Flow<List<TimerItem>>
     private var isFgService: Boolean = false
-
-
-    lateinit var updateTimer: UpdateTimer
 
     private lateinit var context: Context
 
-//    @Inject
-//    lateinit var getTimers: GetTimers
+    @Inject
+    lateinit var updateTimer: UpdateTimer
 
     @Inject
     lateinit var notificationManager: NotificationManagerCompat
 
     @Inject
     lateinit var notification: NotificationCompat.Builder
-
-
-    ////
-    // TO DO: PASS BOARDID FROM UI TO SERVICE WITH INTENT TO GET CURRENT TIMERS
-    // UPDATE TIMER ON EACH DECREMENT
-    // CHANGE TIMERS TO FLOW ON FRONT END TO OBSERVE CHANGES
-    // CHANGE TO FG SERVICE WHEN PAUSING UI
-    // CHANGE FROM FG TO BG WHEN RESUMING UI
-    // NOTIFICATION RUNTIME PERMISSION - BY DEFAULT DISABLED
-
-
-    // Lets image it is board #0
-    // Retrieve list of timers
-
-//    var testBoard: List<TimerItem> = listOf(
-//        TimerItem(
-//            boardId = 0,
-//            name = "Clean sheets",
-//            presetTime = "5",
-//            remainingTime = "5"
-//        ),
-//        TimerItem(
-//            boardId = 0,
-//            name = "Clean sheets",
-//            presetTime = "3",
-//            remainingTime = "3"
-//        ),
-//        TimerItem(
-//            boardId = 0,
-//            name = "Clean sheets",
-//            presetTime = "4",
-//            remainingTime = "4"
-//        )
-//    )
 
     override fun onCreate() {
         super.onCreate()
@@ -113,9 +69,8 @@ class TasksTimerService : LifecycleService() {
         println(action)
         when (action) {
             START_TASKS_TIMER -> startTasksTimer()
-////            PAUSE -> pauseStopwatch()
-////            RESET -> resetStopwatch()
-////            GET_STATUS -> sendStatus()
+//            PAUSE -> pauseStopwatch()
+//            RESET -> resetStopwatch()
             MOVE_TO_FOREGROUND -> moveToForeground()
             MOVE_TO_BACKGROUND -> moveToBackground()
         }
@@ -136,59 +91,69 @@ class TasksTimerService : LifecycleService() {
     }
 
 
-
-
     @Inject
     lateinit var timersRepo: TimersRepository
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun startTasksTimer() {
-        println("Start tasks timer")
-        lifecycleScope.launch {
-            println("hello?")
-            println(timersRepo.getTimers(0))
-            timers = timersRepo.getTimers(0)
 
+    private fun startTasksTimer() {
+        lifecycleScope.launch {
+            timers = timersRepo.getTimers(0)
             if (timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
-            test = "running"
             activeTimer = Timer()
-            var timeElapsed = 0
-            println(timers)
-
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     decrementTime()
-                    if (remainingTimeIsZero()) {
+                    if (remainingTimeOfCurrentTimerIsZero()) {
                         if (currentTimer < timers.size - 1) {
                             currentTimer++
-                        } else stopTimer()
+                        } else {
+                            stopTimer()
+                            resetTimers()
+                            resetCurrentTimer()
+                        }
                     }
-                    println(timers)
                     if (isFgService) updateNotification()
 
-                    if (timeElapsed == 5) Mp.play(context)
-                    if (timeElapsed == 6) stopTimer()
+//                    if (timeElapsed == 5) Mp.play(context)
+//                    if (timeElapsed == 6) stopTimer()
                 }
             }, 0, 100)
 
         }
     }
 
-    //
-//
+
+    private fun resetCurrentTimer(){
+        currentTimer = 0
+    }
+
+    private fun resetTimers(){
+        lifecycleScope.launch {
+            timersRepo.updateTimers(timers.map { timer -> timer.resetTimer() })
+        }
+    }
+
     private fun stopTimer() {
         activeTimer?.cancel()
         activeTimer = null
     }
 
-    private fun remainingTimeIsZero(): Boolean {
-        return timers[currentTimer].remainingTime.toInt() == 0
+    private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
+        return timers[currentTimer].remainingTime.toInt() <= 0
     }
 
     private fun decrementTime() {
         timers = timers.mapIndexed() { index, timer ->
             if (index == currentTimer) {
-                timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
+                val updatedTimer =
+                    timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
+                println(updatedTimer)
+                lifecycleScope.launch {
+                    timersRepo.updateTimer(
+                        updatedTimer
+                    )
+                }
+                updatedTimer
             } else timer
         }
     }
