@@ -10,11 +10,14 @@ import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -42,6 +45,7 @@ data class UiState(
 )
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
@@ -51,21 +55,53 @@ class HomeViewModel @Inject constructor(
     private val deleteBoard: DeleteBoard
 ) : ViewModel() {
 
-    private val _timers = getTimersFlow.invoke(boardId = 0)
     private val _boards = getBoardsFlow()
+    private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = "untitled"))
+    private val _timers = _currentBoard.flatMapLatest {
+        board ->
+        getTimersFlow.invoke(boardId = board.id)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
+    )
+
     private val _uiState = MutableStateFlow(UiState())
 
     val uiState =
-        combine(_timers, _uiState, _boards) { timers, uiState, boards ->
+        combine(_timers, _uiState, _boards, _currentBoard) { timers, uiState, boards, currentBoard ->
             uiState.copy(
                 timers = timers,
-                boards = boards
+                boards = boards,
+                selectedBoard = currentBoard
+
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = UiState()
         )
+
+
+//    private val _sortType = MutableStateFlow(SortType.FIRST_NAME)
+//    private val _contacts = _sortType
+//        .flatMapLatest { sortType ->
+//            when(sortType) {
+//                SortType.FIRST_NAME -> dao.getContactsOrderedByFirstName()
+//                SortType.LAST_NAME -> dao.getContactsOrderedByLastName()
+//                SortType.PHONE_NUMBER -> dao.getContactsOrderedByPhoneNumber()
+//            }
+//        }
+//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+//
+//    private val _state = MutableStateFlow(ContactState())
+//    val state = combine(_state, _sortType, _contacts) { state, sortType, contacts ->
+//        state.copy(
+//            contacts = contacts,
+//            sortType = sortType
+//        )
+//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ContactState())
+
 
 
 //        .combine()
@@ -144,24 +180,7 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.SelectBoard -> {
-//                val intent = Intent(this, TasksTimerService::class.java)
-//                val selectedBoard = event.board
-//                viewModelScope.launch {
-//                    val timers = getTimers(boardId = selectedBoard.id)
-//                    _uiState.update {
-//                        it.copy(
-//                            timers = timers,
-//                            selectedBoard = selectedBoard
-//                        )
-//
-////                        it.copy(
-////                        currentBoardName = uiState.value.boardsWithTimers[event.boardIndex].board.name,
-////                        currentBoardIndex = event.boardIndex,
-////                        currentBoard = uiState.value.boardsWithTimers[event.boardIndex].timers
-////                        )
-//                    }
-
-//                }
+                _currentBoard.value = event.board
             }
 
             is HomeScreenEvent.EditBoards -> {
