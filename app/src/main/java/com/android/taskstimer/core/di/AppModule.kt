@@ -9,7 +9,7 @@ import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
-import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
+import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
@@ -52,10 +52,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetBoards(
+    fun provideGetBoardsFlow(
         boardsRepository: BoardsRepository
-    ): GetBoards {
-        return GetBoards(boardsRepository)
+    ): GetBoardsFlow {
+        return GetBoardsFlow(boardsRepository)
     }
 
     @Provides

@@ -4,16 +4,16 @@ import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 
 class AddTimer(
     private val timersRepository: TimersRepository,
     private val boardsRepository: BoardsRepository
 ) {
     suspend fun invoke(timer: TimerItem){
-        if(boardsRepository.getAllBoards().isEmpty()){
+        if(boardsRepository.getAllBoardsFlow().first().isEmpty()){
             boardsRepository.insertBoard(board = BoardItem(name = "Untitled"))
-            val untitledBoard = boardsRepository.getAllBoards()[0]
+            val untitledBoard = boardsRepository.getAllBoardsFlow().first()[0]
             timersRepository.insertTimer(timer.copy(boardId = untitledBoard.id))
         }
         timersRepository.insertTimer(timer)

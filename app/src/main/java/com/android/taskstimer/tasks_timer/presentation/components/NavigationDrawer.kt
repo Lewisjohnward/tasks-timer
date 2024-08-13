@@ -53,41 +53,6 @@ private data class DrawerItem(
     val onClick: () -> Unit = {}
 )
 
-
-@Composable
-private fun NavDrawerItem(
-    closeDrawer: () -> Unit = {},
-    item: DrawerItem,
-    handle: @Composable () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier.padding(end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        NavigationDrawerItem(
-            modifier = Modifier.weight(1f),
-            label = { Text(text = item.text) },
-            icon = { Icon(imageVector = item.icon, contentDescription = null) },
-            selected = item.selected,
-            shape = RoundedCornerShape(0.dp),
-            onClick = {
-                item.onClick()
-                closeDrawer()
-            },
-            colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = Color.Red,
-                unselectedContainerColor = Color.Transparent,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-            )
-        )
-        Row(modifier = Modifier.weight(0.1f)) {
-            handle()
-        }
-    }
-}
-
 @Composable
 fun NavigationDrawer(
     boards: List<BoardItem> = listOf(),
@@ -211,6 +176,40 @@ fun NavigationDrawer(
                     close = { inputDialogVisible = false }
 
                 )
+        }
+    }
+}
+
+@Composable
+private fun NavDrawerItem(
+    closeDrawer: () -> Unit = {},
+    item: DrawerItem,
+    handle: @Composable () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier.padding(end = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        NavigationDrawerItem(
+            modifier = Modifier.weight(1f),
+            label = { Text(text = item.text) },
+            icon = { Icon(imageVector = item.icon, contentDescription = null) },
+            selected = item.selected,
+            shape = RoundedCornerShape(0.dp),
+            onClick = {
+                item.onClick()
+                closeDrawer()
+            },
+            colors = NavigationDrawerItemDefaults.colors(
+                selectedContainerColor = Color.Red,
+                unselectedContainerColor = Color.Transparent,
+                unselectedIconColor = Color.White,
+                unselectedTextColor = Color.White,
+            )
+        )
+        Row(modifier = Modifier.weight(0.1f)) {
+            handle()
         }
     }
 }

@@ -1,13 +1,11 @@
 package com.android.taskstimer.tasks_timer.presentation
 
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
-import com.android.taskstimer.tasks_timer.domain.use_case.GetBoards
+import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
@@ -15,8 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,30 +42,24 @@ data class UiState(
 )
 
 
-
-
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val updateTimer: UpdateTimer,
     private val insertBoard: InsertBoard,
     private val getTimersFlow: GetTimersFlow,
-    private val getBoards: GetBoards,
+    private val getBoardsFlow: GetBoardsFlow,
     private val deleteBoard: DeleteBoard
 ) : ViewModel() {
-    //
-//    private val _boardsWithTimers: Flow<List<BoardsWithTimersItem>> =
-//        getAllBoardsWithTimers.invoke()
-
-//    val uiState = _uiState.asStateFlow()
 
     private val _timers = getTimersFlow.invoke(boardId = 0)
+    private val _boards = getBoardsFlow()
     private val _uiState = MutableStateFlow(UiState())
 
     val uiState =
-        combine(_timers, _uiState){timers, uiState ->
+        combine(_timers, _uiState, _boards) { timers, uiState, boards ->
             uiState.copy(
-                timers = timers
+                timers = timers,
+                boards = boards
             )
         }.stateIn(
             scope = viewModelScope,
@@ -78,9 +71,6 @@ class HomeViewModel @Inject constructor(
 //        .combine()
 //        .stateIn
 //        .filterNotNull()
-
-
-
 
 
     // Maybe call get tasks?
@@ -241,7 +231,37 @@ class HomeViewModel @Inject constructor(
 ////        if(updatedRemainingTime == 0) {
 ////            stopTimer()
 ////            playAlarm(callback = {startTimer()})
-////        }
+////        er.invoke(currentTimer.copy(remainingTime = updatedRemainingTime.toString()))
+//        }
+//    }
+//
+//    private fun stopTimer() {
+//        uiState.value.coroutineId?.cancel()
+//        _uiState.update {
+//            it.copy(
+//                coroutineId = null,
+//                running = false
+//            )
+//        }
+//    }
+//
+//    private fun resetTimer() {
+//        val resetTimers: List<TimerItem> =
+//            uiState.value.currentBoard.map { timer -> timer.copy(remainingTime = timer.presetTime) }
+//        resetTimers.forEach { timer: TimerItem ->
+//            viewModelScope.launch {
+//                updateTimer.invoke(timer.resetTimer())
+//            }
+//        }
+//        _uiState.update {
+//            it.copy(
+//                running = false,
+//                coroutineId = null,
+//                currentTimerIndex = 0,
+//            )
+//        }
+//    }
+//}
 //
 //        _uiState.update { it.copy(currentTimerIndex = updatedCurrentTimerIndex) }
 //
