@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,6 +29,7 @@ import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.edit_timer.presentation.components.NameInput
 import com.android.taskstimer.edit_timer.presentation.components.Numpad
 import com.android.taskstimer.edit_timer.presentation.components.TimeInput
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
 object TimerAddDestination : NavigationDestination {
@@ -42,7 +45,7 @@ fun TimerAddScreen(
     navigateBack: () -> Unit,
     viewModel: TimerAddViewModel = hiltViewModel()
 ) {
-//    val onEvent = viewModel::onEvent
+    val onEvent = viewModel::onEvent
 
     var sheetState = SheetState(skipPartiallyExpanded = false, initialValue = SheetValue.Expanded)
     var scaffoldState = rememberBottomSheetScaffoldState(sheetState)
@@ -85,6 +88,10 @@ fun TimerAddScreen(
             ) {
                 NameInput()
                 TimeInput()
+                Button(onClick = { onEvent(TimerAddEvent.AddTimer)}) {
+                    Text(text = "hello")
+
+                }
             }
         }
     }

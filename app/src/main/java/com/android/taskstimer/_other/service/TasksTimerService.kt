@@ -96,7 +96,8 @@ class TasksTimerService : LifecycleService() {
 
     private fun startTasksTimer() {
         lifecycleScope.launch {
-            timers = timersRepo.getTimers(0)
+            timers = timersRepo.getTimers(2)
+            println(timers)
             if (timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
             activeTimer = Timer()

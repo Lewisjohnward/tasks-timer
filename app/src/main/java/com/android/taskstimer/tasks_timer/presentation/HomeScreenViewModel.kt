@@ -37,7 +37,7 @@ data class UiState(
 
     val boards: List<BoardItem> = listOf(),
     val timers: List<TimerItem> = listOf(),
-    val selectedBoard: BoardItem = BoardItem(name = "untitled"),
+    val selectedBoard: BoardItem = BoardItem(name = ""),
 
 //    val currentBoardIndex: Int = 0,
 //    val currentBoardName: String = "",
@@ -56,7 +56,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _boards = getBoardsFlow()
-    private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = "untitled"))
+    private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = ""))
     private val _timers = _currentBoard.flatMapLatest {
         board ->
         getTimersFlow.invoke(boardId = board.id)
@@ -82,6 +82,15 @@ class HomeViewModel @Inject constructor(
             initialValue = UiState()
         )
 
+    init{
+        viewModelScope.launch {
+           println(getBoardsFlow().first())
+            val board = getBoardsFlow().first()
+            _currentBoard.update { if(board.isEmpty()) BoardItem() else board[0]}
+        }
+
+        println("Init view model")
+    }
 
 //    private val _sortType = MutableStateFlow(SortType.FIRST_NAME)
 //    private val _contacts = _sortType
@@ -206,7 +215,9 @@ class HomeViewModel @Inject constructor(
 
             HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
-                    deleteBoard.invoke(_uiState.value.selectedBoard)
+                    println(_currentBoard.value)
+//                    deleteBoard.invoke(_uiState.value.selectedBoard)
+                    deleteBoard.invoke(_currentBoard.value)
 //                    loadBoards()
                 }
                 _uiState.update { it.copy(displayDialog = null) }
