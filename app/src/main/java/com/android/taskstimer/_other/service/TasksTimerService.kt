@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
@@ -16,7 +19,9 @@ import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
@@ -57,6 +62,24 @@ class TasksTimerService : LifecycleService() {
 
     @Inject
     lateinit var notification: NotificationCompat.Builder
+
+
+    private val binder = MyBinder()
+
+    inner class MyBinder: Binder(){
+        fun getService() = this@TasksTimerService
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        return binder
+    }
+
+    fun setRunning(){
+        running.value = !running.value
+    }
+
+    var running = mutableStateOf(false)
 
     override fun onCreate() {
         super.onCreate()
