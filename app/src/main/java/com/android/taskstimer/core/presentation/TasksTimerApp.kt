@@ -3,13 +3,20 @@ package com.android.taskstimer.core.presentation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.presentation.navigation.TasksTimerNavHost
 import com.android.taskstimer.core.presentation.ui.theme.TasksTimerTheme
 
 
 @Composable
-fun TasksTimerApp(navController: NavHostController = rememberNavController()) {
+fun TasksTimerApp(
+    navController: NavHostController = rememberNavController(),
+    tasksTimerService: TasksTimerService
+) {
     TasksTimerTheme {
-        TasksTimerNavHost(navController = navController)
+        TasksTimerNavHost(
+            navController = navController,
+            tasksTimerService = tasksTimerService
+        )
     }
 }

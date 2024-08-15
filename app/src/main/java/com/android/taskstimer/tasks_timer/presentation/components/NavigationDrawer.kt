@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -42,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -58,7 +58,8 @@ fun NavigationDrawer(
     boards: List<BoardItem> = listOf(),
     onEvent: (HomeScreenEvent) -> Unit = {},
     closeDrawer: () -> Unit = {},
-    editBoards: Boolean = true
+    editBoards: Boolean = true,
+    tasksTimerService: TasksTimerService
 ) {
 
     var inputDialogVisible by remember { mutableStateOf(false) }
@@ -126,7 +127,10 @@ fun NavigationDrawer(
                         },
                         item = DrawerItem(
                             text = board.name,
-                            onClick = { onEvent(HomeScreenEvent.SelectBoard(board)) }
+                            onClick = {
+                                tasksTimerService.selectBoard(board.id)
+                                onEvent(HomeScreenEvent.SelectBoard(board))
+                            }
                         )
                     )
                 }
@@ -215,10 +219,10 @@ private fun NavDrawerItem(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun NavigationDrawerPreview() {
-    Surface(Modifier.fillMaxSize()) {
-        NavigationDrawer()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun NavigationDrawerPreview() {
+//    Surface(Modifier.fillMaxSize()) {
+//        NavigationDrawer(tasksTimerService = tasksTimerService)
+//    }
+//}

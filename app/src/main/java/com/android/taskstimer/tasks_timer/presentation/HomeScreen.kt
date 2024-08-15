@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
+import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -65,6 +66,7 @@ fun HomeScreen(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToAddTimer: (Int) -> Unit,
+    tasksTimerService: TasksTimerService,
 ) {
 //    LaunchedEffect(true) {
 //        viewModel.loadBoards()
@@ -84,11 +86,20 @@ fun HomeScreen(
         coroutineScope.launch { drawerState.close() }
     }
 
+    LaunchedEffect(key1 = true) {
+        println(uiState.selectedBoard.id)
+        tasksTimerService.selectBoard(
+            uiState.selectedBoard.id
+        )
+    }
+
+
     ModalNavigationDrawer(
         drawerContent = {
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
+                tasksTimerService = tasksTimerService,
                 boards = uiState.boards,
                 editBoards = uiState.editBoards
             )
@@ -129,19 +140,19 @@ fun HomeScreen(
                 Box(modifier = Modifier.padding(innerPadding)) {
                     if (uiState.timers.isNotEmpty())
                         Timers(
-                            timers = uiState.timers,
+                            timers = tasksTimerService.timers.value,
                             onEvent = onEvent,
                         )
                 }
             }
             if (menuOpen) MenuPopup(
                 dismiss = { menuOpen = false },
-                deleteBoard = {onEvent(HomeScreenEvent.DeleteBoard(uiState.selectedBoard))}
+                deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(uiState.selectedBoard)) }
             )
-            if(uiState.displayDialog != null)
+            if (uiState.displayDialog != null)
                 ConfirmDialog(
-                    confirm = {onEvent(HomeScreenEvent.DialogConfirm)},
-                    cancel = {onEvent(HomeScreenEvent.DialogCancel)},
+                    confirm = { onEvent(HomeScreenEvent.DialogConfirm) },
+                    cancel = { onEvent(HomeScreenEvent.DialogCancel) },
                 )
         }
     )

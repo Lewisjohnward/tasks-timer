@@ -49,7 +49,28 @@ class TasksTimerService : LifecycleService() {
 
     var currentTimer = 0
     private var activeTimer: Timer? = null
-    private lateinit var timers: List<TimerItem>
+//    var timers: List<TimerItem> = listOf(
+//
+//    )
+
+    var timers = mutableStateOf(
+        listOf(
+            TimerItem(
+                id = 1836, boardId = 7423, name = "Kason", presetTime = "10", remainingTime = "10"
+            ),
+            TimerItem(
+                id = 1836,
+                boardId = 7423,
+                name = "Clean something",
+                presetTime = "20",
+                remainingTime = "20"
+            ),
+
+            )
+    )
+
+
+
     private var isFgService: Boolean = false
 
     private lateinit var context: Context
@@ -63,10 +84,18 @@ class TasksTimerService : LifecycleService() {
     @Inject
     lateinit var notification: NotificationCompat.Builder
 
+    @Inject
+    lateinit var timersRepo: TimersRepository
+
+    init {
+//        selectBoard()
+        println("init")
+    }
+
 
     private val binder = MyBinder()
 
-    inner class MyBinder: Binder(){
+    inner class MyBinder : Binder() {
         fun getService() = this@TasksTimerService
     }
 
@@ -75,14 +104,21 @@ class TasksTimerService : LifecycleService() {
         return binder
     }
 
-    fun setRunning(){
+    fun setRunning() {
         running.value = !running.value
     }
 
     var running = mutableStateOf(false)
 
+    fun selectBoard(boardId: Int = 1) {
+        lifecycleScope.launch {
+            timers.value = timersRepo.getTimers(boardId)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        selectBoard()
         context = this
     }
 
@@ -114,21 +150,19 @@ class TasksTimerService : LifecycleService() {
     }
 
 
-    @Inject
-    lateinit var timersRepo: TimersRepository
 
     private fun startTasksTimer() {
         lifecycleScope.launch {
-            timers = timersRepo.getTimers(2)
+//            timers = timersRepo.getTimers(1)
             println(timers)
-            if (timers.isEmpty()) return@launch
+            if (timers.value.isEmpty()) return@launch
             if (activeTimer != null) return@launch
             activeTimer = Timer()
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     decrementTime()
                     if (remainingTimeOfCurrentTimerIsZero()) {
-                        if (currentTimer < timers.size - 1) {
+                        if (currentTimer < timers.value.size - 1) {
                             currentTimer++
                         } else {
                             stopTimer()
@@ -141,20 +175,21 @@ class TasksTimerService : LifecycleService() {
 //                    if (timeElapsed == 5) Mp.play(context)
 //                    if (timeElapsed == 6) stopTimer()
                 }
-            }, 0, 100)
+            }, 0, 1000)
 
         }
     }
 
 
-    private fun resetCurrentTimer(){
+    private fun resetCurrentTimer() {
         currentTimer = 0
     }
 
-    private fun resetTimers(){
-        lifecycleScope.launch {
-            timersRepo.updateTimers(timers.map { timer -> timer.resetTimer() })
-        }
+    private fun resetTimers() {
+        timers.value = timers.value.map { timer -> timer.resetTimer() }
+//        lifecycleScope.launch {
+//            timersRepo.updateTimers(timers.value.map { timer -> timer.resetTimer() })
+//        }
     }
 
     private fun stopTimer() {
@@ -163,11 +198,11 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
-        return timers[currentTimer].remainingTime.toInt() <= 0
+        return timers.value[currentTimer].remainingTime.toInt() <= 0
     }
 
     private fun decrementTime() {
-        timers = timers.mapIndexed() { index, timer ->
+        timers.value = timers.value.mapIndexed() { index, timer ->
             if (index == currentTimer) {
                 val updatedTimer =
                     timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
@@ -192,11 +227,11 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
-        val initialTime = timers[currentTimer].presetTime.toInt()
-        val elapsedTime = initialTime - timers[currentTimer].remainingTime.toInt()
+        val initialTime = timers.value[currentTimer].presetTime.toInt()
+        val elapsedTime = initialTime - timers.value[currentTimer].remainingTime.toInt()
         return notification
-            .setContentTitle("${timers[currentTimer].name} -${currentTimer}/${timers.size}")
-            .setContentText(timers[currentTimer].formatTime())
+            .setContentTitle("${timers.value[currentTimer].name} -${currentTimer}/${timers.value.size}")
+            .setContentText(timers.value[currentTimer].formatTime())
             .setProgress(initialTime, elapsedTime, false)
             .build()
     }

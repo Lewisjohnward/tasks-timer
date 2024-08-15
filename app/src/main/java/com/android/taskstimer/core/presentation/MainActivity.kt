@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,13 +18,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
-    private lateinit var mService: TasksTimerService
+    private lateinit var tasksTimerService: TasksTimerService
     private var isBound by mutableStateOf(false)
 
-    private val connection = object :ServiceConnection {
+    private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val service = binder as TasksTimerService.MyBinder
-            mService = service.getService()
+            tasksTimerService = service.getService()
             isBound = true
         }
 
@@ -46,13 +44,15 @@ class MainActivity : ComponentActivity() {
 //            val uiState by appViewModel.uiState.collectAsState()
 //            HomeScreen()
 //            AddTimer()
-//            TasksTimerApp()
-
-            if(isBound){
-                Button(onClick = {mService.setRunning()}) {
-                    Text(text = if(mService.running.value) "start" else "stop")
-                }
+            if (isBound) {
+                TasksTimerApp(tasksTimerService = tasksTimerService)
             }
+
+//            if(isBound){
+//                Button(onClick = {mService.setRunning()}) {
+//                    Text(text = if(mService.running.value) "start" else "stop")
+//                }
+//            }
 
         }
     }
