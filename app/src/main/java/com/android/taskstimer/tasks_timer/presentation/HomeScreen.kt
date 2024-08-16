@@ -39,6 +39,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.tasks_timer.presentation.components.Timers
+import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -121,7 +122,9 @@ fun HomeScreen(
                         actionOnClick = { menuOpen = true }
                     )
                 },
-
+                bottomBar = {
+                    ToggleTimer(running = false)
+                },
                 floatingActionButton = {
                     FloatingActionBtn(onClick = { navigateToAddTimer(uiState.selectedBoard.id) },
                         icon = {

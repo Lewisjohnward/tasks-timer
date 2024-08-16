@@ -1,6 +1,5 @@
 package com.android.taskstimer.tasks_timer.presentation.components
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,23 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
@@ -67,7 +57,6 @@ private fun TimerView(
                 TimerComposable(timer = timer, index = index)
             }
         }
-        ToggleTimer(running = false)
     }
 }
 
@@ -97,35 +86,6 @@ fun TimerComposable(timer: TimerItem, index: Int) {
                 fontSize = 45.sp,
                 color = Color.White
             )
-        }
-    }
-}
-
-@Composable
-private fun ToggleTimer(running: Boolean) {
-    val context = LocalContext.current
-    val icon: ImageVector = if (running) Icons.Filled.Menu else Icons.Filled.PlayArrow
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = {
-                val intent = Intent(context, TasksTimerService::class.java)
-                intent.putExtra(
-                    TasksTimerService.SERVICE_ACTION,
-                    TasksTimerService.START_TASKS_TIMER
-                )
-                context.startService(intent)
-            },
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null
-            )
-
         }
     }
 }

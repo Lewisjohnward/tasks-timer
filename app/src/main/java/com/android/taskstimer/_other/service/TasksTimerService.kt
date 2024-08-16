@@ -175,11 +175,14 @@ class TasksTimerService : LifecycleService() {
 //                    if (timeElapsed == 5) Mp.play(context)
 //                    if (timeElapsed == 6) stopTimer()
                 }
-            }, 0, 1000)
+            }, 0, 100)
 
         }
     }
 
+    fun isRunning(): Boolean{
+        return activeTimer != null
+    }
 
     private fun resetCurrentTimer() {
         currentTimer = 0
@@ -187,9 +190,6 @@ class TasksTimerService : LifecycleService() {
 
     private fun resetTimers() {
         timers.value = timers.value.map { timer -> timer.resetTimer() }
-//        lifecycleScope.launch {
-//            timersRepo.updateTimers(timers.value.map { timer -> timer.resetTimer() })
-//        }
     }
 
     private fun stopTimer() {
@@ -206,12 +206,6 @@ class TasksTimerService : LifecycleService() {
             if (index == currentTimer) {
                 val updatedTimer =
                     timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
-                println(updatedTimer)
-                lifecycleScope.launch {
-                    timersRepo.updateTimer(
-                        updatedTimer
-                    )
-                }
                 updatedTimer
             } else timer
         }
