@@ -12,6 +12,8 @@ import com.android.taskstimer.tasks_timer.presentation.HomeDestination
 import com.android.taskstimer.tasks_timer.presentation.HomeScreen
 import com.android.taskstimer.edit_timer.presentation.TimerAddDestination
 import com.android.taskstimer.edit_timer.presentation.TimerAddScreen
+import com.android.taskstimer.settings.presentation.SettingsDestination
+import com.android.taskstimer.settings.presentation.SettingsScreen
 
 
 @Composable
@@ -32,6 +34,9 @@ fun TasksTimerNavHost(
                 },
                 tasksTimerService = tasksTimerService
             )
+        }
+        composable(route = SettingsDestination.route) {
+            SettingsScreen { navController.popBackStack() }
         }
         composable(
             route = TimerAddDestination.routeWithArgs,
