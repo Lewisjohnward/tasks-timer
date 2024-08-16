@@ -50,16 +50,6 @@ object HomeDestination : NavigationDestination {
     override val title = "Tasks Timer Home"
 }
 
-
-data class FakeTasksTimer(
-    val running: Boolean = false,
-    val finished: Boolean = false,
-    val coroutineId: Job? = null,
-    val currentTimerIndex: Int = 0,
-    val timers: List<TimerItem> = listOf()
-)
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -69,9 +59,6 @@ fun HomeScreen(
     navigateToAddTimer: (Int) -> Unit,
     tasksTimerService: TasksTimerService,
 ) {
-//    LaunchedEffect(true) {
-//        viewModel.loadBoards()
-//    }
 
     val uiState: UiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
