@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.tasks_timer.presentation.ConfirmDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +29,8 @@ import com.android.taskstimer.tasks_timer.presentation.ConfirmDialog
 fun ConfirmDialog(
     dialog: ConfirmDialog = ConfirmDialog(
         message = "Are you sure you want to delete this board?",
-        icon = Icons.Filled.Delete
+        icon = Icons.Filled.Delete,
+        boardItem = BoardItem()
     ),
     confirm: () -> Unit,
     cancel: () -> Unit

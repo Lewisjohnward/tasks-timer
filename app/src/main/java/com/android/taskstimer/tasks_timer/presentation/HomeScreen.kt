@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
 import com.android.taskstimer._other.service.TasksTimerService
-import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
@@ -41,7 +40,6 @@ import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.tasks_timer.presentation.components.Timers
 import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
@@ -75,10 +73,7 @@ fun HomeScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        println(uiState.selectedBoard.id)
-        tasksTimerService.selectBoard(
-            uiState.selectedBoard.id
-        )
+        tasksTimerService.reloadBoard()
     }
 
 
@@ -100,7 +95,7 @@ fun HomeScreen(
                 containerColor = BackgroundDarkGray,
                 topBar = {
                     TimerTopBar(
-                        title = uiState.selectedBoard.name,
+                        title = tasksTimerService.state.value.boardItem.name,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
@@ -113,7 +108,7 @@ fun HomeScreen(
                     ToggleTimer(running = false)
                 },
                 floatingActionButton = {
-                    FloatingActionBtn(onClick = { navigateToAddTimer(uiState.selectedBoard.id) },
+                    FloatingActionBtn(onClick = { navigateToAddTimer(tasksTimerService.state.value.boardItem.id) },
                         icon = {
                             Image(
                                 modifier = Modifier.size(30.dp),
@@ -128,16 +123,16 @@ fun HomeScreen(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    if (uiState.timers.isNotEmpty())
+                    if (tasksTimerService.state.value.timers.isNotEmpty())
                         Timers(
-                            timers = tasksTimerService.timers.value,
+                            timers = tasksTimerService.state.value.timers,
                             onEvent = onEvent,
                         )
                 }
             }
             if (menuOpen) MenuPopup(
                 dismiss = { menuOpen = false },
-                deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(uiState.selectedBoard)) }
+                deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) }
             )
             if (uiState.displayDialog != null)
                 ConfirmDialog(

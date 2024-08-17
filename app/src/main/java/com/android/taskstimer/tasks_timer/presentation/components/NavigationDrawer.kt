@@ -129,7 +129,7 @@ fun NavigationDrawer(
                             text = board.name,
                             onClick = {
                                 tasksTimerService.selectBoard(board.id)
-                                onEvent(HomeScreenEvent.SelectBoard(board))
+//                                onEvent(HomeScreenEvent.SelectBoard(board))
                             }
                         )
                     )

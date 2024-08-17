@@ -11,21 +11,24 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.android.taskstimer._other.mediaPlayer.Mp
+import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.domain.model.resetTimer
+import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
+
+
+data class State(
+    val timers: List<TimerItem> = emptyList(),
+    val boardItem: BoardItem = BoardItem()
+)
 
 @AndroidEntryPoint
 class TasksTimerService : LifecycleService() {
@@ -70,7 +73,7 @@ class TasksTimerService : LifecycleService() {
     )
 
 
-
+    var state = mutableStateOf(State())
     private var isFgService: Boolean = false
 
     private lateinit var context: Context
@@ -86,6 +89,9 @@ class TasksTimerService : LifecycleService() {
 
     @Inject
     lateinit var timersRepo: TimersRepository
+
+    @Inject
+    lateinit var boardsRepo: BoardsRepository
 
     init {
 //        selectBoard()
@@ -110,9 +116,30 @@ class TasksTimerService : LifecycleService() {
 
     var running = mutableStateOf(false)
 
-    fun selectBoard(boardId: Int = 1) {
+    fun selectBoard(boardId: Int? = null) {
         lifecycleScope.launch {
-            timers.value = timersRepo.getTimers(boardId)
+            if (boardId == null) {
+                val board = boardsRepo.getInitBoard()
+                if (board != null) {
+                    state.value = state.value.copy(
+                        boardItem = board,
+                        timers = timersRepo.getTimers(board.id)
+                    )
+                }
+            } else {
+                state.value = state.value.copy(
+                    boardItem = boardsRepo.getBoard(boardId),
+                    timers = timersRepo.getTimers(boardId)
+                )
+            }
+        }
+    }
+
+    fun reloadBoard(){
+        lifecycleScope.launch {
+            state.value = state.value.copy(
+                timers = timersRepo.getTimers(state.value.boardItem.id)
+            )
         }
     }
 
@@ -150,7 +177,6 @@ class TasksTimerService : LifecycleService() {
     }
 
 
-
     private fun startTasksTimer() {
         lifecycleScope.launch {
 //            timers = timersRepo.getTimers(1)
@@ -180,7 +206,7 @@ class TasksTimerService : LifecycleService() {
         }
     }
 
-    fun isRunning(): Boolean{
+    fun isRunning(): Boolean {
         return activeTimer != null
     }
 

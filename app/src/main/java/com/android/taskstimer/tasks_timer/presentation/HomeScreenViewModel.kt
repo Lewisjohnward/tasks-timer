@@ -23,18 +23,10 @@ import javax.inject.Inject
 
 
 data class UiState(
-    val running: Boolean = false,
-    val finished: Boolean = false,
-    val coroutineId: Job? = null,
-    val currentTimerIndex: Int = 0,
-
     val editBoards: Boolean = false,
-
     val displayDialog: ConfirmDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
-    val timers: List<TimerItem> = listOf(),
-    val selectedBoard: BoardItem = BoardItem(name = ""),
 )
 
 
@@ -42,35 +34,22 @@ data class UiState(
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val insertBoard: InsertBoard,
-    private val getTimersFlow: GetTimersFlow,
     private val getBoardsFlow: GetBoardsFlow,
     private val deleteBoard: DeleteBoard
 ) : ViewModel() {
 
     private val _boards = getBoardsFlow()
     private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = ""))
-    private val _timers = _currentBoard.flatMapLatest { board ->
-        getTimersFlow.invoke(boardId = board.id)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList()
-    )
 
     private val _uiState = MutableStateFlow(UiState())
 
     val uiState =
         combine(
-            _timers,
             _uiState,
             _boards,
-            _currentBoard
-        ) { timers, uiState, boards, currentBoard ->
+        ) { uiState, boards ->
             uiState.copy(
-                timers = timers,
                 boards = boards,
-                selectedBoard = currentBoard
-
             )
         }.stateIn(
             scope = viewModelScope,
@@ -78,15 +57,6 @@ class HomeViewModel @Inject constructor(
             initialValue = UiState()
         )
 
-    init {
-        viewModelScope.launch {
-            println(getBoardsFlow().first())
-            val board = getBoardsFlow().first()
-            _currentBoard.update { if (board.isEmpty()) BoardItem() else board[0] }
-        }
-
-        println("Init view model")
-    }
 
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
@@ -105,14 +75,16 @@ class HomeViewModel @Inject constructor(
                     it.copy(
                         displayDialog = ConfirmDialog(
                             message = "Are you sure you want to delete this board?",
-                        )
+                            boardItem = event.board
+                        ),
                     )
                 }
             }
 
             HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
-                    deleteBoard.invoke(_currentBoard.value)
+                    println(uiState.value.displayDialog?.boardItem)
+                    uiState.value.displayDialog?.let { deleteBoard.invoke(it.boardItem) }
                 }
                 _uiState.update { it.copy(displayDialog = null) }
             }
