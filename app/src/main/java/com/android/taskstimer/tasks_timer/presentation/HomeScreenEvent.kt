@@ -8,4 +8,6 @@ sealed interface HomeScreenEvent {
     data class DeleteBoard(val board: BoardItem): HomeScreenEvent
     data object DialogConfirm: HomeScreenEvent
     data object DialogCancel: HomeScreenEvent
+
+    data class DisplayMenu(val displayMenu: Boolean): HomeScreenEvent
 }

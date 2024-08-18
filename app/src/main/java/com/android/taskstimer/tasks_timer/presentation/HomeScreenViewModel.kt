@@ -1,5 +1,6 @@
 package com.android.taskstimer.tasks_timer.presentation
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
@@ -24,6 +25,7 @@ import javax.inject.Inject
 
 data class UiState(
     val editBoards: Boolean = false,
+    val displayMenu: Boolean = false,
     val displayDialog: ConfirmDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
@@ -40,6 +42,9 @@ class HomeViewModel @Inject constructor(
 
     private val _boards = getBoardsFlow()
     private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = ""))
+
+    var boardDeleted = mutableStateOf(false)
+
 
     private val _uiState = MutableStateFlow(UiState())
 
@@ -86,11 +91,19 @@ class HomeViewModel @Inject constructor(
                     println(uiState.value.displayDialog?.boardItem)
                     uiState.value.displayDialog?.let { deleteBoard.invoke(it.boardItem) }
                 }
-                _uiState.update { it.copy(displayDialog = null) }
+                _uiState.update { it.copy(
+                    displayDialog = null,
+                    displayMenu = false
+                ) }
+                boardDeleted.value = true
             }
 
             HomeScreenEvent.DialogCancel -> {
-                _uiState.update { it.copy(displayDialog = null) }
+                _uiState.update { it.copy(displayDialog = null, displayMenu = false) }
+            }
+
+            is HomeScreenEvent.DisplayMenu -> {
+                _uiState.update { it.copy(displayMenu = event.displayMenu) }
             }
         }
     }

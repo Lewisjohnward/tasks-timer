@@ -117,6 +117,7 @@ class TasksTimerService : LifecycleService() {
     var running = mutableStateOf(false)
 
     fun selectBoard(boardId: Int? = null) {
+        println("board to load ${boardId}")
         lifecycleScope.launch {
             if (boardId == null) {
                 val board = boardsRepo.getInitBoard()
@@ -124,6 +125,12 @@ class TasksTimerService : LifecycleService() {
                     state.value = state.value.copy(
                         boardItem = board,
                         timers = timersRepo.getTimers(board.id)
+                    )
+                }
+                else {
+                    state.value = state.value.copy(
+                        boardItem = BoardItem(name = "Untitled"),
+                        timers = emptyList()
                     )
                 }
             } else {
@@ -135,7 +142,7 @@ class TasksTimerService : LifecycleService() {
         }
     }
 
-    fun reloadBoard(){
+    fun reloadBoard() {
         lifecycleScope.launch {
             state.value = state.value.copy(
                 timers = timersRepo.getTimers(state.value.boardItem.id)

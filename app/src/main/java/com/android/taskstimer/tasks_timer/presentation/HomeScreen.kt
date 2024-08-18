@@ -18,10 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -61,7 +58,6 @@ fun HomeScreen(
     val uiState: UiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
-    var menuOpen: Boolean by remember { mutableStateOf(false) }
 
     fun openDrawer() {
         viewModel.onEvent(HomeScreenEvent.EditBoards(false))
@@ -74,6 +70,18 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = true) {
         tasksTimerService.reloadBoard()
+    }
+
+    LaunchedEffect(key1 = viewModel.boardDeleted.value) {
+        if (viewModel.boardDeleted.value) {
+            if(uiState.boards.size > 1) {
+                println("Board deleted so load ${uiState.boards[0]}")
+                tasksTimerService.selectBoard(uiState.boards[uiState.boards.size - 2].id)
+            }else {
+                tasksTimerService.selectBoard(null)
+            }
+            viewModel.boardDeleted.value = false
+        }
     }
 
 
@@ -101,7 +109,7 @@ fun HomeScreen(
                         scrollBehavior = null,
                         icon = Icons.Filled.Menu,
                         actionIcon = Icons.Filled.MoreVert,
-                        actionOnClick = { menuOpen = true }
+                        actionOnClick = {  onEvent(HomeScreenEvent.DisplayMenu(true))}
                     )
                 },
                 bottomBar = {
@@ -130,8 +138,8 @@ fun HomeScreen(
                         )
                 }
             }
-            if (menuOpen) MenuPopup(
-                dismiss = { menuOpen = false },
+            if (uiState.displayMenu) MenuPopup(
+                dismiss = { onEvent(HomeScreenEvent.DisplayMenu(false)) },
                 deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) }
             )
             if (uiState.displayDialog != null)
