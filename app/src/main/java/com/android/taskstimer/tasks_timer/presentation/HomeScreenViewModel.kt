@@ -1,22 +1,18 @@
 package com.android.taskstimer.tasks_timer.presentation
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
-import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
-import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,6 +25,7 @@ data class UiState(
     val displayDialog: ConfirmDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
+    val currentBoardIndex: Int = 0
 )
 
 
@@ -41,9 +38,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _boards = getBoardsFlow()
-    private val _currentBoard = MutableStateFlow(BoardItem(id = 1, name = ""))
 
-    var boardDeleted = mutableStateOf(false)
+    var boardToLoad: MutableState<Int?> = mutableStateOf(null)
 
 
     private val _uiState = MutableStateFlow(UiState())
@@ -88,14 +84,30 @@ class HomeViewModel @Inject constructor(
 
             HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
-                    println(uiState.value.displayDialog?.boardItem)
                     uiState.value.displayDialog?.let { deleteBoard.invoke(it.boardItem) }
+
+                    _uiState.update {
+                        it.copy(
+                            displayDialog = null,
+                            displayMenu = false
+                        )
+                    }
+
+                    val boardIndexToLoad = boardIndexToLoad(
+                        boardCount = uiState.value.boards.size,
+                        deletedBoard = uiState.value.currentBoardIndex
+                    )
+
+
+                    if (boardIndexToLoad != null) {
+                        boardToLoad.value = uiState.value.boards[boardIndexToLoad].id
+                    } else {
+                        boardToLoad.value = 0
+                    }
+
                 }
-                _uiState.update { it.copy(
-                    displayDialog = null,
-                    displayMenu = false
-                ) }
-                boardDeleted.value = true
+
+
             }
 
             HomeScreenEvent.DialogCancel -> {
@@ -105,6 +117,22 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.DisplayMenu -> {
                 _uiState.update { it.copy(displayMenu = event.displayMenu) }
             }
+
+            is HomeScreenEvent.SelectBoard -> {
+                _uiState.update { it.copy(currentBoardIndex = event.boardIndex) }
+            }
         }
     }
+
+    private fun boardIndexToLoad(boardCount: Int, deletedBoard: Int): Int? {
+        // First board
+        if (deletedBoard == 0 && boardCount > 0) return 0
+        // Middle board
+        if (boardCount != deletedBoard) return boardCount - 1
+        // Last board
+        if (boardCount > 0) return boardCount - 1
+        // All boards deleted
+        return null
+    }
 }
+

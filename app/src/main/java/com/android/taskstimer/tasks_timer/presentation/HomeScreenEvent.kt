@@ -6,6 +6,8 @@ sealed interface HomeScreenEvent {
     data class EditBoards(val edit: Boolean): HomeScreenEvent
     data class CreateBoard(val name: String) : HomeScreenEvent
     data class DeleteBoard(val board: BoardItem): HomeScreenEvent
+
+    data class SelectBoard(val boardIndex: Int): HomeScreenEvent
     data object DialogConfirm: HomeScreenEvent
     data object DialogCancel: HomeScreenEvent
 

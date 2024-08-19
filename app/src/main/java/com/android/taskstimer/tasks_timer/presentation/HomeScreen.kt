@@ -72,17 +72,19 @@ fun HomeScreen(
         tasksTimerService.reloadBoard()
     }
 
-    LaunchedEffect(key1 = viewModel.boardDeleted.value) {
-        if (viewModel.boardDeleted.value) {
-            if(uiState.boards.size > 1) {
-                println("Board deleted so load ${uiState.boards[0]}")
-                tasksTimerService.selectBoard(uiState.boards[uiState.boards.size - 2].id)
-            }else {
+    LaunchedEffect(key1 = viewModel.boardToLoad.value) {
+        if (viewModel.boardToLoad.value != null) {
+            val boardIdToLoad = viewModel.boardToLoad.value
+            if (boardIdToLoad != 0) {
+                tasksTimerService.selectBoard(boardIdToLoad)
+                viewModel.boardToLoad.value = null
+            } else {
                 tasksTimerService.selectBoard(null)
             }
-            viewModel.boardDeleted.value = false
+            viewModel.boardToLoad.value = null
         }
     }
+
 
 
     ModalNavigationDrawer(
@@ -109,7 +111,7 @@ fun HomeScreen(
                         scrollBehavior = null,
                         icon = Icons.Filled.Menu,
                         actionIcon = Icons.Filled.MoreVert,
-                        actionOnClick = {  onEvent(HomeScreenEvent.DisplayMenu(true))}
+                        actionOnClick = { onEvent(HomeScreenEvent.DisplayMenu(true)) }
                     )
                 },
                 bottomBar = {
