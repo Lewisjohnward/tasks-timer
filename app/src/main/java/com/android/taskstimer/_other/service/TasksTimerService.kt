@@ -52,26 +52,6 @@ class TasksTimerService : LifecycleService() {
 
     var currentTimer = 0
     private var activeTimer: Timer? = null
-//    var timers: List<TimerItem> = listOf(
-//
-//    )
-
-    var timers = mutableStateOf(
-        listOf(
-            TimerItem(
-                id = 1836, boardId = 7423, name = "Kason", presetTime = "10", remainingTime = "10"
-            ),
-            TimerItem(
-                id = 1836,
-                boardId = 7423,
-                name = "Clean something",
-                presetTime = "20",
-                remainingTime = "20"
-            ),
-
-            )
-    )
-
 
     var state = mutableStateOf(State())
     private var isFgService: Boolean = false
@@ -93,12 +73,6 @@ class TasksTimerService : LifecycleService() {
     @Inject
     lateinit var boardsRepo: BoardsRepository
 
-    init {
-//        selectBoard()
-        println("init")
-    }
-
-
     private val binder = MyBinder()
 
     inner class MyBinder : Binder() {
@@ -117,7 +91,6 @@ class TasksTimerService : LifecycleService() {
     var running = mutableStateOf(false)
 
     fun selectBoard(boardId: Int? = null) {
-        println("board to load ${boardId}")
         lifecycleScope.launch {
             if (boardId == null) {
                 val board = boardsRepo.getInitBoard()
@@ -152,6 +125,7 @@ class TasksTimerService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        println("service: onCreate")
         selectBoard()
         context = this
     }
@@ -186,16 +160,14 @@ class TasksTimerService : LifecycleService() {
 
     private fun startTasksTimer() {
         lifecycleScope.launch {
-//            timers = timersRepo.getTimers(1)
-            println(timers)
-            if (timers.value.isEmpty()) return@launch
+            if (state.value.timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
             activeTimer = Timer()
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     decrementTime()
                     if (remainingTimeOfCurrentTimerIsZero()) {
-                        if (currentTimer < timers.value.size - 1) {
+                        if (currentTimer < state.value.timers.size - 1) {
                             currentTimer++
                         } else {
                             stopTimer()
@@ -222,7 +194,11 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun resetTimers() {
-        timers.value = timers.value.map { timer -> timer.resetTimer() }
+//        state.value = state.value.timers.map { timer -> timer.resetTimer() }
+//        timers.value = timers.value.map { timer -> timer.resetTimer() }
+        state.value = state.value.copy(
+            timers = state.value.timers.map {timer -> timer.resetTimer()}
+        )
     }
 
     private fun stopTimer() {
@@ -231,17 +207,18 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
-        return timers.value[currentTimer].remainingTime.toInt() <= 0
+        return state.value.timers[currentTimer].remainingTime.toInt() <= 0
     }
 
     private fun decrementTime() {
-        timers.value = timers.value.mapIndexed() { index, timer ->
-            if (index == currentTimer) {
-                val updatedTimer =
-                    timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
-                updatedTimer
-            } else timer
-        }
+        state.value = state.value.copy(
+            timers = state.value.timers.mapIndexed { index, timer ->
+                if (index == currentTimer) {
+                    val updatedTimer =
+                        timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
+                    updatedTimer
+                } else timer}
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -254,11 +231,11 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
-        val initialTime = timers.value[currentTimer].presetTime.toInt()
-        val elapsedTime = initialTime - timers.value[currentTimer].remainingTime.toInt()
+        val initialTime = state.value.timers[currentTimer].presetTime.toInt()
+        val elapsedTime = initialTime - state.value.timers[currentTimer].remainingTime.toInt()
         return notification
-            .setContentTitle("${timers.value[currentTimer].name} -${currentTimer}/${timers.value.size}")
-            .setContentText(timers.value[currentTimer].formatTime())
+            .setContentTitle("${state.value.timers[currentTimer].name} -${currentTimer}/${state.value.timers.size}")
+            .setContentText(state.value.timers[currentTimer].formatTime())
             .setProgress(initialTime, elapsedTime, false)
             .build()
     }
