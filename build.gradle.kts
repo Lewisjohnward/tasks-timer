@@ -7,8 +7,8 @@ buildscript {
 }
 
 plugins {
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.jetbrainsKotlinAndroid) apply false
-    alias(libs.plugins.devtoolsKsp)
-    alias(libs.plugins.hiltAndroid) apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.daggerHiltAndroid) apply false
+    alias(libs.plugins.jetbrainsKotlinSerialization) apply false
 }
