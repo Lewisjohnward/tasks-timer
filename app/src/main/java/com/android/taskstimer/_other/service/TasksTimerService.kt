@@ -102,7 +102,7 @@ class TasksTimerService : LifecycleService() {
                 }
                 else {
                     state.value = state.value.copy(
-                        boardItem = BoardItem(name = "Untitled"),
+                        boardItem = BoardItem(name = ""),
                         timers = emptyList()
                     )
                 }

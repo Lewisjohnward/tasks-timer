@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.util.TestTags
 
 private data class DrawerItem(
     val text: String,
@@ -117,6 +119,7 @@ fun NavigationDrawer(
 
                 itemsIndexed(boards) {index, board ->
                     NavDrawerItem(
+                        modifier = Modifier.testTag("${TestTags.BOARD} ${board.name}"),
                         closeDrawer = closeDrawer,
                         handle = {
                             if (editBoards)
@@ -187,6 +190,7 @@ fun NavigationDrawer(
 
 @Composable
 private fun NavDrawerItem(
+    modifier: Modifier = Modifier,
     closeDrawer: () -> Unit = {},
     item: DrawerItem,
     handle: @Composable () -> Unit = {}
@@ -197,7 +201,7 @@ private fun NavDrawerItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NavigationDrawerItem(
-            modifier = Modifier.weight(1f),
+            modifier = modifier.weight(1f),
             label = { Text(text = item.text) },
             icon = { Icon(imageVector = item.icon, contentDescription = null) },
             selected = item.selected,

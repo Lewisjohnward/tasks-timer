@@ -21,11 +21,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.edit_timer.presentation.components.NameInput
 import com.android.taskstimer.edit_timer.presentation.components.Numpad
 import com.android.taskstimer.edit_timer.presentation.components.TimeInput
@@ -88,7 +90,13 @@ fun TimerAddScreen(
             ) {
                 NameInput()
                 TimeInput()
-                Button(onClick = { onEvent(TimerAddEvent.AddTimer)}) {
+                Button(
+                    modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
+                    onClick = {
+                        onEvent(TimerAddEvent.AddTimer)
+                        navigateBack()
+                    }
+                ) {
                     Text(text = "hello")
 
                 }

@@ -14,10 +14,12 @@ import com.android.taskstimer.R
 
 @Composable
 fun FloatingActionBtn(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     icon: @Composable () -> Unit
 ) {
     FloatingActionButton(
+        modifier = modifier,
         containerColor = Color(0xFF629D61),
         shape = RoundedCornerShape(50.dp),
         onClick = { onClick() }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +30,7 @@ import com.android.taskstimer.R
 import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
@@ -122,7 +124,9 @@ fun HomeScreen(
                     ToggleTimer(running = false)
                 },
                 floatingActionButton = {
-                    FloatingActionBtn(onClick = { navigateToAddTimer(tasksTimerService.state.value.boardItem.id) },
+                    FloatingActionBtn(
+                        modifier = Modifier.testTag(TestTags.ADD_TIMER_FAB),
+                        onClick = { navigateToAddTimer(tasksTimerService.state.value.boardItem.id) },
                         icon = {
                             Image(
                                 modifier = Modifier.size(30.dp),

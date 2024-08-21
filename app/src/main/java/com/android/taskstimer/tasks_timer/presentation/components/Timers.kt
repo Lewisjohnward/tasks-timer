@@ -14,11 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 
@@ -67,6 +69,7 @@ fun TimerComposable(timer: TimerItem, index: Int) {
             .height(100.dp)
     ) {
         Text(
+            modifier = Modifier.testTag("${TestTags.TIMER} ${timer.name}"),
             text = timer.name,
             fontSize = 20.sp,
             color = Color.White
