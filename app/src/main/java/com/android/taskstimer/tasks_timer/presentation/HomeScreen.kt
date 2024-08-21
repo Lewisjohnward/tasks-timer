@@ -69,7 +69,11 @@ fun HomeScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        tasksTimerService.reloadBoard()
+        if (uiState.boards.size == 1) {
+            tasksTimerService.selectBoard(uiState.boards[0].id)
+        } else {
+            tasksTimerService.reloadBoard()
+        }
     }
 
     LaunchedEffect(key1 = viewModel.boardToLoad.value) {

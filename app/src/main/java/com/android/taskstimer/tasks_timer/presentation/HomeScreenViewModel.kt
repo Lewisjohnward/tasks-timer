@@ -68,6 +68,11 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.CreateBoard -> {
                 viewModelScope.launch {
                     insertBoard(BoardItem(name = event.name))
+
+                    // If this is the first board created load into service/ui
+                    if(uiState.value.boards.size == 1){
+                        boardToLoad.value = uiState.value.boards[0].id
+                    }
                 }
             }
 
