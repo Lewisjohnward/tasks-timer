@@ -4,14 +4,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+data class TimerAddUiState(
+    val timer: TimerItem = TimerItem(),
+    val isEntryValid: Boolean = false
+)
 
 @HiltViewModel
 class TimerAddViewModel @Inject constructor(
@@ -19,12 +24,11 @@ class TimerAddViewModel @Inject constructor(
     private val addTimer: AddTimer
 ) : ViewModel() {
     private val boardId: Int = checkNotNull(savedStateHandle[TimerAddDestination.boardIdArg])
-    private val _uiState = MutableStateFlow("Put uiState here")
+    private val _uiState = MutableStateFlow(TimerAddUiState())
     val uiState = _uiState.asStateFlow()
 
 
     private fun addTimer(timer: TimerItem) {
-        println(timer)
         viewModelScope.launch {
             addTimer.invoke(timer)
         }
@@ -33,16 +37,38 @@ class TimerAddViewModel @Inject constructor(
     fun onEvent(event: TimerAddEvent) {
         when (event) {
             is TimerAddEvent.AddTimer -> {
-                val dummyData = TimerItem(
-                    boardId = boardId,
-                    name = "My banging new timer",
-                    presetTime = "143",
-                    remainingTime = "143"
+                addTimer(
+                    TimerItem(
+                        boardId = boardId,
+                        name = uiState.value.timer.name,
+                        presetTime = "125",
+                        remainingTime = "125"
+                    )
                 )
-                addTimer(dummyData)
 
             }
+
+            is TimerAddEvent.UpdateName -> {
+                _uiState.update {
+                    val updatedTimer = TimerItem(
+                        name = event.name
+                    )
+                    it.copy(
+                        timer = updatedTimer,
+                        isEntryValid = validateInput(updatedTimer)
+
+                    )
+                }
+                println(uiState.value.timer)
+                println(validateInput(uiState.value.timer))
+            }
+
         }
     }
 
+    private fun validateInput(timer: TimerItem = _uiState.value.timer): Boolean {
+        return with(timer) {
+            name.isNotBlank() // && name.isNotBlank() && presetTime.isNotBlank()
+        }
+    }
 }

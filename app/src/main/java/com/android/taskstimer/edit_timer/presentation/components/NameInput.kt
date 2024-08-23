@@ -17,26 +17,31 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.taskstimer.edit_timer.presentation.TimerAddEvent
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 @Composable
-fun NameInput() {
+fun NameInput(
+    name: String,
+    onEvent: (TimerAddEvent) -> Unit
+) {
     Column(
         modifier = Modifier.background(Color.Transparent),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         BasicTextField(
-            value = "My awesome new timer",
+            value = name,
             textStyle = TextStyle(
                 fontSize = 30.sp,
                 color = Color.White
             ),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
             enabled = true,
             maxLines = 1,
             cursorBrush = SolidColor(Color.White),
-            onValueChange = {},
+            onValueChange = {onEvent(TimerAddEvent.UpdateName(it))},
         )
         Spacer(
             modifier = Modifier

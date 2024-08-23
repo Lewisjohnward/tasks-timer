@@ -17,6 +17,9 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +34,7 @@ import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.edit_timer.presentation.components.NameInput
 import com.android.taskstimer.edit_timer.presentation.components.Numpad
 import com.android.taskstimer.edit_timer.presentation.components.TimeInput
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenUiState
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
 object TimerAddDestination : NavigationDestination {
@@ -47,11 +50,13 @@ fun TimerAddScreen(
     navigateBack: () -> Unit,
     viewModel: TimerAddViewModel = hiltViewModel()
 ) {
+    val uiState: TimerAddUiState by viewModel.uiState.collectAsState()
     val onEvent = viewModel::onEvent
 
     var sheetState = SheetState(skipPartiallyExpanded = false, initialValue = SheetValue.Expanded)
     var scaffoldState = rememberBottomSheetScaffoldState(sheetState)
     val scope = rememberCoroutineScope()
+
 
 
     BottomSheetScaffold(
@@ -88,14 +93,18 @@ fun TimerAddScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(120.dp)
             ) {
-                NameInput()
+                NameInput(
+                    name = uiState.timer.name,
+                    onEvent = onEvent
+                )
                 TimeInput()
                 Button(
                     modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
                     onClick = {
                         onEvent(TimerAddEvent.AddTimer)
                         navigateBack()
-                    }
+                    },
+                    enabled = uiState.isEntryValid
                 ) {
                     Text(text = "hello")
 
