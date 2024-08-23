@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class UiState(
+data class HomeScreenUiState(
     val editBoards: Boolean = false,
     val displayMenu: Boolean = false,
     val displayDialog: ConfirmDialog? = null,
@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
     var boardToLoad: MutableState<Int?> = mutableStateOf(null)
 
 
-    private val _uiState = MutableStateFlow(UiState())
+    private val _uiState = MutableStateFlow(HomeScreenUiState())
 
     val uiState =
         combine(
@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = UiState()
+            initialValue = HomeScreenUiState()
         )
 
 

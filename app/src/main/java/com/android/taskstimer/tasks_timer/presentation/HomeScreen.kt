@@ -57,7 +57,7 @@ fun HomeScreen(
     tasksTimerService: TasksTimerService,
 ) {
 
-    val uiState: UiState by viewModel.uiState.collectAsState()
+    val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
 
