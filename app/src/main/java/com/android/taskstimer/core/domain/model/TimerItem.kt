@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 data class TimerItem(
     val id: Int = 0,
-    val boardId: Int,
-    val name: String,
-    val presetTime: String,
-    val remainingTime: String
+    val boardId: Int = 0,
+    val name: String = "",
+    val presetTime: String = "",
+    val remainingTime: String = ""
 )
 
 fun TimerItem.formatTime(): String {
