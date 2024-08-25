@@ -115,14 +115,6 @@ class TasksTimerService : LifecycleService() {
         }
     }
 
-    fun reloadBoard() {
-        lifecycleScope.launch {
-            state.value = state.value.copy(
-                timers = timersRepo.getTimers(state.value.boardItem.id)
-            )
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
         println("service: onCreate")
