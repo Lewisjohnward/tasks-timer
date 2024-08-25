@@ -13,7 +13,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,13 +79,14 @@ fun HomeScreen(
 
     // Triggered when choosing a board/deleting a board
     LaunchedEffect(key1 = viewModel.boardToLoad.value) {
-        if (viewModel.boardToLoad.value != null) {
-            val boardIdToLoad = viewModel.boardToLoad.value
-            if (boardIdToLoad != 0) { tasksTimerService.selectBoard(boardIdToLoad) }
-            else { tasksTimerService.selectBoard(null) }
-            viewModel.boardToLoad.value = null
+        if (viewModel.boardToLoad.value == null) return@LaunchedEffect
+        when (val boardToLoad: BoardToLoad = viewModel.boardToLoad.value!!) {
+            is BoardToLoad.BoardId -> tasksTimerService.selectBoard(boardToLoad.int)
+            is BoardToLoad.NullBoard -> tasksTimerService.selectBoard(null)
         }
+        viewModel.boardToLoad.value = null
     }
+
 
     ModalNavigationDrawer(
         drawerContent = {
