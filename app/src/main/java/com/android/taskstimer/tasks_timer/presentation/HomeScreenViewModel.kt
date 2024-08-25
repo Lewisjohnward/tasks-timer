@@ -3,6 +3,7 @@ package com.android.taskstimer.tasks_timer.presentation
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
@@ -10,12 +11,16 @@ import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -37,11 +42,11 @@ class HomeViewModel @Inject constructor(
     private val deleteBoard: DeleteBoard
 ) : ViewModel() {
 
-    private val _boards = getBoardsFlow()
 
     var boardToLoad: MutableState<Int?> = mutableStateOf(null)
 
 
+    private val _boards = getBoardsFlow()
     private val _uiState = MutableStateFlow(HomeScreenUiState())
 
     val uiState =
@@ -58,7 +63,6 @@ class HomeViewModel @Inject constructor(
             initialValue = HomeScreenUiState()
         )
 
-
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
             is HomeScreenEvent.EditBoards -> {
@@ -68,10 +72,11 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.CreateBoard -> {
                 viewModelScope.launch {
                     insertBoard(BoardItem(name = event.name))
-
                     // If this is the first board created load into service/ui
-                    if(uiState.value.boards.size == 1){
-                        boardToLoad.value = uiState.value.boards[0].id
+                    if(uiState.value.boards.isEmpty()){
+                        if(getBoardsFlow().first().isNotEmpty() ) {
+                            boardToLoad.value = getBoardsFlow().first()[0].id
+                        }
                     }
                 }
             }
@@ -87,7 +92,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-            HomeScreenEvent.DialogConfirm -> {
+            is HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
                     uiState.value.displayDialog?.let { deleteBoard.invoke(it.boardItem) }
 
@@ -99,15 +104,17 @@ class HomeViewModel @Inject constructor(
                     }
 
                     val boardIndexToLoad = boardIndexToLoad(
-                        boardCount = uiState.value.boards.size,
+                        boardCount = getBoardsFlow().first().size,
                         deletedBoard = uiState.value.currentBoardIndex
                     )
 
 
                     if (boardIndexToLoad != null) {
                         boardToLoad.value = uiState.value.boards[boardIndexToLoad].id
+                        _uiState.update { it.copy(currentBoardIndex = boardIndexToLoad) }
                     } else {
                         boardToLoad.value = 0
+                        _uiState.update { it.copy(currentBoardIndex = 0) }
                     }
 
                 }
@@ -115,7 +122,7 @@ class HomeViewModel @Inject constructor(
 
             }
 
-            HomeScreenEvent.DialogCancel -> {
+            is HomeScreenEvent.DialogCancel -> {
                 _uiState.update { it.copy(displayDialog = null, displayMenu = false) }
             }
 

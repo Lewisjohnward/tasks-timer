@@ -70,28 +70,23 @@ fun HomeScreen(
         coroutineScope.launch { drawerState.close() }
     }
 
-    LaunchedEffect(key1 = true) {
+    // After adding a timer causes the service to load the timers
+    LaunchedEffect(key1 = uiState.boards, key2 = true) {
         if (uiState.boards.size == 1) {
             tasksTimerService.selectBoard(uiState.boards[0].id)
-        } else {
-            tasksTimerService.reloadBoard()
         }
+        else tasksTimerService.reloadBoard()
     }
 
+    // Triggered when choosing a board/deleting a board
     LaunchedEffect(key1 = viewModel.boardToLoad.value) {
         if (viewModel.boardToLoad.value != null) {
             val boardIdToLoad = viewModel.boardToLoad.value
-            if (boardIdToLoad != 0) {
-                tasksTimerService.selectBoard(boardIdToLoad)
-                viewModel.boardToLoad.value = null
-            } else {
-                tasksTimerService.selectBoard(null)
-            }
+            if (boardIdToLoad != 0) { tasksTimerService.selectBoard(boardIdToLoad) }
+            else { tasksTimerService.selectBoard(null) }
             viewModel.boardToLoad.value = null
         }
     }
-
-
 
     ModalNavigationDrawer(
         drawerContent = {
