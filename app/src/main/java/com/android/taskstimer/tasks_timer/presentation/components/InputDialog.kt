@@ -26,11 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.TasksTimerTheme
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 
@@ -63,6 +65,7 @@ fun InputDialog(
                     fontWeight = FontWeight.Bold
                 )
                 TextField(
+                    modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
                     value = input,
                     placeholder = {Text(text = "My awesome new board")},
                     onValueChange = {input = it},
@@ -89,7 +92,9 @@ fun InputDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = {
+                    TextButton(
+                        modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
+                        onClick = {
                         onEvent(HomeScreenEvent.CreateBoard(input))
                         close()
                     }) {
@@ -98,7 +103,9 @@ fun InputDialog(
                             color = Color(0xFFFF9B88)
                         )
                     }
-                    TextButton(onClick = { close() }) {
+                    TextButton(
+                        modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
+                        onClick = { close() }) {
                         Text(
                             text = "Cancel",
                             color = Color(0xFFFF9B88)

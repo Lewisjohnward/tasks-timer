@@ -67,6 +67,7 @@ fun NavigationDrawer(
 
     var inputDialogVisible by remember { mutableStateOf(false) }
     ModalDrawerSheet(
+        modifier = Modifier.testTag(TestTags.DRAWER),
         drawerShape = RectangleShape
     ) {
         Column(
@@ -108,7 +109,10 @@ fun NavigationDrawer(
                     color = Color(0x99FFFFFF),
                     fontWeight = FontWeight.Bold
                 )
-                TextButton(onClick = { onEvent(HomeScreenEvent.EditBoards(!editBoards)) }) {
+                TextButton(
+                    modifier = Modifier.testTag(TestTags.DRAWER_EDIT_BUTTON),
+                    onClick = { onEvent(HomeScreenEvent.EditBoards(!editBoards)) }
+                ) {
                     Text(
                         text = if (editBoards) "Done" else "Edit",
                         color = Color(0xFFFF9B88)
@@ -140,6 +144,7 @@ fun NavigationDrawer(
                 }
                 if (editBoards) item {
                     Button(
+                        modifier = Modifier.testTag(TestTags.DRAWER_ADD_BOARD_BUTTON),
                         onClick = { inputDialogVisible = true },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent

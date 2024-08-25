@@ -50,6 +50,7 @@ fun TimerTopBar(
         actions = {
             actionIcon?.let {
                 IconButton(
+                    modifier = Modifier.testTag(TestTags.BOARD_MENU_BUTTON),
                     onClick = actionOnClick
                 ) {
                     Icon(
@@ -63,7 +64,7 @@ fun TimerTopBar(
         navigationIcon = {
             if (displayIcon) {
                 IconButton(
-                    modifier = Modifier.testTag(TestTags.MENU_BUTTON),
+                    modifier = Modifier.testTag(TestTags.OPEN_DRAWER_BUTTON),
                     onClick = iconOnclick
                 ) {
                     Icon(

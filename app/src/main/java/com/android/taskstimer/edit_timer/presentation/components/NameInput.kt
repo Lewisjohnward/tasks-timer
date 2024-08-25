@@ -13,10 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.edit_timer.presentation.TimerAddEvent
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
@@ -31,6 +33,7 @@ fun NameInput(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         BasicTextField(
+            modifier = Modifier.testTag(TestTags.INPUT_FIELD),
             value = name,
             textStyle = TextStyle(
                 fontSize = 30.sp,

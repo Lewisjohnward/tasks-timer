@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.util.TestTags
 
 @Composable
 fun MenuPopup(
@@ -48,8 +50,12 @@ fun MenuPopup(
                 defaultElevation = 5.dp
             )
         ) {
-            MenuPopupItem(icon = Icons.Filled.Edit, text = "Rename Board", onClick = {})
             MenuPopupItem(
+                testTag = TestTags.MENU_RENAME_BOARD,
+                icon = Icons.Filled.Edit, text = "Rename Board", onClick = {}
+            )
+            MenuPopupItem(
+                testTag = TestTags.MENU_DELETE_BOARD,
                 text = "Delete Board",
                 contentsColor = Color(0xFFFF5447),
                 icon = Icons.Filled.Delete,
@@ -65,10 +71,12 @@ fun MenuPopupItem(
     text: String,
     contentsColor: Color = Color.White,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    testTag: String = ""
 ) {
     TextButton(
-        onClick = { onClick() },
+        modifier = Modifier.testTag(testTag),
+        onClick = { onClick() }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
