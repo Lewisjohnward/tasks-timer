@@ -40,7 +40,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
-import com.android.taskstimer.tasks_timer.presentation.components.Timer
+import com.android.taskstimer.tasks_timer.presentation.components.timer.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
 import kotlinx.coroutines.CoroutineScope

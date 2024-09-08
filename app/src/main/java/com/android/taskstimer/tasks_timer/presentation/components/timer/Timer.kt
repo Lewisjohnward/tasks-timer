@@ -1,17 +1,23 @@
-package com.android.taskstimer.tasks_timer.presentation.components
+package com.android.taskstimer.tasks_timer.presentation.components.timer
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 
 @Composable
 fun Timer(
@@ -56,7 +63,7 @@ fun Timer(
             time = timer.formatTime(),
             onMenuClick = { displayMenu = true }
         )
-        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }){
+        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }) {
             TimerMenu()
         }
     }
@@ -64,12 +71,11 @@ fun Timer(
 }
 
 
-
 @Composable
 private fun TimerDetails(
     name: String = "Timer name",
     time: String = "00:45",
-    onMenuClick: () -> Unit = {}
+    onMenuClick: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -95,14 +101,83 @@ private fun TimerDetails(
         )
     }
     Row(
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
         Text(
             text = time,
             fontSize = 45.sp,
             color = Color.White
+        )
+        Control()
+    }
+}
+
+@Composable
+private fun Control(
+    isActive: Boolean = false
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+        ControlButton(
+            icon = Icons.Filled.RestartAlt,
+            contentDescription = "Restart button",
+            color = Color(0xFF3C6071),
+            padding = PaddingValues(5.dp),
+            onClick = {}
+        )
+
+        when (isActive) {
+            true -> {
+                ControlButton(
+                    icon = Icons.Filled.Pause,
+                    padding = PaddingValues(start = 14.dp, top = 5.dp, end = 15.dp, bottom = 5.dp),
+                    contentDescription = "Pause button",
+                    color = Color(0xFFFF5447),
+                    onClick = {}
+                )
+            }
+            false -> {
+                ControlButton(
+                    icon = Icons.Filled.PlayArrow,
+                    padding = PaddingValues(start = 14.dp, top = 5.dp, end = 15.dp, bottom = 5.dp),
+                    contentDescription = "Play button",
+                    color = Color(0xFF629D61),
+                    onClick = {}
+                )
+
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun ControlButton(
+    color: Color,
+    padding: PaddingValues,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String
+
+) {
+    Button(
+        modifier = Modifier.defaultMinSize(
+            minWidth = 1.dp,
+            minHeight = 1.dp
+        ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = color
+        ),
+        contentPadding = padding,
+        shape = RoundedCornerShape(10.dp),
+        onClick = {}
+    ) {
+        Icon(
+            modifier = Modifier.size(30.dp),
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = Color.White
         )
     }
 
