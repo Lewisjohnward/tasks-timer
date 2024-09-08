@@ -8,6 +8,7 @@ object TestTags {
     const val OPEN_DRAWER_BUTTON = "OPEN_DRAWER_BUTTON"
     const val BOARD_MENU_BUTTON = "BOARD_MENU_BUTTON"
     const val TIMER = "TIMER"
+    const val TIMER_MENU = "TIMER_MENU"
 
     // HomeScreen - Drawer
     const val DRAWER = "DRAWER"

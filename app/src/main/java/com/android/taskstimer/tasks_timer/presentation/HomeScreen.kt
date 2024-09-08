@@ -1,10 +1,15 @@
 package com.android.taskstimer.tasks_timer.presentation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
@@ -35,6 +40,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
+import com.android.taskstimer.tasks_timer.presentation.components.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.tasks_timer.presentation.components.Timers
 import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
@@ -137,10 +143,22 @@ fun HomeScreen(
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
                     if (tasksTimerService.state.value.timers.isNotEmpty())
-                        Timers(
-                            timers = tasksTimerService.state.value.timers,
-                            onEvent = onEvent,
-                        )
+                        LazyColumn(
+                            modifier = Modifier
+//                .weight(0.8f)
+                                .fillMaxWidth()
+                                .padding(25.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(tasksTimerService.state.value.timers){timer ->
+                                Timer(timer = timer)
+                            }
+                        }
+
+                    Timers(
+                        timers = tasksTimerService.state.value.timers,
+                        onEvent = onEvent,
+                    )
                 }
             }
             if (uiState.displayMenu) MenuPopup(
