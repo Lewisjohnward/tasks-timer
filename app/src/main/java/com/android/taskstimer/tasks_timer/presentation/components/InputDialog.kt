@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -46,9 +47,7 @@ fun InputDialog(
 
     var input by remember { mutableStateOf("") }
 
-    AlertDialog(
-        onDismissRequest = {},
-    ) {
+    BasicAlertDialog(onDismissRequest = {}) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,8 +66,8 @@ fun InputDialog(
                 TextField(
                     modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
                     value = input,
-                    placeholder = {Text(text = "My awesome new board")},
-                    onValueChange = {input = it},
+                    placeholder = { Text(text = "My awesome new board") },
+                    onValueChange = { input = it },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -86,7 +85,7 @@ fun InputDialog(
                         cursorColor = Color.White,
                         unfocusedPlaceholderColor = Color(0x22FFFFFF)
 
-                        ),
+                    ),
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,9 +94,9 @@ fun InputDialog(
                     TextButton(
                         modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
                         onClick = {
-                        onEvent(HomeScreenEvent.CreateBoard(input))
-                        close()
-                    }) {
+                            onEvent(HomeScreenEvent.CreateBoard(input))
+                            close()
+                        }) {
                         Text(
                             text = "confirm",
                             color = Color(0xFFFF9B88)

@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,11 @@ fun TimerAddScreen(
     val uiState: TimerAddUiState by viewModel.uiState.collectAsState()
     val onEvent = viewModel::onEvent
 
-    var sheetState = SheetState(skipPartiallyExpanded = false, initialValue = SheetValue.Expanded)
+    var sheetState = SheetState(
+        skipPartiallyExpanded = false,
+        density = LocalDensity.current,
+        initialValue = SheetValue.Expanded
+    )
     var scaffoldState = rememberBottomSheetScaffoldState(sheetState)
     val scope = rememberCoroutineScope()
 

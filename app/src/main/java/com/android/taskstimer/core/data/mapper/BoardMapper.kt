@@ -20,6 +20,6 @@ fun BoardItem.toBoardEntityForDelete(): BoardEntity {
 fun BoardEntity.toBoardItem(): BoardItem {
     return BoardItem(
         name = name,
-        id = id ?: 0
+        id = id
     )
 }

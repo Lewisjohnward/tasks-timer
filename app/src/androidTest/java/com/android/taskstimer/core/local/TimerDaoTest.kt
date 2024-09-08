@@ -1,4 +1,3 @@
 package com.android.taskstimer.core.local
 
-class TimerDaoTest {
-}
+class TimerDaoTest

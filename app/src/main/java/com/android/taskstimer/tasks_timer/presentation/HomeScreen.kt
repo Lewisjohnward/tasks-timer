@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerState
@@ -41,7 +39,6 @@ import com.android.taskstimer.tasks_timer.presentation.components.BoardMenu
 import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
-import com.android.taskstimer.tasks_timer.presentation.components.MenuPopupItem
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
 import com.android.taskstimer.tasks_timer.presentation.components.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar

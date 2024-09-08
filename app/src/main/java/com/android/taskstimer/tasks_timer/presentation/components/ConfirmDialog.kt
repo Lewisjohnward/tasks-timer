@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,37 +37,37 @@ fun ConfirmDialog(
     cancel: () -> Unit
 )
  {
-    AlertDialog(onDismissRequest = {}) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(5.dp))
-                .background(Color(0xFFFFFFFF))
-                .padding(20.dp)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+     BasicAlertDialog(onDismissRequest = {}) {
+         Box(
+             modifier = Modifier
+                 .fillMaxWidth()
+                 .clip(RoundedCornerShape(5.dp))
+                 .background(Color(0xFFFFFFFF))
+                 .padding(20.dp)
+         ) {
+             Column(
+                 horizontalAlignment = Alignment.CenterHorizontally,
+                 verticalArrangement = Arrangement.spacedBy(20.dp)
 
-            ) {
-                Icon(
-                    imageVector = dialog.icon,
-                    contentDescription = "Delete icon",
-                    tint = Color(0xFF555555)
-                )
-                Text(text = dialog.message)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = {confirm()}) {
-                        Text(text = "Confirm")
-                    }
-                    TextButton(onClick = {cancel()}) {
-                        Text(text = "Cancel")
-                    }
-                }
-            }
-        }
-    }
-}
+             ) {
+                 Icon(
+                     imageVector = dialog.icon,
+                     contentDescription = "Delete icon",
+                     tint = Color(0xFF555555)
+                 )
+                 Text(text = dialog.message)
+                 Row(
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.End
+                 ) {
+                     TextButton(onClick = { confirm() }) {
+                         Text(text = "Confirm")
+                     }
+                     TextButton(onClick = { cancel() }) {
+                         Text(text = "Cancel")
+                     }
+                 }
+             }
+         }
+     }
+ }

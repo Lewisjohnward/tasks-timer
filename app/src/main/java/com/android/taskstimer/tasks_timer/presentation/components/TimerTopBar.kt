@@ -1,7 +1,7 @@
 package com.android.taskstimer.tasks_timer.presentation.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,7 +27,7 @@ fun TimerTopBar(
     displayIcon: Boolean = true,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     iconOnclick: () -> Unit = {},
-    icon: ImageVector = Icons.Filled.ArrowBack,
+    icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actionIcon: ImageVector? = null,
     actionOnClick: () -> Unit = {}
 ) {
