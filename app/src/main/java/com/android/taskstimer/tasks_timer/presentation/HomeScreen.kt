@@ -45,7 +45,6 @@ import com.android.taskstimer.tasks_timer.presentation.components.MenuPopupItem
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
 import com.android.taskstimer.tasks_timer.presentation.components.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
-import com.android.taskstimer.tasks_timer.presentation.components.Timers
 import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -157,11 +156,6 @@ fun HomeScreen(
                                 Timer(timer = timer)
                             }
                         }
-
-                    Timers(
-                        timers = tasksTimerService.state.value.timers,
-                        onEvent = onEvent,
-                    )
                 }
             }
             if (uiState.displayBoardMenu) MenuPopup(
