@@ -13,6 +13,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,47 +30,72 @@ import com.android.taskstimer.core.presentation.util.TestTags
 
 @Composable
 fun Timer(timer: TimerItem) {
+    var displayMenu by remember {
+        mutableStateOf(false)
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = Color.White.copy(alpha = 0.3f), shape = RoundedCornerShape(0.dp))
+            .border(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(0.dp)
+            )
             .padding(10.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-
-        ) {
-            Text(
-                modifier = Modifier.testTag("${TestTags.TIMER} ${timer.name}"),
-                text = timer.name,
-                fontSize = 20.sp,
-                color = Color.White
-            )
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        println("Clicked")
-                    }
-                    .testTag(TestTags.TIMER_MENU),
-                imageVector = Icons.Filled.MoreVert,
-                contentDescription = "Edit timer",
-                tint = Color.White
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-
-            Text(
-                text = timer.formatTime(),
-                fontSize = 45.sp,
-                color = Color.White
-            )
-        }
+        TimerDetails(
+            name = timer.name,
+            time = timer.formatTime(),
+            onMenuClick = { displayMenu = true }
+        )
+        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }, deleteBoard = {})
     }
+
+}
+
+@Composable
+private fun TimerDetails(
+    name: String = "Timer name",
+    time: String = "00:45",
+    onMenuClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+
+    ) {
+        Text(
+            modifier = Modifier.testTag("${TestTags.TIMER} $name"),
+            text = name,
+            fontSize = 20.sp,
+            color = Color.White
+        )
+        Icon(
+            modifier = Modifier
+                .clickable {
+                    onMenuClick()
+                }
+                .testTag(TestTags.TIMER_MENU),
+            imageVector = Icons.Filled.MoreVert,
+            contentDescription = "Edit timer",
+            tint = Color.White
+        )
+    }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        Text(
+            text = time,
+            fontSize = 45.sp,
+            color = Color.White
+        )
+    }
+
 }
 
 
