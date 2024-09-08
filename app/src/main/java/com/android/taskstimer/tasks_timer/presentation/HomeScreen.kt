@@ -120,9 +120,6 @@ fun HomeScreen(
                         actionOnClick = { onEvent(HomeScreenEvent.DisplayMenu(true)) }
                     )
                 },
-                bottomBar = {
-                    ToggleTimer(running = false)
-                },
                 floatingActionButton = {
                     FloatingActionBtn(
                         modifier = Modifier.testTag(TestTags.ADD_TIMER_FAB),
