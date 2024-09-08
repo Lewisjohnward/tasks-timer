@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerState
@@ -35,9 +37,11 @@ import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.tasks_timer.presentation.components.BoardMenu
 import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
+import com.android.taskstimer.tasks_timer.presentation.components.MenuPopupItem
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
 import com.android.taskstimer.tasks_timer.presentation.components.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
@@ -149,7 +153,7 @@ fun HomeScreen(
                                 .padding(25.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            items(tasksTimerService.state.value.timers){timer ->
+                            items(tasksTimerService.state.value.timers) { timer ->
                                 Timer(timer = timer)
                             }
                         }
@@ -162,8 +166,12 @@ fun HomeScreen(
             }
             if (uiState.displayBoardMenu) MenuPopup(
                 dismiss = { onEvent(HomeScreenEvent.DisplayMenu(false)) },
-                deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) }
-            )
+            ) {
+                BoardMenu(
+                    rename = {},
+                    delete = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) },
+                )
+            }
             if (uiState.displayConfirmDialog != null)
                 ConfirmDialog(
                     confirm = { onEvent(HomeScreenEvent.DialogConfirm) },

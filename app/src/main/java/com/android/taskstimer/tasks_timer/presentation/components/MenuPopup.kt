@@ -27,7 +27,7 @@ import com.android.taskstimer.core.presentation.util.TestTags
 @Composable
 fun MenuPopup(
     dismiss: () -> Unit,
-    deleteBoard: () -> Unit
+    content: @Composable () -> Unit
 ) {
     // TODO: Wire up logic
     Popup(
@@ -50,21 +50,10 @@ fun MenuPopup(
                 defaultElevation = 5.dp
             )
         ) {
-            MenuPopupItem(
-                testTag = TestTags.MENU_RENAME_BOARD,
-                icon = Icons.Filled.Edit, text = "Rename Board", onClick = {}
-            )
-            MenuPopupItem(
-                testTag = TestTags.MENU_DELETE_BOARD,
-                text = "Delete Board",
-                contentsColor = Color(0xFFFF5447),
-                icon = Icons.Filled.Delete,
-                onClick = deleteBoard
-            )
+           content()
         }
     }
 }
-
 
 @Composable
 fun MenuPopupItem(

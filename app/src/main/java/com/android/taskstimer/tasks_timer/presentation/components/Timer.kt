@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,9 +29,13 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 @Composable
-fun Timer(timer: TimerItem) {
+fun Timer(
+    timer: TimerItem
+
+) {
     var displayMenu by remember {
         mutableStateOf(false)
     }
@@ -50,10 +56,14 @@ fun Timer(timer: TimerItem) {
             time = timer.formatTime(),
             onMenuClick = { displayMenu = true }
         )
-        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }, deleteBoard = {})
+        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }){
+            TimerMenu()
+        }
     }
 
 }
+
+
 
 @Composable
 private fun TimerDetails(
