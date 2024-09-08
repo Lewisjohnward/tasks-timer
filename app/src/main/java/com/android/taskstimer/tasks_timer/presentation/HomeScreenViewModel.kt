@@ -28,8 +28,8 @@ sealed interface BoardToLoad {
 
 data class HomeScreenUiState(
     val editBoards: Boolean = false,
-    val displayMenu: Boolean = false,
-    val displayDialog: ConfirmDialog? = null,
+    val displayBoardMenu: Boolean = false,
+    val displayConfirmDialog: ConfirmDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
     val currentBoardIndex: Int = 0
@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.DeleteBoard -> {
                 _uiState.update {
                     it.copy(
-                        displayDialog = ConfirmDialog(
+                        displayConfirmDialog = ConfirmDialog(
                             message = "Are you sure you want to delete this board?",
                             boardItem = event.board
                         ),
@@ -95,12 +95,12 @@ class HomeViewModel @Inject constructor(
 
             is HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
-                    uiState.value.displayDialog?.let { deleteBoard.invoke(it.boardItem) }
+                    uiState.value.displayConfirmDialog?.let { deleteBoard.invoke(it.boardItem) }
 
                     _uiState.update {
                         it.copy(
-                            displayDialog = null,
-                            displayMenu = false
+                            displayConfirmDialog = null,
+                            displayBoardMenu = false
                         )
                     }
 
@@ -125,11 +125,11 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.DialogCancel -> {
-                _uiState.update { it.copy(displayDialog = null, displayMenu = false) }
+                _uiState.update { it.copy(displayConfirmDialog = null, displayBoardMenu = false) }
             }
 
             is HomeScreenEvent.DisplayMenu -> {
-                _uiState.update { it.copy(displayMenu = event.displayMenu) }
+                _uiState.update { it.copy(displayBoardMenu = event.displayMenu) }
             }
 
             is HomeScreenEvent.SelectBoard -> {

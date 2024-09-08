@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
@@ -161,11 +160,11 @@ fun HomeScreen(
                     )
                 }
             }
-            if (uiState.displayMenu) MenuPopup(
+            if (uiState.displayBoardMenu) MenuPopup(
                 dismiss = { onEvent(HomeScreenEvent.DisplayMenu(false)) },
                 deleteBoard = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) }
             )
-            if (uiState.displayDialog != null)
+            if (uiState.displayConfirmDialog != null)
                 ConfirmDialog(
                     confirm = { onEvent(HomeScreenEvent.DialogConfirm) },
                     cancel = { onEvent(HomeScreenEvent.DialogCancel) },
