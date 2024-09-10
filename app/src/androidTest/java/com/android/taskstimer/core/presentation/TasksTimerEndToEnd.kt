@@ -81,14 +81,33 @@ class TasksTimerEndToEnd {
 
         navigateToBoard("Untitled")
         assertBoardName("Untitled")
-        deleteBoard()
+
+        runBlocking {
+            delay(300)
+        }
+
+
+
+//        deleteBoard()
+
+        deleteTimer("Timer 1")
+        deleteTimer("Timer 2")
+
+        // Assert correct deletion
+
+    }
+
+
+    private fun deleteTimer(name: String){
+        composeRule.onNodeWithTag("${TestTags.TIMER_MENU} $name").performClick()
+        composeRule.onNodeWithTag(TestTags.TIMER_MENU_DELETE_TIMER).performClick()
 
     }
 
     // Not working correctly, when deleting the UI isn't updated quick enough
     private fun deleteBoard(){
         composeRule.onNodeWithTag(TestTags.BOARD_MENU_BUTTON).performClick()
-        composeRule.onNodeWithTag(TestTags.MENU_DELETE_BOARD).performClick()
+        composeRule.onNodeWithTag(TestTags.BOARD_MENU_DELETE_BOARD).performClick()
     }
 
     private fun navigateToBoard(boardName: String) {

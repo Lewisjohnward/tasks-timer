@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.tasks_timer.presentation.components.MenuPopupItem
 
 @Composable
 fun BoardMenu(
@@ -15,11 +14,11 @@ fun BoardMenu(
 
 ){
     MenuPopupItem(
-        testTag = TestTags.MENU_RENAME_BOARD,
+        testTag = TestTags.BOARD_MENU_RENAME_BOARD,
         icon = Icons.Filled.Edit, text = "Rename Board", onClick = {rename}
     )
     MenuPopupItem(
-        testTag = TestTags.MENU_DELETE_BOARD,
+        testTag = TestTags.BOARD_MENU_DELETE_BOARD,
         text = "Delete Board",
         contentsColor = Color(0xFFFF5447),
         icon = Icons.Filled.Delete,

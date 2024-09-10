@@ -21,9 +21,13 @@ object TestTags {
     const val DIALOG_ADD_BOARD_CONFIRM = "ADD_BOARD_CONFIRM"
     const val DIALOG_ADD_BOARD_CANCEL = "ADD_BOARD_CANCEL"
 
-   // HomeScreen - Menu
-    const val MENU_RENAME_BOARD = "RENAME_BOARD"
-    const val MENU_DELETE_BOARD = "DELETE_BOARD"
+   // HomeScreen - Board Menu
+    const val BOARD_MENU_RENAME_BOARD = "RENAME_BOARD"
+    const val BOARD_MENU_DELETE_BOARD = "DELETE_BOARD"
+
+    // HomeScreen - Timer Menu
+    const val TIMER_MENU_RENAME_TIMER = "RENAME_TIMER"
+    const val TIMER_MENU_DELETE_TIMER = "DELETE_TIMER"
 
 
 

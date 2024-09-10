@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 
 @Composable
@@ -66,6 +65,7 @@ fun Timer(
         )
         if (displayMenu) MenuPopup(dismiss = { displayMenu = false }) {
             TimerMenu(
+                timer = timer,
                 deleteTimer = deleteTimer
             )
         }
@@ -97,7 +97,7 @@ private fun TimerDetails(
                 .clickable {
                     onMenuClick()
                 }
-                .testTag(TestTags.TIMER_MENU),
+                .testTag("${TestTags.TIMER_MENU} $name"),
             imageVector = Icons.Filled.MoreVert,
             contentDescription = "Edit timer",
             tint = Color.White
