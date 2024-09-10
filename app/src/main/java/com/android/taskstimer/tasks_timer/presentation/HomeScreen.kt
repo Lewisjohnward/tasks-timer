@@ -93,7 +93,7 @@ private fun HomeScreenContent(
         }
     }
 
-    // Triggered when choosing a board/deleting a board
+    // Triggered when choosing a board or deleting a board/timer
     LaunchedEffect(key1 = viewModel.boardToLoad.value) {
         if (viewModel.boardToLoad.value == null) return@LaunchedEffect
         when (val boardToLoad: BoardToLoad = viewModel.boardToLoad.value!!) {
