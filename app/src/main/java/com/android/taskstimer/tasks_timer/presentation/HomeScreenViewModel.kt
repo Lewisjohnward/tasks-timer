@@ -5,7 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
+import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
+import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +32,7 @@ sealed interface BoardToLoad {
 data class HomeScreenUiState(
     val editBoards: Boolean = false,
     val displayBoardMenu: Boolean = false,
-    val displayConfirmDialog: ConfirmDialog? = null,
+    val displayConfirmDialog: DeleteDialog? = null,
 
     val boards: List<BoardItem> = listOf(),
     val currentBoardIndex: Int = 0
@@ -40,7 +43,8 @@ data class HomeScreenUiState(
 class HomeViewModel @Inject constructor(
     private val insertBoard: InsertBoard,
     private val getBoardsFlow: GetBoardsFlow,
-    private val deleteBoard: DeleteBoard
+    private val deleteBoard: DeleteBoard,
+    private val deleteTimer: DeleteTimer
 ) : ViewModel() {
 
 
@@ -85,39 +89,28 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.DeleteBoard -> {
                 _uiState.update {
                     it.copy(
-                        displayConfirmDialog = ConfirmDialog(
-                            message = "Are you sure you want to delete this board?",
-                            boardItem = event.board
-                        ),
+                        displayConfirmDialog = DeleteDialog.Board(board = event.board)
+                    )
+                }
+            }
+
+            is HomeScreenEvent.DeleteTimer -> {
+                _uiState.update {
+                    it.copy(
+                        displayConfirmDialog = DeleteDialog.Timer(timer = event.timer)
                     )
                 }
             }
 
             is HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
-                    uiState.value.displayConfirmDialog?.let { deleteBoard.invoke(it.boardItem) }
-
-                    _uiState.update {
-                        it.copy(
-                            displayConfirmDialog = null,
-                            displayBoardMenu = false
-                        )
+                    uiState.value.displayConfirmDialog?.let { deleteDialog ->
+                        when (deleteDialog) {
+                            is DeleteDialog.Board -> deleteBoard(board = deleteDialog.board)
+                            is DeleteDialog.Timer -> deleteTimer(timer = deleteDialog.timer)
+                        }
                     }
 
-                    val boardIndexToLoad = boardIndexToLoad(
-                        boardCount = getBoardsFlow().first().size,
-                        deletedBoard = uiState.value.currentBoardIndex
-                    )
-
-
-                    if (boardIndexToLoad != null) {
-                        boardToLoad.value =
-                            BoardToLoad.BoardId(uiState.value.boards[boardIndexToLoad].id)
-                        _uiState.update { it.copy(currentBoardIndex = boardIndexToLoad) }
-                    } else {
-                        boardToLoad.value = BoardToLoad.NullBoard
-                        _uiState.update { it.copy(currentBoardIndex = 0) }
-                    }
 
                 }
 
@@ -135,6 +128,48 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.SelectBoard -> {
                 _uiState.update { it.copy(currentBoardIndex = event.boardIndex) }
             }
+
+
+        }
+    }
+
+    private fun deleteTimer(timer: TimerItem) = viewModelScope.launch {
+        deleteTimer.invoke(timer)
+
+        boardToLoad.value = BoardToLoad.BoardId(uiState.value.boards[uiState.value.currentBoardIndex].id)
+
+        _uiState.update {
+            it.copy(
+                displayConfirmDialog = null,
+                displayBoardMenu = false
+            )
+        }
+
+    }
+
+
+    private fun deleteBoard(board: BoardItem) = viewModelScope.launch {
+        deleteBoard.invoke(board)
+        val boardIndexToLoad = boardIndexToLoad(
+            boardCount = getBoardsFlow().first().size,
+            deletedBoard = uiState.value.currentBoardIndex
+        )
+
+
+        if (boardIndexToLoad != null) {
+            boardToLoad.value =
+                BoardToLoad.BoardId(uiState.value.boards[boardIndexToLoad].id)
+            _uiState.update { it.copy(currentBoardIndex = boardIndexToLoad) }
+        } else {
+            boardToLoad.value = BoardToLoad.NullBoard
+            _uiState.update { it.copy(currentBoardIndex = 0) }
+        }
+
+        _uiState.update {
+            it.copy(
+                displayConfirmDialog = null,
+                displayBoardMenu = false
+            )
         }
     }
 

@@ -52,14 +52,25 @@ object HomeDestination : NavigationDestination {
     override val title = "Tasks Timer Home"
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigateToAddTimer: (Int) -> Unit = {},
+    tasksTimerService: TasksTimerService ,
+) {
+    HomeScreenContent(
+        navigateToAddTimer = navigateToAddTimer,
+        tasksTimerService = tasksTimerService
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeScreenContent(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = hiltViewModel(),
-    navigateToAddTimer: (Int) -> Unit,
-    tasksTimerService: TasksTimerService,
+    navigateToAddTimer: (Int) -> Unit = {},
+    tasksTimerService: TasksTimerService ,
 ) {
 
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
@@ -147,7 +158,10 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             items(tasksTimerService.state.value.timers) { timer ->
-                                Timer(timer = timer)
+                                Timer(
+                                    timer = timer,
+                                    deleteTimer = {onEvent(HomeScreenEvent.DeleteTimer(timer))}
+                                )
                             }
                         }
                 }
@@ -162,6 +176,7 @@ fun HomeScreen(
             }
             if (uiState.displayConfirmDialog != null)
                 ConfirmDialog(
+                    dialog = uiState.displayConfirmDialog!!,
                     confirm = { onEvent(HomeScreenEvent.DialogConfirm) },
                     cancel = { onEvent(HomeScreenEvent.DialogCancel) },
                 )

@@ -1,6 +1,8 @@
 package com.android.taskstimer.core.data.mapper
 
+import com.android.taskstimer.core.data.local.board.BoardEntity
 import com.android.taskstimer.core.data.local.timer.TimerEntity
+import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 
 fun TimerItem.toTimerEntityForInsert(): TimerEntity{
@@ -12,7 +14,7 @@ fun TimerItem.toTimerEntityForInsert(): TimerEntity{
     )
 }
 
-fun TimerItem.toTimerEntityForUpdate(): TimerEntity{
+fun TimerItem.toTimerEntity(): TimerEntity{
     return TimerEntity(
         id = id,
         boardId = boardId,
@@ -21,6 +23,7 @@ fun TimerItem.toTimerEntityForUpdate(): TimerEntity{
         remainingTime = remainingTime
     )
 }
+
 
 fun TimerEntity.toTimerItem(): TimerItem{
     return TimerItem(

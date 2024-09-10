@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,17 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.android.taskstimer.core.domain.model.BoardItem
-import com.android.taskstimer.tasks_timer.presentation.ConfirmDialog
+import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmDialog(
-    dialog: ConfirmDialog = ConfirmDialog(
-        message = "Are you sure you want to delete this board?",
-        icon = Icons.Filled.Delete,
-        boardItem = BoardItem()
-    ),
+    dialog: DeleteDialog,
     confirm: () -> Unit,
     cancel: () -> Unit
 )
@@ -55,7 +47,7 @@ fun ConfirmDialog(
                      contentDescription = "Delete icon",
                      tint = Color(0xFF555555)
                  )
-                 Text(text = dialog.message)
+                 Text(text = dialog.dialog)
                  Row(
                      modifier = Modifier.fillMaxWidth(),
                      horizontalArrangement = Arrangement.End

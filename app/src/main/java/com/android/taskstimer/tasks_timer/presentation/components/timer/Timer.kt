@@ -36,12 +36,13 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 
 @Composable
 fun Timer(
-    timer: TimerItem
-
+    timer: TimerItem,
+    deleteTimer: () -> Unit
 ) {
     var displayMenu by remember {
         mutableStateOf(false)
@@ -64,7 +65,9 @@ fun Timer(
             onMenuClick = { displayMenu = true }
         )
         if (displayMenu) MenuPopup(dismiss = { displayMenu = false }) {
-            TimerMenu()
+            TimerMenu(
+                deleteTimer = deleteTimer
+            )
         }
     }
 
@@ -192,5 +195,8 @@ private val previewTimerItem = TimerItem(
 @Preview
 @Composable
 private fun TimerPreview() {
-    Timer(timer = previewTimerItem)
+    Timer(
+        timer = previewTimerItem,
+        deleteTimer = {}
+    )
 }
