@@ -1,8 +1,8 @@
 package com.android.taskstimer.core.repository
 
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
+import com.android.taskstimer.core.data.mapper.toTimerEntity
 import com.android.taskstimer.core.data.mapper.toTimerEntityForInsert
-import com.android.taskstimer.core.data.mapper.toTimerEntityForUpdate
 import com.android.taskstimer.core.data.mapper.toTimerItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.TimersRepository
@@ -30,10 +30,10 @@ class FakeTimersRepositoryImpl(
 //    override suspend fun deleteTimer(timer: Timer) = timerDao.delete(timer)
 
     override suspend fun updateTimer(timer: TimerItem) =
-        timerDao.update(timer.toTimerEntityForUpdate())
+        timerDao.update(timer.toTimerEntity())
 
     override suspend fun updateTimers(timers: List<TimerItem>) =
-        timerDao.updateTimers(timers.map { timer -> timer.toTimerEntityForUpdate() })
+        timerDao.updateTimers(timers.map { timer -> timer.toTimerEntity() })
 
     override suspend fun deleteTimer(timer: TimerItem) {
         TODO("Not yet implemented")

@@ -11,6 +11,7 @@ import com.android.taskstimer.core.repository.FakeBoardsRepositoryImpl
 import com.android.taskstimer.core.repository.FakeTimersRepositoryImpl
 import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
+import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
@@ -108,6 +109,14 @@ object TestAppModule {
         boardsRepository: BoardsRepository
     ): AddTimer {
         return AddTimer(timersRepository, boardsRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteTimer(
+        timersRepository: TimersRepository
+    ): DeleteTimer {
+        return DeleteTimer(timersRepository)
     }
 
 }
