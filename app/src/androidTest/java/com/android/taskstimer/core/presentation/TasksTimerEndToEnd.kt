@@ -87,27 +87,39 @@ class TasksTimerEndToEnd {
         }
 
 
-
 //        deleteBoard()
 
         deleteTimer("Timer 1")
+        runBlocking {
+            delay(300)
+        }
+        assertTimerDeleted("Timer 1")
         deleteTimer("Timer 2")
+        runBlocking {
+            delay(300)
+        }
+        assertTimerDeleted("Timer 2")
 
         // Assert correct deletion
 
     }
 
+    private fun assertTimerDeleted(name: String) {
+        composeRule.onNodeWithTag("${TestTags.TIMER_MENU} $name").assertDoesNotExist()
+    }
 
-    private fun deleteTimer(name: String){
+    private fun deleteTimer(name: String) {
         composeRule.onNodeWithTag("${TestTags.TIMER_MENU} $name").performClick()
         composeRule.onNodeWithTag(TestTags.TIMER_MENU_DELETE_TIMER).performClick()
+        composeRule.onNodeWithTag(TestTags.CONFIRM_DELETE).performClick()
 
     }
 
     // Not working correctly, when deleting the UI isn't updated quick enough
-    private fun deleteBoard(){
+    private fun deleteBoard() {
         composeRule.onNodeWithTag(TestTags.BOARD_MENU_BUTTON).performClick()
         composeRule.onNodeWithTag(TestTags.BOARD_MENU_DELETE_BOARD).performClick()
+        composeRule.onNodeWithTag(TestTags.CONFIRM_DELETE).performClick()
     }
 
     private fun navigateToBoard(boardName: String) {
@@ -122,7 +134,7 @@ class TasksTimerEndToEnd {
 
     }
 
-    private fun addBoard(boardName: String){
+    private fun addBoard(boardName: String) {
         openNavTray()
         composeRule.onNodeWithTag(TestTags.DRAWER_EDIT_BUTTON).performClick()
         composeRule.onNodeWithTag(TestTags.DRAWER_ADD_BOARD_BUTTON).performClick()
@@ -131,14 +143,13 @@ class TasksTimerEndToEnd {
     }
 
 
-
     private fun addTimer(timerName: String) {
         composeRule.onNodeWithTag(TestTags.ADD_TIMER_FAB).performClick()
         composeRule.onNodeWithTag(TestTags.INPUT_FIELD).performTextInput(timerName)
         composeRule.onNodeWithTag(TestTags.SAVE_BUTTON).performClick()
     }
 
-    private fun assertTimerAdded(timerName: String){
+    private fun assertTimerAdded(timerName: String) {
         composeRule.onNodeWithTag("${TestTags.TIMER} ${timerName}").assertExists()
     }
 

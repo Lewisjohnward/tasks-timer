@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +54,10 @@ fun ConfirmDialog(
                      modifier = Modifier.fillMaxWidth(),
                      horizontalArrangement = Arrangement.End
                  ) {
-                     TextButton(onClick = { confirm() }) {
+                     TextButton(
+                         modifier = Modifier.testTag(TestTags.CONFIRM_DELETE),
+                         onClick = { confirm() }
+                     ) {
                          Text(text = "Confirm")
                      }
                      TextButton(onClick = { cancel() }) {

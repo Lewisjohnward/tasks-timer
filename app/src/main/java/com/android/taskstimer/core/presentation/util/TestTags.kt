@@ -9,6 +9,7 @@ object TestTags {
     const val BOARD_MENU_BUTTON = "BOARD_MENU_BUTTON"
     const val TIMER = "TIMER"
     const val TIMER_MENU = "TIMER_MENU"
+    const val CONFIRM_DELETE = "CONFIRM_DELETE"
 
     // HomeScreen - Drawer
     const val DRAWER = "DRAWER"
