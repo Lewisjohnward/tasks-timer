@@ -43,7 +43,7 @@ fun Timer(
     timer: TimerItem,
     deleteTimer: () -> Unit
 ) {
-    var displayMenu by remember {
+    var menuVisible by remember {
         mutableStateOf(false)
     }
 
@@ -61,16 +61,16 @@ fun Timer(
         TimerDetails(
             name = timer.name,
             time = timer.formatTime(),
-            onMenuClick = { displayMenu = true }
+            onMenuClick = { menuVisible = true }
         )
-        if (displayMenu) MenuPopup(dismiss = { displayMenu = false }) {
-            TimerMenu(
-                timer = timer,
-                deleteTimer = deleteTimer
-            )
+        if (menuVisible) {
+            MenuPopup(dismiss = { menuVisible = false }) {
+                TimerMenu(
+                    deleteTimer = deleteTimer
+                )
+            }
         }
     }
-
 }
 
 

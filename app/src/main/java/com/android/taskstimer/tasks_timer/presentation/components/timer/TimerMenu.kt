@@ -12,11 +12,12 @@ import com.android.taskstimer.tasks_timer.presentation.components.MenuPopupItem
 @Composable
 fun TimerMenu(
     deleteTimer: () -> Unit,
-    timer: TimerItem
 ) {
     MenuPopupItem(
         testTag = TestTags.TIMER_MENU_RENAME_TIMER,
-        icon = Icons.Filled.Edit, text = "Edit timer", onClick = {}
+        icon = Icons.Filled.Edit,
+        text = "Edit timer",
+        onClick = {}
     )
     MenuPopupItem(
         testTag = TestTags.TIMER_MENU_DELETE_TIMER,
