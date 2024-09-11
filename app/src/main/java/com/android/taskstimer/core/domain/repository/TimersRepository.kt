@@ -9,6 +9,8 @@ interface TimersRepository {
 
     suspend fun getTimers(boardId: Int): List<TimerItem>
 
+    fun getTimerStream(timerId: Int): Flow<TimerItem>
+
     suspend fun insertTimer(timer: TimerItem)
 
     suspend fun updateTimer(timer: TimerItem)

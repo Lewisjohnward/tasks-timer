@@ -41,13 +41,14 @@ import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 @Composable
 fun Timer(
     timer: TimerItem,
-    deleteTimer: () -> Unit
+    deleteTimer: () -> Unit = {},
+    editTimer: () -> Unit = {}
 ) {
     var menuVisible by remember {
         mutableStateOf(false)
     }
 
-    fun handleDeleteTimer(){
+    fun handleDeleteTimer() {
         menuVisible = false
         deleteTimer()
     }
@@ -71,7 +72,8 @@ fun Timer(
         if (menuVisible) {
             MenuPopup(dismiss = { menuVisible = false }) {
                 TimerMenu(
-                    deleteTimer = {handleDeleteTimer()}
+                    deleteTimer = { handleDeleteTimer() },
+                    editTimer = { editTimer() }
                 )
             }
         }
@@ -145,6 +147,7 @@ private fun Control(
                     onClick = {}
                 )
             }
+
             false -> {
                 ControlButton(
                     icon = Icons.Filled.PlayArrow,
@@ -202,6 +205,5 @@ private val previewTimerItem = TimerItem(
 private fun TimerPreview() {
     Timer(
         timer = previewTimerItem,
-        deleteTimer = {}
     )
 }

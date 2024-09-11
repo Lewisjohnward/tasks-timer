@@ -1,4 +1,4 @@
-package com.android.taskstimer.timer.add_timer.presentation.components
+package com.android.taskstimer.timer.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

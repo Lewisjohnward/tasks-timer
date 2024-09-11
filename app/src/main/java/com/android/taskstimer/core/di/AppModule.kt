@@ -14,6 +14,7 @@ import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
+import com.android.taskstimer.timer.edit_timer.domain.use_case.GetTimerStream
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -117,6 +118,14 @@ object AppModule {
         timersRepository: TimersRepository,
     ): DeleteTimer {
         return DeleteTimer(timersRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetTimerStream(
+        timersRepository: TimersRepository,
+    ): GetTimerStream {
+        return GetTimerStream(timersRepository)
     }
 
 

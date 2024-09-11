@@ -14,6 +14,8 @@ import com.android.taskstimer.timer.add_timer.presentation.TimerAddDestination
 import com.android.taskstimer.timer.add_timer.presentation.TimerAddScreen
 import com.android.taskstimer.settings.presentation.SettingsDestination
 import com.android.taskstimer.settings.presentation.SettingsScreen
+import com.android.taskstimer.timer.edit_timer.presentation.TimerEditDestination
+import com.android.taskstimer.timer.edit_timer.presentation.TimerEditScreen
 
 
 @Composable
@@ -32,6 +34,9 @@ fun TasksTimerNavHost(
                 navigateToAddTimer = {
                     navController.navigate("${TimerAddDestination.route}/${it}")
                 },
+                navigateToEditTimer = {
+                    navController.navigate("${TimerEditDestination.route}/${it}")
+                },
                 tasksTimerService = tasksTimerService
             )
         }
@@ -46,10 +51,10 @@ fun TasksTimerNavHost(
         }
 
         composable(
-            route = TimerAddDestination.routeWithArgs,
-            arguments = listOf(navArgument(name = "boardId"){type = NavType.IntType})
+            route = TimerEditDestination.routeWithArgs,
+            arguments = listOf(navArgument(name = "timerId"){type = NavType.IntType})
         ) {
-            TimerAddScreen(
+            TimerEditScreen(
                 navigateBack = { navController.popBackStack() },
             )
         }

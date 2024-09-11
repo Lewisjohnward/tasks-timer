@@ -31,9 +31,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.timer.add_timer.presentation.components.NameInput
-import com.android.taskstimer.timer.add_timer.presentation.components.Numpad
-import com.android.taskstimer.timer.add_timer.presentation.components.TimeInput
+import com.android.taskstimer.timer.presentation.components.NameInput
+import com.android.taskstimer.timer.presentation.components.Numpad
+import com.android.taskstimer.timer.presentation.components.TimeInput
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
 object TimerAddDestination : NavigationDestination {

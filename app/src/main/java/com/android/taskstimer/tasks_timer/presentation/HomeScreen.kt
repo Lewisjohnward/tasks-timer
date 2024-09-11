@@ -40,9 +40,8 @@ import com.android.taskstimer.tasks_timer.presentation.components.ConfirmDialog
 import com.android.taskstimer.tasks_timer.presentation.components.FloatingActionBtn
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 import com.android.taskstimer.tasks_timer.presentation.components.NavigationDrawer
-import com.android.taskstimer.tasks_timer.presentation.components.timer.Timer
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
-import com.android.taskstimer.tasks_timer.presentation.components.ToggleTimer
+import com.android.taskstimer.tasks_timer.presentation.components.timer.Timer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -55,10 +54,12 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToAddTimer: (Int) -> Unit = {},
-    tasksTimerService: TasksTimerService ,
+    navigateToEditTimer: (Int) -> Unit = {},
+    tasksTimerService: TasksTimerService,
 ) {
     HomeScreenContent(
         navigateToAddTimer = navigateToAddTimer,
+        navigateToEditTimer = navigateToEditTimer,
         tasksTimerService = tasksTimerService
     )
 }
@@ -70,7 +71,8 @@ private fun HomeScreenContent(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToAddTimer: (Int) -> Unit = {},
-    tasksTimerService: TasksTimerService ,
+    navigateToEditTimer: (Int) -> Unit = {},
+    tasksTimerService: TasksTimerService,
 ) {
 
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
@@ -160,7 +162,13 @@ private fun HomeScreenContent(
                             items(tasksTimerService.state.value.timers) { timer ->
                                 Timer(
                                     timer = timer,
-                                    deleteTimer = {onEvent(HomeScreenEvent.DeleteTimer(timer))}
+                                    deleteTimer = {
+                                        onEvent(HomeScreenEvent.DeleteTimer(timer))
+                                    },
+                                    editTimer = {
+                                        println(timer.id)
+                                        navigateToEditTimer(timer.id)
+                                    }
                                 )
                             }
                         }
