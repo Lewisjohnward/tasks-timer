@@ -1,4 +1,4 @@
-package com.android.taskstimer.edit_timer.presentation
+package com.android.taskstimer.timer.add_timer.presentation
 
 sealed interface TimerAddEvent{
     data object AddTimer : TimerAddEvent

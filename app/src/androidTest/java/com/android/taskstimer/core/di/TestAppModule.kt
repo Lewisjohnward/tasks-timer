@@ -3,13 +3,11 @@ package com.android.taskstimer.core.di
 import android.app.Application
 import androidx.room.Room
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
-import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
-import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.core.repository.FakeBoardsRepositoryImpl
 import com.android.taskstimer.core.repository.FakeTimersRepositoryImpl
-import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
+import com.android.taskstimer.timer.add_timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow

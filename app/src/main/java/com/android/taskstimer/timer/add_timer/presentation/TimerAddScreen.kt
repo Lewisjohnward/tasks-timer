@@ -1,4 +1,4 @@
-package com.android.taskstimer.edit_timer.presentation
+package com.android.taskstimer.timer.add_timer.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,6 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,10 +31,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.edit_timer.presentation.components.NameInput
-import com.android.taskstimer.edit_timer.presentation.components.Numpad
-import com.android.taskstimer.edit_timer.presentation.components.TimeInput
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenUiState
+import com.android.taskstimer.timer.add_timer.presentation.components.NameInput
+import com.android.taskstimer.timer.add_timer.presentation.components.Numpad
+import com.android.taskstimer.timer.add_timer.presentation.components.TimeInput
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
 object TimerAddDestination : NavigationDestination {

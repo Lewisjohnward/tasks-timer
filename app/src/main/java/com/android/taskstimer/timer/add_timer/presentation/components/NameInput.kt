@@ -1,4 +1,4 @@
-package com.android.taskstimer.edit_timer.presentation.components
+package com.android.taskstimer.timer.add_timer.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.edit_timer.presentation.TimerAddEvent
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.timer.add_timer.presentation.TimerAddEvent
 
 @Composable
 fun NameInput(

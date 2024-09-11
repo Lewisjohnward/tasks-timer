@@ -1,10 +1,10 @@
-package com.android.taskstimer.edit_timer.presentation
+package com.android.taskstimer.timer.add_timer.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.edit_timer.domain.use_case.AddTimer
+import com.android.taskstimer.timer.add_timer.domain.use_case.AddTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
