@@ -47,6 +47,11 @@ fun Timer(
         mutableStateOf(false)
     }
 
+    fun handleDeleteTimer(){
+        menuVisible = false
+        deleteTimer()
+    }
+
 
     Column(
         modifier = Modifier
@@ -66,7 +71,7 @@ fun Timer(
         if (menuVisible) {
             MenuPopup(dismiss = { menuVisible = false }) {
                 TimerMenu(
-                    deleteTimer = deleteTimer
+                    deleteTimer = {handleDeleteTimer()}
                 )
             }
         }
