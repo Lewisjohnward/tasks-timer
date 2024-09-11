@@ -29,42 +29,43 @@ fun ConfirmDialog(
     dialog: DeleteDialog,
     confirm: () -> Unit,
     cancel: () -> Unit
-)
- {
-     BasicAlertDialog(onDismissRequest = {}) {
-         Box(
-             modifier = Modifier
-                 .fillMaxWidth()
-                 .clip(RoundedCornerShape(5.dp))
-                 .background(Color(0xFFFFFFFF))
-                 .padding(20.dp)
-         ) {
-             Column(
-                 horizontalAlignment = Alignment.CenterHorizontally,
-                 verticalArrangement = Arrangement.spacedBy(20.dp)
+) {
+    BasicAlertDialog(
+        onDismissRequest = { cancel() }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(5.dp))
+                .background(Color(0xFFFFFFFF))
+                .padding(20.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
 
-             ) {
-                 Icon(
-                     imageVector = dialog.icon,
-                     contentDescription = "Delete icon",
-                     tint = Color(0xFF555555)
-                 )
-                 Text(text = dialog.dialog)
-                 Row(
-                     modifier = Modifier.fillMaxWidth(),
-                     horizontalArrangement = Arrangement.End
-                 ) {
-                     TextButton(
-                         modifier = Modifier.testTag(TestTags.CONFIRM_DELETE),
-                         onClick = { confirm() }
-                     ) {
-                         Text(text = "Confirm")
-                     }
-                     TextButton(onClick = { cancel() }) {
-                         Text(text = "Cancel")
-                     }
-                 }
-             }
-         }
-     }
- }
+            ) {
+                Icon(
+                    imageVector = dialog.icon,
+                    contentDescription = "Delete icon",
+                    tint = Color(0xFF555555)
+                )
+                Text(text = dialog.dialog)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        modifier = Modifier.testTag(TestTags.CONFIRM_DELETE),
+                        onClick = { confirm() }
+                    ) {
+                        Text(text = "Confirm")
+                    }
+                    TextButton(onClick = { cancel() }) {
+                        Text(text = "Cancel")
+                    }
+                }
+            }
+        }
+    }
+}
