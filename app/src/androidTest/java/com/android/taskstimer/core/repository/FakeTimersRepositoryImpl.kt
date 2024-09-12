@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 class FakeTimersRepositoryImpl(
     private val tasksTimerDb: TasksTimerDatabase
-): TimersRepository {
+) : TimersRepository {
 
     private val timerDao = tasksTimerDb.timerDao
 
@@ -23,6 +23,9 @@ class FakeTimersRepositoryImpl(
 
     override suspend fun getTimers(boardId: Int): List<TimerItem> =
         timerDao.getTimers(boardId).map { it.toTimerItem() }
+
+    override fun getTimerStream(timerId: Int): Flow<TimerItem> =
+        timerDao.getTimerStream(timerId).map { it.toTimerItem() }
 
     override suspend fun insertTimer(timer: TimerItem) =
         timerDao.insert(timer.toTimerEntityForInsert())

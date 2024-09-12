@@ -90,17 +90,15 @@ class TasksTimerEndToEnd {
 //        deleteBoard()
 
         deleteTimer("Timer 1")
-        runBlocking {
-            delay(300)
-        }
         assertTimerDeleted("Timer 1")
         deleteTimer("Timer 2")
-        runBlocking {
-            delay(300)
-        }
         assertTimerDeleted("Timer 2")
 
         // Assert correct deletion
+
+    }
+
+    private fun deleteBoard(name: String){
 
     }
 
