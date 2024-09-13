@@ -85,8 +85,8 @@ private fun HomeScreenContent(
         coroutineScope.launch { drawerState.close() }
     }
 
-    // After adding a timer causes the service to load the timers
-    LaunchedEffect(key1 = uiState.boards, key2 = true) {
+//     After adding a timer causes the service to load the timers
+    LaunchedEffect(true) {
         if (uiState.boards.isNotEmpty()) {
             tasksTimerService.selectBoard(uiState.boards[uiState.currentBoardIndex].id)
         }
