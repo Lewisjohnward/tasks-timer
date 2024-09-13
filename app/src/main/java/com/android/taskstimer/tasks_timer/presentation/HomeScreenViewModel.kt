@@ -36,6 +36,8 @@ data class HomeScreenUiState(
     val boardMenuEnabled:Boolean = false,
 
     val boards: List<BoardItem> = listOf(),
+
+
     val currentBoardIndex: Int = 0
 )
 
@@ -60,8 +62,10 @@ class HomeViewModel @Inject constructor(
             _uiState,
             _boards,
         ) { uiState, boards ->
+            val boardMenuEnabled = boards.isNotEmpty()
             uiState.copy(
                 boards = boards,
+                boardMenuEnabled = boardMenuEnabled
             )
         }.stateIn(
             scope = viewModelScope,
