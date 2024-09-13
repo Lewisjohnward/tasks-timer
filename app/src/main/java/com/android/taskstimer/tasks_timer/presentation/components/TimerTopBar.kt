@@ -29,7 +29,8 @@ fun TimerTopBar(
     iconOnclick: () -> Unit = {},
     icon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actionIcon: ImageVector? = null,
-    actionOnClick: () -> Unit = {}
+    actionOnClick: () -> Unit = {},
+    actionEnabled: Boolean = true
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -48,15 +49,17 @@ fun TimerTopBar(
 
         ),
         actions = {
-            actionIcon?.let {
-                IconButton(
-                    modifier = Modifier.testTag(TestTags.BOARD_MENU_BUTTON),
-                    onClick = actionOnClick
-                ) {
-                    Icon(
-                        imageVector = it,
-                        contentDescription = null
-                    )
+            if(actionEnabled) {
+                actionIcon?.let {
+                    IconButton(
+                        modifier = Modifier.testTag(TestTags.BOARD_MENU_BUTTON),
+                        onClick = actionOnClick
+                    ) {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         },

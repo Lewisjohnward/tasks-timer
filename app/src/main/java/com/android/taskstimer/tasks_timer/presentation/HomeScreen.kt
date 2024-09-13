@@ -103,6 +103,7 @@ private fun HomeScreenContent(
     }
 
 
+
     ModalNavigationDrawer(
         drawerContent = {
             NavigationDrawer(
@@ -127,7 +128,8 @@ private fun HomeScreenContent(
                         scrollBehavior = null,
                         icon = Icons.Filled.Menu,
                         actionIcon = Icons.Filled.MoreVert,
-                        actionOnClick = { onEvent(HomeScreenEvent.DisplayMenu(true)) }
+                        actionOnClick = { onEvent(HomeScreenEvent.DisplayMenu(true)) },
+                        actionEnabled = uiState.boardMenuEnabled
                     )
                 },
                 floatingActionButton = {

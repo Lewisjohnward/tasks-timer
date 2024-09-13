@@ -33,6 +33,7 @@ data class HomeScreenUiState(
     val editBoards: Boolean = false,
     val displayBoardMenu: Boolean = false,
     val displayConfirmDialog: DeleteDialog? = null,
+    val boardMenuEnabled:Boolean = false,
 
     val boards: List<BoardItem> = listOf(),
     val currentBoardIndex: Int = 0
@@ -126,7 +127,10 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.SelectBoard -> {
-                _uiState.update { it.copy(currentBoardIndex = event.boardIndex) }
+                _uiState.update { it.copy(
+                    currentBoardIndex = event.boardIndex,
+                    boardMenuEnabled = true
+                ) }
             }
 
 
@@ -162,8 +166,14 @@ class HomeViewModel @Inject constructor(
             _uiState.update { it.copy(currentBoardIndex = boardIndexToLoad) }
         } else {
             boardToLoad.value = BoardToLoad.NullBoard
-            _uiState.update { it.copy(currentBoardIndex = 0) }
+            _uiState.update {
+                it.copy(
+                    currentBoardIndex = 0,
+                    boardMenuEnabled = false
+                )
+            }
         }
+
 
         _uiState.update {
             it.copy(
