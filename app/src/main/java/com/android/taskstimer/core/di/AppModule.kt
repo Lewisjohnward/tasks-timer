@@ -7,14 +7,14 @@ import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
 import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
-import com.android.taskstimer.timer.add_timer.domain.use_case.AddTimer
+import com.android.taskstimer.timer.domain.use_case.AddTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.GetTimersFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
-import com.android.taskstimer.timer.edit_timer.domain.use_case.GetTimerStream
+import com.android.taskstimer.timer.domain.use_case.GetTimerStream
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.android.taskstimer.timer.add_timer.presentation
+package com.android.taskstimer.timer.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,20 +36,21 @@ import com.android.taskstimer.timer.presentation.components.Numpad
 import com.android.taskstimer.timer.presentation.components.TimeInput
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 
-object TimerAddDestination : NavigationDestination {
-    override val route = "timer_add"
+object TimerDestination : NavigationDestination {
+    override val route = "timer"
     override val title = "Add timer"
     const val boardIdArg = "boardId"
-    val routeWithArgs = "$route/{$boardIdArg}"
+    const val timerIdArg = "timerId"
+    val routeWithArgs = "$route/{$boardIdArg}/{$timerIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimerAddScreen(
+fun TimerScreen(
     navigateBack: () -> Unit,
-    viewModel: TimerAddViewModel = hiltViewModel()
+    viewModel: TimerViewModel = hiltViewModel()
 ) {
-    val uiState: TimerAddUiState by viewModel.uiState.collectAsState()
+    val uiState: TimerUiState by viewModel.uiState.collectAsState()
     val onEvent = viewModel::onEvent
 
     var sheetState = SheetState(
@@ -76,7 +77,7 @@ fun TimerAddScreen(
         },
         topBar = {
             TimerTopBar(
-                title = "Add timer",
+                title = uiState.title,
                 iconOnclick = navigateBack
             )
         },
@@ -104,7 +105,7 @@ fun TimerAddScreen(
                 Button(
                     modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
                     onClick = {
-                        onEvent(TimerAddEvent.AddTimer)
+                        onEvent(TimerEvent.AddTimer)
                         navigateBack()
                     },
                     enabled = uiState.isEntryValid
@@ -121,5 +122,5 @@ fun TimerAddScreen(
 @Preview(showBackground = true)
 @Composable
 fun TimerAddScreenPreview() {
-    TimerAddScreen(navigateBack = { true })
+    TimerScreen(navigateBack = { })
 }

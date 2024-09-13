@@ -53,13 +53,11 @@ object HomeDestination : NavigationDestination {
 
 @Composable
 fun HomeScreen(
-    navigateToAddTimer: (Int) -> Unit = {},
-    navigateToEditTimer: (Int) -> Unit = {},
+    navigateToTimer: (Int, Int) -> Unit,
     tasksTimerService: TasksTimerService,
 ) {
     HomeScreenContent(
-        navigateToAddTimer = navigateToAddTimer,
-        navigateToEditTimer = navigateToEditTimer,
+        navigateToTimer = navigateToTimer,
         tasksTimerService = tasksTimerService
     )
 }
@@ -70,8 +68,7 @@ private fun HomeScreenContent(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = hiltViewModel(),
-    navigateToAddTimer: (Int) -> Unit = {},
-    navigateToEditTimer: (Int) -> Unit = {},
+    navigateToTimer: (Int, Int) -> Unit,
     tasksTimerService: TasksTimerService,
 ) {
 
@@ -136,7 +133,12 @@ private fun HomeScreenContent(
                 floatingActionButton = {
                     FloatingActionBtn(
                         modifier = Modifier.testTag(TestTags.ADD_TIMER_FAB),
-                        onClick = { navigateToAddTimer(tasksTimerService.state.value.boardItem.id) },
+                        onClick = {
+                            navigateToTimer(
+                                tasksTimerService.state.value.boardItem.id,
+                                0
+                            )
+                        },
                         icon = {
                             Image(
                                 modifier = Modifier.size(30.dp),
@@ -166,8 +168,10 @@ private fun HomeScreenContent(
                                         onEvent(HomeScreenEvent.DeleteTimer(timer))
                                     },
                                     editTimer = {
-                                        println(timer.id)
-                                        navigateToEditTimer(timer.id)
+                                        navigateToTimer(
+                                            timer.boardId,
+                                            timer.id
+                                        )
                                     }
                                 )
                             }

@@ -1,4 +1,4 @@
-package com.android.taskstimer.timer.edit_timer.domain.use_case
+package com.android.taskstimer.timer.domain.use_case
 
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.TimersRepository

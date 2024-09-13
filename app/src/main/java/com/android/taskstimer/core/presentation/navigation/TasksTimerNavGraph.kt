@@ -8,14 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.android.taskstimer._other.service.TasksTimerService
-import com.android.taskstimer.tasks_timer.presentation.HomeDestination
-import com.android.taskstimer.tasks_timer.presentation.HomeScreen
-import com.android.taskstimer.timer.add_timer.presentation.TimerAddDestination
-import com.android.taskstimer.timer.add_timer.presentation.TimerAddScreen
 import com.android.taskstimer.settings.presentation.SettingsDestination
 import com.android.taskstimer.settings.presentation.SettingsScreen
-import com.android.taskstimer.timer.edit_timer.presentation.TimerEditDestination
-import com.android.taskstimer.timer.edit_timer.presentation.TimerEditScreen
+import com.android.taskstimer.tasks_timer.presentation.HomeDestination
+import com.android.taskstimer.tasks_timer.presentation.HomeScreen
+import com.android.taskstimer.timer.presentation.TimerDestination
+import com.android.taskstimer.timer.presentation.TimerScreen
 
 
 @Composable
@@ -31,35 +29,26 @@ fun TasksTimerNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToAddTimer = {
-                    navController.navigate("${TimerAddDestination.route}/${it}")
-                },
-                navigateToEditTimer = {
-                    navController.navigate("${TimerEditDestination.route}/${it}")
+                navigateToTimer = { boardId, timerId ->
+                    navController.navigate(
+                        "${TimerDestination.route}/${boardId}/${timerId}"
+                    )
                 },
                 tasksTimerService = tasksTimerService
             )
         }
 
         composable(
-            route = TimerAddDestination.routeWithArgs,
-            arguments = listOf(navArgument(name = "boardId"){type = NavType.IntType})
+            route = TimerDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(name = "boardId") { type = NavType.IntType },
+                navArgument(name = "timerId") { type = NavType.IntType },
+            )
         ) {
-            TimerAddScreen(
+            TimerScreen(
                 navigateBack = { navController.popBackStack() },
             )
         }
-
-        composable(
-            route = TimerEditDestination.routeWithArgs,
-            arguments = listOf(navArgument(name = "timerId"){type = NavType.IntType})
-        ) {
-            TimerEditScreen(
-                navigateBack = { navController.popBackStack() },
-            )
-        }
-
-
 
         composable(route = SettingsDestination.route) {
             SettingsScreen { navController.popBackStack() }

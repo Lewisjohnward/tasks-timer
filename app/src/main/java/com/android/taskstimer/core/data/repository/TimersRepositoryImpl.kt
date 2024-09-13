@@ -28,7 +28,7 @@ class TimersRepositoryImpl(
 
 
     override suspend fun insertTimer(timer: TimerItem) =
-        timerDao.insert(timer.toTimerEntityForInsert())
+        timerDao.insert(timer.toTimerEntity())
 
 //    override suspend fun deleteTimer(timer: Timer) = timerDao.delete(timer)
 

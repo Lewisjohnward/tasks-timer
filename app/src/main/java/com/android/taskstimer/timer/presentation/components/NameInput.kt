@@ -19,12 +19,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.timer.add_timer.presentation.TimerAddEvent
+import com.android.taskstimer.timer.presentation.TimerEvent
 
 @Composable
 fun NameInput(
     name: String,
-    onEvent: (TimerAddEvent) -> Unit
+    onEvent: (TimerEvent) -> Unit
 ) {
     Column(
         modifier = Modifier.background(Color.Transparent),
@@ -43,7 +43,7 @@ fun NameInput(
             enabled = true,
             maxLines = 1,
             cursorBrush = SolidColor(Color.White),
-            onValueChange = {onEvent(TimerAddEvent.UpdateName(it))},
+            onValueChange = {onEvent(TimerEvent.UpdateName(it))},
         )
         Spacer(
             modifier = Modifier
