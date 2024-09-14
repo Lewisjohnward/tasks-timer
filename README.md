@@ -1,4 +1,6 @@
 # Todo
+- [ ] Create Thumbnail
+- [ ] Make Timer title enum a string resource
 - [ ] Shouldn't Timer composable be a Row and not a Column?
 - [ ] Implement Icon selection when creating a board
 - [ ] Allow arbitrary selection of timers
