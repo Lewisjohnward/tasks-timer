@@ -13,3 +13,4 @@
 
 # Bugs
 - [ ] Delete last board then add timer, new board isn't loaded (works if delete last then delete again)
+- [ ] When first fresh initialise of app database initialisation happens after screen so default board not loaded (key2= uistate.boards) fixes it but causes deletion bug
