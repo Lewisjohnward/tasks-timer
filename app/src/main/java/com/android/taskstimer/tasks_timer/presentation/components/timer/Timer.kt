@@ -87,40 +87,44 @@ private fun TimerDetails(
     time: String = "00:45",
     onMenuClick: () -> Unit = {},
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Column(
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
 
-    ) {
-        Text(
-            modifier = Modifier.testTag("${TestTags.TIMER} $name"),
-            text = name,
-            fontSize = 20.sp,
-            color = Color.White
-        )
-        Icon(
-            modifier = Modifier
-                .clickable {
-                    onMenuClick()
-                }
-                .testTag("${TestTags.TIMER_MENU} $name"),
-            imageVector = Icons.Filled.MoreVert,
-            contentDescription = "Edit timer",
-            tint = Color.White
-        )
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = time,
-            fontSize = 45.sp,
-            color = Color.White
-        )
-        Control()
+        ) {
+            Text(
+                modifier = Modifier.testTag("${TestTags.TIMER} $name"),
+                text = name,
+                fontSize = 20.sp,
+                color = Color.White
+            )
+            Icon(
+                modifier = Modifier
+                    .clickable {
+                        onMenuClick()
+                    }
+                    .testTag("${TestTags.TIMER_MENU} $name"),
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = "Edit timer",
+                tint = Color.White
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = time,
+                fontSize = 45.sp,
+                color = Color.White
+            )
+            Control()
+        }
     }
 }
 
