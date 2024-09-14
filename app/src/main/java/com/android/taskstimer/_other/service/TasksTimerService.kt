@@ -44,6 +44,7 @@ class TasksTimerService : LifecycleService() {
         const val GET_STATUS = "GET_STATUS"
         const val MOVE_TO_FOREGROUND = "MOVE_TO_FOREGROUND"
         const val MOVE_TO_BACKGROUND = "MOVE_TO_BACKGROUND"
+        const val TIMER_INDEX = "TIMER_INDEX"
 
         // Intent Extras
         const val SERVICE_ACTION = "STOPWATCH_ACTION"
@@ -99,8 +100,7 @@ class TasksTimerService : LifecycleService() {
                         boardItem = board,
                         timers = timersRepo.getTimers(board.id)
                     )
-                }
-                else {
+                } else {
                     state.value = state.value.copy(
                         boardItem = BoardItem(name = ""),
                         timers = emptyList()
@@ -125,9 +125,10 @@ class TasksTimerService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("Intent recieved")
         val action = intent?.getStringExtra(SERVICE_ACTION)
-        println(action)
+        val timerIndex = intent?.getStringExtra(TIMER_INDEX)?.toInt()
+
         when (action) {
-            START_TASKS_TIMER -> startTasksTimer()
+            START_TASKS_TIMER -> timerIndex?.let { startTasksTimer(it) }
 //            PAUSE -> pauseStopwatch()
 //            RESET -> resetStopwatch()
             MOVE_TO_FOREGROUND -> moveToForeground()
@@ -150,10 +151,11 @@ class TasksTimerService : LifecycleService() {
     }
 
 
-    private fun startTasksTimer() {
+    private fun startTasksTimer(timerIndex: Int) {
         lifecycleScope.launch {
             if (state.value.timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
+            currentTimer = timerIndex
             activeTimer = Timer()
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
@@ -189,7 +191,7 @@ class TasksTimerService : LifecycleService() {
 //        state.value = state.value.timers.map { timer -> timer.resetTimer() }
 //        timers.value = timers.value.map { timer -> timer.resetTimer() }
         state.value = state.value.copy(
-            timers = state.value.timers.map {timer -> timer.resetTimer()}
+            timers = state.value.timers.map { timer -> timer.resetTimer() }
         )
     }
 
@@ -209,7 +211,8 @@ class TasksTimerService : LifecycleService() {
                     val updatedTimer =
                         timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
                     updatedTimer
-                } else timer}
+                } else timer
+            }
         )
     }
 
