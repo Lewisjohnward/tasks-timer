@@ -60,6 +60,14 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                 timerDao.insert(
                     TimerEntity(
                         boardId = 2,
+                        name = "Teach shake",
+                        presetTime = "120",
+                        remainingTime = "120"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 2,
                         name = "Teach somersault",
                         presetTime = "120",
                         remainingTime = "120"
