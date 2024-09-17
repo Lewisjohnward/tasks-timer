@@ -26,9 +26,16 @@ import javax.inject.Inject
 
 
 data class State(
+    val active: RUNSTATE = RUNSTATE.STOPPED,
     val timers: List<TimerItem> = emptyList(),
-    val boardItem: BoardItem = BoardItem()
+    val boardItem: BoardItem = BoardItem(),
+    val currentTimer: Int = 0,
 )
+
+enum class RUNSTATE {
+    RUNNING,
+    STOPPED
+}
 
 @AndroidEntryPoint
 class TasksTimerService : LifecycleService() {
@@ -38,7 +45,7 @@ class TasksTimerService : LifecycleService() {
         const val CHANNEL_ID = "Stopwatch_Notifications"
 
         // Service Actions
-        const val START_TASKS_TIMER = "START"
+        const val START = "START"
         const val PAUSE = "PAUSE"
         const val RESET = "RESET"
         const val GET_STATUS = "GET_STATUS"
@@ -51,7 +58,6 @@ class TasksTimerService : LifecycleService() {
     }
 
 
-    var currentTimer = 0
     private var activeTimer: Timer? = null
 
     var state = mutableStateOf(State())
@@ -84,12 +90,6 @@ class TasksTimerService : LifecycleService() {
         super.onBind(intent)
         return binder
     }
-
-    fun setRunning() {
-        running.value = !running.value
-    }
-
-    var running = mutableStateOf(false)
 
     fun selectBoard(boardId: Int? = null) {
         lifecycleScope.launch {
@@ -128,14 +128,15 @@ class TasksTimerService : LifecycleService() {
         val timerIndex = intent?.getStringExtra(TIMER_INDEX)?.toInt()
 
         when (action) {
-            START_TASKS_TIMER -> timerIndex?.let { startTasksTimer(it) }
-//            PAUSE -> pauseStopwatch()
-//            RESET -> resetStopwatch()
+            START -> timerIndex?.let { index -> startTasksTimer(index) }
+            PAUSE -> stopTimer()
+            RESET -> timerIndex?.let { index -> resetTimer(index) }
             MOVE_TO_FOREGROUND -> moveToForeground()
             MOVE_TO_BACKGROUND -> moveToBackground()
         }
         return super.onStartCommand(intent, flags, startId)
     }
+
 
     //
     private fun moveToForeground() {
@@ -150,19 +151,26 @@ class TasksTimerService : LifecycleService() {
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
-
     private fun startTasksTimer(timerIndex: Int) {
         lifecycleScope.launch {
             if (state.value.timers.isEmpty()) return@launch
             if (activeTimer != null) return@launch
-            currentTimer = timerIndex
+
+
             activeTimer = Timer()
+            setCurrentTimer(timerIndex)
+            setTimerActiveState(RUNSTATE.RUNNING)
+
+            if (remainingTimeOfCurrentTimerIsZero()) {
+                incrementCurrentTimer()
+            }
+
             activeTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     decrementTime()
                     if (remainingTimeOfCurrentTimerIsZero()) {
-                        if (currentTimer < state.value.timers.size - 1) {
-                            currentTimer++
+                        if (lastTimerInList()) {
+                            incrementCurrentTimer()
                         } else {
                             stopTimer()
                             resetTimers()
@@ -179,17 +187,39 @@ class TasksTimerService : LifecycleService() {
         }
     }
 
-    fun isRunning(): Boolean {
-        return activeTimer != null
+    private fun resetTimer(index: Int) {
+        state.value = state.value.copy(
+            timers = state.value.timers.mapIndexed { i, timer ->
+                if (index == i) {
+                    timer.resetTimer()
+                } else timer
+            }
+        )
+    }
+
+    private fun lastTimerInList(): Boolean {
+        return state.value.currentTimer < state.value.timers.size - 1
+    }
+
+    private fun incrementCurrentTimer() {
+        state.value = state.value.copy(
+            currentTimer = state.value.currentTimer + 1
+        )
+    }
+
+    private fun setCurrentTimer(index: Int) {
+        state.value = state.value.copy(currentTimer = index)
+    }
+
+    private fun setTimerActiveState(runState: RUNSTATE) {
+        state.value = state.value.copy(active = runState)
     }
 
     private fun resetCurrentTimer() {
-        currentTimer = 0
+        state.value = state.value.copy(currentTimer = 0)
     }
 
     private fun resetTimers() {
-//        state.value = state.value.timers.map { timer -> timer.resetTimer() }
-//        timers.value = timers.value.map { timer -> timer.resetTimer() }
         state.value = state.value.copy(
             timers = state.value.timers.map { timer -> timer.resetTimer() }
         )
@@ -198,16 +228,18 @@ class TasksTimerService : LifecycleService() {
     private fun stopTimer() {
         activeTimer?.cancel()
         activeTimer = null
+        setTimerActiveState(RUNSTATE.STOPPED)
     }
 
     private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
-        return state.value.timers[currentTimer].remainingTime.toInt() <= 0
+        return state.value.timers[state.value.currentTimer].remainingTime.toInt() <= 0
     }
 
     private fun decrementTime() {
+        println(state.value.currentTimer)
         state.value = state.value.copy(
             timers = state.value.timers.mapIndexed { index, timer ->
-                if (index == currentTimer) {
+                if (index == state.value.currentTimer) {
                     val updatedTimer =
                         timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
                     updatedTimer
@@ -226,6 +258,8 @@ class TasksTimerService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
+        val currentTimer = state.value.currentTimer
+
         val initialTime = state.value.timers[currentTimer].presetTime.toInt()
         val elapsedTime = initialTime - state.value.timers[currentTimer].remainingTime.toInt()
         return notification

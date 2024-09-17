@@ -32,7 +32,7 @@ fun ToggleTimer(running: Boolean = true) {
                 val intent = Intent(context, TasksTimerService::class.java)
                 intent.putExtra(
                     TasksTimerService.SERVICE_ACTION,
-                    TasksTimerService.START_TASKS_TIMER
+                    TasksTimerService.START
                 )
                 context.startService(intent)
             },
