@@ -35,7 +35,7 @@ abstract class TasksTimerDatabase : RoomDatabase() {
             CoroutineScope(Dispatchers.IO).launch {
                 timerDao.insert(
                     TimerEntity(
-                        id = 0,
+                        id = 1,
                         boardId = 1,
                         name = "Clean the floor",
                         presetTime = "120",
@@ -44,7 +44,7 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                 )
                 timerDao.insert(
                     TimerEntity(
-                        id = 0,
+                        id = 2,
                         boardId = 1,
                         name = "Unload the washing machine",
                         presetTime = "120",
@@ -55,6 +55,28 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                     BoardEntity(
                         id = 1,
                         name = "Household Chores"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 2,
+                        name = "Teach somersault",
+                        presetTime = "120",
+                        remainingTime = "120"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 2,
+                        name = "Teach stand on hind legs",
+                        presetTime = "120",
+                        remainingTime = "120"
+                    )
+                )
+                boardDao.insert(
+                    BoardEntity(
+                        id = 2,
+                        name = "Train Bruno"
                     )
                 )
 
