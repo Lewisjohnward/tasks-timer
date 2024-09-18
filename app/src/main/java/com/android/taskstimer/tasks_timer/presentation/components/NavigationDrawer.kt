@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,7 +37,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer._other.service.TasksTimerService
@@ -60,9 +56,10 @@ private data class DrawerItem(
 fun NavigationDrawer(
     boards: List<BoardItem> = listOf(),
     onEvent: (HomeScreenEvent) -> Unit = {},
+    navigateToSettings: () -> Unit = {},
     closeDrawer: () -> Unit = {},
     editBoards: Boolean = true,
-    tasksTimerService: TasksTimerService
+    tasksTimerService: TasksTimerService,
 ) {
 
     var inputDialogVisible by remember { mutableStateOf(false) }
@@ -125,7 +122,7 @@ fun NavigationDrawer(
                     NavDrawerItem(
                         modifier = Modifier.testTag("${TestTags.BOARD} ${board.name}"),
                         closeDrawer = closeDrawer,
-                        handle = {
+                        dragHandle = {
                             if (editBoards)
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.List,
@@ -179,7 +176,7 @@ fun NavigationDrawer(
             NavDrawerItem(
                 item = DrawerItem(
                     text = "Settings",
-                    onClick = {}
+                    onClick = {navigateToSettings()}
                 )
             )
 
@@ -198,7 +195,7 @@ private fun NavDrawerItem(
     modifier: Modifier = Modifier,
     closeDrawer: () -> Unit = {},
     item: DrawerItem,
-    handle: @Composable () -> Unit = {}
+    dragHandle: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = Modifier.padding(end = 16.dp),
@@ -223,7 +220,7 @@ private fun NavDrawerItem(
             )
         )
         Row(modifier = Modifier.weight(0.1f)) {
-            handle()
+            dragHandle()
         }
     }
 }

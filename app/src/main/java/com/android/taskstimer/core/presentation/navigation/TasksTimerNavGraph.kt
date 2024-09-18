@@ -34,6 +34,12 @@ fun TasksTimerNavHost(
                         "${TimerDestination.route}/${boardId}/${timerId}"
                     )
                 },
+                navigateToSettings = {
+                    navController.navigate(
+                        SettingsDestination.route
+                    )
+
+                },
                 tasksTimerService = tasksTimerService
             )
         }
@@ -51,7 +57,9 @@ fun TasksTimerNavHost(
         }
 
         composable(route = SettingsDestination.route) {
-            SettingsScreen { navController.popBackStack() }
+            SettingsScreen(
+                navigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

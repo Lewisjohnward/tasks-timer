@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
@@ -60,10 +59,12 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToTimer: (Int, Int) -> Unit,
+    navigateToSettings: () -> Unit,
     tasksTimerService: TasksTimerService,
 ) {
     HomeScreenContent(
         navigateToTimer = navigateToTimer,
+        navigateToSettings = navigateToSettings,
         tasksTimerService = tasksTimerService
     )
 }
@@ -76,6 +77,7 @@ private fun HomeScreenContent(
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToTimer: (Int, Int) -> Unit,
     tasksTimerService: TasksTimerService,
+    navigateToSettings: () -> Unit,
 ) {
 
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
@@ -116,6 +118,7 @@ private fun HomeScreenContent(
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
+                navigateToSettings = {navigateToSettings()},
                 tasksTimerService = tasksTimerService,
                 boards = uiState.boards,
                 editBoards = uiState.editBoards
@@ -194,7 +197,9 @@ private fun HomeScreenContent(
                                 )
                             }
                             item {
-                                Spacer(modifier = Modifier.fillMaxWidth().height(75.dp))
+                                Spacer(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(75.dp))
                             }
                         }
                 }
