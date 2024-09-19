@@ -39,6 +39,9 @@ import com.android.taskstimer._other.service.RUNSTATE
 import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
+import com.android.taskstimer.core.presentation.ui.theme.Green
+import com.android.taskstimer.core.presentation.ui.theme.SlateGray
+import com.android.taskstimer.core.presentation.ui.theme.Red
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 
@@ -213,7 +216,7 @@ private fun Control(
         ControlButton(
             icon = Icons.Filled.RestartAlt,
             contentDescription = "Restart button",
-            color = Color(0xFF3C6071),
+            color = SlateGray,
             padding = PaddingValues(5.dp),
             enabled = enabledResetButton,
             onClick = { onReset() }
@@ -225,7 +228,7 @@ private fun Control(
                     icon = Icons.Filled.Pause,
                     padding = PaddingValues(start = 14.dp, top = 5.dp, end = 15.dp, bottom = 5.dp),
                     contentDescription = "Pause button",
-                    color = Color(0xFFFF5447),
+                    color = Red,
                     onClick = { onPause() }
                 )
             }
@@ -235,7 +238,7 @@ private fun Control(
                     icon = Icons.Filled.PlayArrow,
                     padding = PaddingValues(start = 14.dp, top = 5.dp, end = 15.dp, bottom = 5.dp),
                     contentDescription = "Play button",
-                    color = Color(0xFF629D61),
+                    color = Green,
                     enabled = enabledPlayButton,
                     onClick = { onStart() }
                 )
