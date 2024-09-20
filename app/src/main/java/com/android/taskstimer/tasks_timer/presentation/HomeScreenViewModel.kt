@@ -41,7 +41,6 @@ data class HomeScreenUiState(
     val currentBoardIndex: Int = 0
 )
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val insertBoard: InsertBoard,

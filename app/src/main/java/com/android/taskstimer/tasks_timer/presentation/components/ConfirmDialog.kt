@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmDialog(
     dialog: DeleteDialog,

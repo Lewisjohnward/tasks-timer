@@ -37,7 +37,6 @@ import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputDialog(
     myNewBoardName: String = "My awesome new board",

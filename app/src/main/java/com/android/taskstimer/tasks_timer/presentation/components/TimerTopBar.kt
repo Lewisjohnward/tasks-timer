@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.util.TestTags
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimerTopBar(
     title: String = "Top bar",
@@ -82,7 +81,6 @@ fun TimerTopBar(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun TimerTopBarPreview() {
