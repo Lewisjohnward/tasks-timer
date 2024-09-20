@@ -2,6 +2,7 @@
 agp = "8.3.2"
 coilCompose = "2.4.0"
 converterGson = "2.9.0"
+datastorePreferences = "1.0.0"
 hiltAndroid = "2.51.1"
 hiltCompiler = "1.2.0"
 hiltPlugin = "2.51.1"
@@ -39,6 +40,7 @@ hiltAndroidCompiler = "2.51.1"
 lifecycleService = "2.8.4"
 
 [libraries]
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 junit = { module = "junit:junit", version.ref = "junit" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 androidx-core = { module = "androidx.test:core", version.ref = "testCore" }

@@ -110,6 +110,10 @@ dependencies {
     // Extended Icons
     implementation(libs.androidx.material.icons.extended)
 
+    // Preferences DataStore
+    implementation(libs.androidx.datastore.preferences)
+
+
     // Local Tests
     testImplementation(libs.junit)
     testImplementation(libs.truth)
