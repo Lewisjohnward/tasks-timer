@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
@@ -25,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -57,12 +58,14 @@ fun SettingsScreen(navigateBack: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreenContent(
-    navigateBack: () -> Unit = {}
+    navigateBack: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     var displayDialog: Boolean by remember { mutableStateOf(false) }
+    val uiState: SettingsUiState by viewModel.uiState.collectAsState()
+    val onEvent = viewModel::onEvent
 
     Scaffold(
         topBar = {
@@ -85,8 +88,8 @@ private fun SettingsScreenContent(
                 description = stringResource(R.string.ignore_silent_mode_description),
                 input = {
                     Switch(
-                        onClick = {},
-                        checked = true
+                        onClick = {onEvent(SettingsEvent.SetIgnoreSilentMode(it))},
+                        checked = uiState.ignoreSilentMode
                     )
                 },
             )
@@ -96,7 +99,7 @@ private fun SettingsScreenContent(
                 input = {
                     Time(
                         onClick = {displayDialog = true},
-                        value = 5.toString()
+                        value = uiState.timeIntervalBetweenTimers.toString()
                     )
                 }
             )
@@ -105,22 +108,29 @@ private fun SettingsScreenContent(
                 description = stringResource(R.string.use_media_volume_when_headphones_are_connected_description),
                 input = {
                     Switch(
-                        onClick = {},
-                        checked = false
+                        onClick = {onEvent(SettingsEvent.SetUseMediaVolumeHeadphones(it))},
+                        checked = uiState.useMediaVolumeHeadphones
                     )
                 }
             )
         }
         if (displayDialog) {
-            Dialog(dismiss = { displayDialog = false })
+            Dialog(
+                dismiss = { displayDialog = false },
+                value = uiState.timeIntervalBetweenTimers,
+                onChange = {onEvent(SettingsEvent.SetTimeInterval(it))}
+            )
         }
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Dialog(dismiss: () -> Unit) {
+private fun Dialog(
+    dismiss: () -> Unit,
+    value: Int,
+    onChange: (Int) -> Unit)
+{
 
     CompositionLocalProvider(value = LocalMinimumInteractiveComponentEnforcement provides false) {
         BasicAlertDialog(
@@ -138,7 +148,7 @@ private fun Dialog(dismiss: () -> Unit) {
                 ) {
                     IconButton(
                         modifier = Modifier.size(100.dp),
-                        onClick = {}) {
+                        onClick = {onChange(value + 1)}) {
                         Icon(
                             modifier = Modifier
                                 .rotate(90f)
@@ -149,14 +159,14 @@ private fun Dialog(dismiss: () -> Unit) {
 
                     }
                     Text(
-                        text = "5s",
+                        text = "${value}s",
                         fontSize = 75.sp,
                     )
 
                     IconButton(
                         modifier = Modifier
                             .size(100.dp),
-                        onClick = {}
+                        onClick = {onChange(value - 1)}
                     ) {
                         Icon(
                             modifier = Modifier
@@ -205,13 +215,13 @@ private fun SettingsItem(
 
 @Composable
 private fun ColumnScope.Switch(
-    onClick: () -> Unit,
+    onClick: (Boolean) -> Unit,
     checked: Boolean
 ) {
     Switch(
         modifier = Modifier.weight(0.1f),
         checked = checked,
-        onCheckedChange = { onClick() },
+        onCheckedChange = { onClick(it) },
         colors = SwitchDefaults.colors(
             checkedTrackColor = Green
         )
