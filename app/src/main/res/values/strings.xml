@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Tasks Timer</string>
+    <string name="ignore_silent_mode">Ignore silent mode</string>
+    <string name="ignore_silent_mode_description">Play timer sound in silent or vibration mode</string>
+    <string name="time_interval_between_timers">Time interval between timers</string>
+    <string name="time_interval_between_timers_description">The time that elapses before starting the next timer</string>
+    <string name="use_media_volume_when_headphones_are_connected">Use media volume when headphones are connected</string>
+    <string name="use_media_volume_when_headphones_are_connected_description">When a headset is connected, the individual alarm volume is ignored, and the alarm sound is output according to the default media volume of the phone\n\nIt is recommended to enable this option as it may surprise you when the volume suddenly changes whilst playing music</string>
 </resources>
