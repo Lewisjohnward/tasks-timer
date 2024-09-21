@@ -88,7 +88,7 @@ private fun SettingsScreenContent(
                 description = stringResource(R.string.ignore_silent_mode_description),
                 input = {
                     Switch(
-                        onClick = {onEvent(SettingsEvent.SetIgnoreSilentMode(it))},
+                        onClick = { onEvent(SettingsEvent.SetIgnoreSilentMode(it)) },
                         checked = uiState.ignoreSilentMode
                     )
                 },
@@ -98,7 +98,7 @@ private fun SettingsScreenContent(
                 description = stringResource(R.string.time_interval_between_timers_description),
                 input = {
                     Time(
-                        onClick = {displayDialog = true},
+                        onClick = { displayDialog = true },
                         value = uiState.timeIntervalBetweenTimers.toString()
                     )
                 }
@@ -108,17 +108,19 @@ private fun SettingsScreenContent(
                 description = stringResource(R.string.use_media_volume_when_headphones_are_connected_description),
                 input = {
                     Switch(
-                        onClick = {onEvent(SettingsEvent.SetUseMediaVolumeHeadphones(it))},
+                        onClick = { onEvent(SettingsEvent.SetUseMediaVolumeHeadphones(it)) },
                         checked = uiState.useMediaVolumeHeadphones
                     )
                 }
             )
         }
         if (displayDialog) {
-            Dialog(
+            NumberPickerDialog(
                 dismiss = { displayDialog = false },
                 value = uiState.timeIntervalBetweenTimers,
-                onChange = {onEvent(SettingsEvent.SetTimeInterval(it))}
+                onChange = { onEvent(SettingsEvent.SetTimeInterval(it)) },
+                max = 99,
+                min = 0
             )
         }
     }
@@ -126,15 +128,21 @@ private fun SettingsScreenContent(
 
 
 @Composable
-private fun Dialog(
+private fun NumberPickerDialog(
     dismiss: () -> Unit,
     value: Int,
-    onChange: (Int) -> Unit)
-{
+    onChange: (Int) -> Unit,
+    max: Int,
+    min: Int
+) {
+
+    val displayIncrement: Boolean = value < max
+    val displayDecrement: Boolean = value - 1 >= min
+
 
     CompositionLocalProvider(value = LocalMinimumInteractiveComponentEnforcement provides false) {
         BasicAlertDialog(
-            onDismissRequest = {dismiss()}
+            onDismissRequest = { dismiss() }
         ) {
             Box(
                 modifier = Modifier
@@ -146,35 +154,42 @@ private fun Dialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    IconButton(
-                        modifier = Modifier.size(100.dp),
-                        onClick = {onChange(value + 1)}) {
-                        Icon(
-                            modifier = Modifier
-                                .rotate(90f)
-                                .fillMaxSize(),
-                            imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = "Increase",
-                        )
+                    Box(modifier = Modifier.size(100.dp)) {
+                        if (displayIncrement) {
+                            IconButton(
+                                modifier = Modifier.fillMaxSize(),
+                                onClick = { onChange(value + 1) }) {
+                                Icon(
+                                    modifier = Modifier
+                                        .rotate(90f)
+                                        .fillMaxSize(),
+                                    imageVector = Icons.Filled.ChevronLeft,
+                                    contentDescription = "Increase",
+                                )
 
+                            }
+                        }
                     }
                     Text(
                         text = "${value}s",
                         fontSize = 75.sp,
                     )
-
-                    IconButton(
-                        modifier = Modifier
-                            .size(100.dp),
-                        onClick = {onChange(value - 1)}
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .rotate(-90f)
-                                .fillMaxSize(),
-                            imageVector = Icons.Filled.ChevronLeft,
-                            contentDescription = "Decrease"
-                        )
+                    Box(modifier = Modifier.size(100.dp)) {
+                        if (displayDecrement) {
+                            IconButton(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                onClick = { onChange(value - 1) }
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .rotate(-90f)
+                                        .fillMaxSize(),
+                                    imageVector = Icons.Filled.ChevronLeft,
+                                    contentDescription = "Decrease"
+                                )
+                            }
+                        }
                     }
                 }
             }
