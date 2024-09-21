@@ -7,6 +7,7 @@ import com.android.taskstimer.core.data.local.board.BoardDao
 import com.android.taskstimer.core.data.local.board.BoardEntity
 import com.android.taskstimer.core.data.local.timer.TimerDao
 import com.android.taskstimer.core.data.local.timer.TimerEntity
+import com.android.taskstimer.core.presentation.ui.IconKey
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,8 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                 boardDao.insert(
                     BoardEntity(
                         id = 1,
-                        name = "Household Chores"
+                        name = "Household Chores",
+                        iconKey = IconKey.CLEANING
                     )
                 )
                 timerDao.insert(
@@ -116,7 +118,8 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                 boardDao.insert(
                     BoardEntity(
                         id = 2,
-                        name = "Train Bruno"
+                        name = "Train Bruno",
+                        iconKey = IconKey.PETS
                     )
                 )
 
