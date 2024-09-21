@@ -40,10 +40,9 @@ import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.ui.theme.Green
-import com.android.taskstimer.core.presentation.ui.theme.SlateGray
 import com.android.taskstimer.core.presentation.ui.theme.Red
+import com.android.taskstimer.core.presentation.ui.theme.SlateGray
 import com.android.taskstimer.core.presentation.util.TestTags
-import com.android.taskstimer.tasks_timer.presentation.components.MenuPopup
 
 
 @Composable
@@ -125,15 +124,15 @@ fun Timer(
             onStart = { handleStart() },
             enabledPlayButton = enabledPlayButton,
             enabledResetButton = enabledResetButton,
-            onReset = { handleReset() }
-        ) { handlePause() }
+            onReset = { handleReset() },
+            onPause = { handlePause() }
+        )
         if (menuVisible) {
-            MenuPopup(dismiss = { menuVisible = false }) {
-                TimerMenu(
-                    deleteTimer = { handleDeleteTimer() },
-                    editTimer = { editTimer() }
-                )
-            }
+            TimerMenu(
+                dismiss = { menuVisible = false },
+                deleteTimer = { handleDeleteTimer() },
+                editTimer = { editTimer() }
+            )
         }
     }
 }
