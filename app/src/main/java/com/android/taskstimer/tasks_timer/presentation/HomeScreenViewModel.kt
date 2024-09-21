@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.core.presentation.ui.IconKey
 import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -28,12 +28,25 @@ sealed interface BoardToLoad {
     data object NullBoard : BoardToLoad
 }
 
+enum class CreateBoardDialog {
+    NAME_BOARD,
+    CHOOSE_ICON
+}
+
+data class NewBoardDetails(
+    val name: String = "",
+    val iconKey: IconKey = IconKey.DEFAULT
+)
+
 
 data class HomeScreenUiState(
     val editBoards: Boolean = false,
     val displayBoardMenu: Boolean = false,
     val displayConfirmDialog: DeleteDialog? = null,
-    val boardMenuEnabled:Boolean = false,
+    val boardMenuEnabled: Boolean = false,
+
+    val createBoard: CreateBoardDialog? = null,
+    val newBoardDetails: NewBoardDetails = NewBoardDetails(),
 
     val boards: List<BoardItem> = listOf(),
 
@@ -78,17 +91,6 @@ class HomeViewModel @Inject constructor(
                 _uiState.update { it.copy(editBoards = event.edit) }
             }
 
-            is HomeScreenEvent.CreateBoard -> {
-                viewModelScope.launch {
-                    insertBoard(BoardItem(name = event.name))
-                    // If this is the first board created load into service/ui
-                    if (uiState.value.boards.isEmpty()) {
-                        if (getBoardsFlow().first().isNotEmpty()) {
-                            boardToLoad.value = BoardToLoad.BoardId(getBoardsFlow().first()[0].id)
-                        }
-                    }
-                }
-            }
 
             is HomeScreenEvent.DeleteBoard -> {
                 _uiState.update {
@@ -130,20 +132,67 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.SelectBoard -> {
-                _uiState.update { it.copy(
-                    currentBoardIndex = event.boardIndex,
-                    boardMenuEnabled = true
-                ) }
+                _uiState.update {
+                    it.copy(
+                        currentBoardIndex = event.boardIndex,
+                        boardMenuEnabled = true
+                    )
+                }
             }
 
+            is HomeScreenEvent.CreateNewBoard -> {
+                _uiState.update {
+                    it.copy(createBoard = CreateBoardDialog.NAME_BOARD)
+                }
+            }
 
+            is HomeScreenEvent.NameNewBoard -> {
+                _uiState.update {
+                    it.copy(
+                        createBoard = CreateBoardDialog.CHOOSE_ICON,
+                        newBoardDetails = it.newBoardDetails.copy(
+                            name = event.name
+                        )
+                    )
+                }
+
+
+            }
+
+            is HomeScreenEvent.AssignIconNewBoard -> {
+                _uiState.update {
+                    it.copy(
+                        createBoard = null,
+                        newBoardDetails = it.newBoardDetails.copy(
+                            iconKey = event.iconKey
+                        )
+                    )
+                }
+
+
+                viewModelScope.launch {
+                    insertBoard(BoardItem(
+                        name = _uiState.value.newBoardDetails.name,
+                        iconKey = _uiState.value.newBoardDetails.iconKey
+                    ))
+                    // If this is the first board created load into service/ui
+                    if (uiState.value.boards.isEmpty()) {
+                        if (getBoardsFlow().first().isNotEmpty()) {
+                            boardToLoad.value = BoardToLoad.BoardId(getBoardsFlow().first()[0].id)
+                        }
+                    }
+                }
+
+
+            }
         }
     }
 
     private fun deleteTimer(timer: TimerItem) = viewModelScope.launch {
         deleteTimer.invoke(timer)
 
-        boardToLoad.value = BoardToLoad.BoardId(uiState.value.boards[uiState.value.currentBoardIndex].id)
+        boardToLoad.value =
+            BoardToLoad.BoardId(uiState.value.boards[uiState.value.currentBoardIndex].id)
 
         _uiState.update {
             it.copy(

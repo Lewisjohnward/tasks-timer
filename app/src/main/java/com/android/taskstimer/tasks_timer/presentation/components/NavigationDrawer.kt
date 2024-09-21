@@ -25,10 +25,6 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,10 +40,11 @@ import com.android.taskstimer.core.presentation.ui.settingsIcon
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.tasks_timer.presentation.CreateBoardDialog
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.tasks_timer.presentation.NewBoardDetails
 import com.android.taskstimer.tasks_timer.presentation.components.board.IconInputDialog
 import com.android.taskstimer.tasks_timer.presentation.components.board.NameInputDialog
-import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 
 private data class DrawerItem(
     val text: String,
@@ -64,11 +61,9 @@ fun NavigationDrawer(
     closeDrawer: () -> Unit = {},
     editBoards: Boolean = true,
     tasksTimerService: TasksTimerService,
+    createBoard: CreateBoardDialog?,
 ) {
 
-    var inputDialogVisible by remember { mutableStateOf(false) }
-
-    var chooseIconDialogVisible by remember { mutableStateOf(true) }
 
     ModalDrawerSheet(
         modifier = Modifier.testTag(TestTags.DRAWER),
@@ -126,7 +121,7 @@ fun NavigationDrawer(
             }
             LazyColumn(modifier = Modifier.weight(0.5f)) {
 
-                itemsIndexed(boards) {index, board ->
+                itemsIndexed(boards) { index, board ->
                     val drawerItem = DrawerItem(
                         text = board.name,
                         onClick = {
@@ -155,7 +150,7 @@ fun NavigationDrawer(
                 if (editBoards) item {
                     Button(
                         modifier = Modifier.testTag(TestTags.DRAWER_ADD_BOARD_BUTTON),
-                        onClick = { inputDialogVisible = true },
+                        onClick = { onEvent(HomeScreenEvent.CreateNewBoard)},
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent
                         ),
@@ -189,23 +184,27 @@ fun NavigationDrawer(
             NavDrawerItem(
                 item = DrawerItem(
                     text = "Settings",
-                    onClick = {navigateToSettings()},
+                    onClick = { navigateToSettings() },
                     icon = settingsIcon
                 )
             )
 
-            if (inputDialogVisible)
-                NameInputDialog(
-                    onEvent = onEvent,
-                    close = { inputDialogVisible = false }
-                )
+            when (createBoard) {
+                CreateBoardDialog.NAME_BOARD -> {
+                    NameInputDialog(
+                        onEvent = onEvent,
+//                        onClose = { inputDialogVisible = false }
+                    )
+                }
+                CreateBoardDialog.CHOOSE_ICON -> {
+                    IconInputDialog(
+                        onEvent = onEvent,
+//                        onClose = { inputDialogVisible = false }
+                    )
 
-            if (chooseIconDialogVisible)
-                IconInputDialog(
-                    onEvent = onEvent,
-                    close = { inputDialogVisible = false }
-
-                )
+                }
+                null -> {}
+            }
         }
     }
 }

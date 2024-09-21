@@ -24,7 +24,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 @Composable
 fun IconInputDialog(
     myNewBoardName: String = "My awesome new board",
-    close: () -> Unit = {},
+    onClose: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {},
 ) {
 
@@ -43,7 +43,7 @@ fun IconInputDialog(
                 items(IconKey.entries.toTypedArray()) { iconKey ->
                     IconButton(
                         modifier = Modifier.padding(10.dp),
-                        onClick = {},
+                        onClick = {onEvent(HomeScreenEvent.AssignIconNewBoard(iconKey))},
                     ) {
                         Icon(
                             modifier = Modifier

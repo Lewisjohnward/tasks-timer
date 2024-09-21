@@ -28,7 +28,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 @Composable
 fun NameInputDialog(
     myNewBoardName: String = "My awesome new board",
-    close: () -> Unit = {},
+    onClose: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {},
 ) {
     // TODO: On process death this will be lost it needs
@@ -75,8 +75,8 @@ fun NameInputDialog(
                 TextButton(
                     modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
                     onClick = {
-                        onEvent(HomeScreenEvent.CreateBoard(input))
-                        close()
+                        onEvent(HomeScreenEvent.NameNewBoard(input))
+                        onClose()
                     }) {
                     Text(
                         text = "confirm",
@@ -85,7 +85,7 @@ fun NameInputDialog(
                 }
                 TextButton(
                     modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
-                    onClick = { close() }) {
+                    onClick = { onClose() }) {
                     Text(
                         text = "Cancel",
                         color = Color(0xFFFF9B88)
