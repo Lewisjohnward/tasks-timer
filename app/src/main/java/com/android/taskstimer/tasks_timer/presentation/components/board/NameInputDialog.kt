@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
-import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 
 @Composable
 fun NameInputDialog(
@@ -35,63 +34,61 @@ fun NameInputDialog(
     // save state handle in the viewmodel
     var input by remember { mutableStateOf("") }
 
-    Dialog {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text(
+            text = "New board name",
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+        TextField(
+            modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
+            value = input,
+            placeholder = { Text(text = "My awesome new board") },
+            onValueChange = { input = it },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add icon"
+                )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedLeadingIconColor = Color(0x99FFFFFF),
+                unfocusedLeadingIconColor = Color(0x44FFFFFF),
+                cursorColor = Color.White,
+                unfocusedPlaceholderColor = Color(0x22FFFFFF)
+
+            ),
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Text(
-                text = "New board name",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            TextField(
-                modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
-                value = input,
-                placeholder = { Text(text = "My awesome new board") },
-                onValueChange = { input = it },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add icon"
-                    )
-                },
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLeadingIconColor = Color(0x99FFFFFF),
-                    unfocusedLeadingIconColor = Color(0x44FFFFFF),
-                    cursorColor = Color.White,
-                    unfocusedPlaceholderColor = Color(0x22FFFFFF)
+            TextButton(
+                modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
+                onClick = {
+                    onEvent(HomeScreenEvent.NameNewBoard(input))
+                    onClose()
+                }) {
+                Text(
+                    text = "confirm",
+                    color = Color(0xFFFF9B88)
+                )
+            }
+            TextButton(
+                modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
+                onClick = { onClose() }) {
+                Text(
+                    text = "Cancel",
+                    color = Color(0xFFFF9B88)
 
-                ),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(
-                    modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
-                    onClick = {
-                        onEvent(HomeScreenEvent.NameNewBoard(input))
-                        onClose()
-                    }) {
-                    Text(
-                        text = "confirm",
-                        color = Color(0xFFFF9B88)
-                    )
-                }
-                TextButton(
-                    modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
-                    onClick = { onClose() }) {
-                    Text(
-                        text = "Cancel",
-                        color = Color(0xFFFF9B88)
-
-                    )
-                }
+                )
             }
         }
     }

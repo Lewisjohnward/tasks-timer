@@ -42,9 +42,9 @@ import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.CreateBoardDialog
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
-import com.android.taskstimer.tasks_timer.presentation.NewBoardDetails
 import com.android.taskstimer.tasks_timer.presentation.components.board.IconInputDialog
 import com.android.taskstimer.tasks_timer.presentation.components.board.NameInputDialog
+import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 
 private data class DrawerItem(
     val text: String,
@@ -150,7 +150,7 @@ fun NavigationDrawer(
                 if (editBoards) item {
                     Button(
                         modifier = Modifier.testTag(TestTags.DRAWER_ADD_BOARD_BUTTON),
-                        onClick = { onEvent(HomeScreenEvent.CreateNewBoard)},
+                        onClick = { onEvent(HomeScreenEvent.CreateNewBoard) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Transparent
                         ),
@@ -189,22 +189,23 @@ fun NavigationDrawer(
                 )
             )
 
-            when (createBoard) {
-                CreateBoardDialog.NAME_BOARD -> {
-                    NameInputDialog(
-                        onEvent = onEvent,
+            if (createBoard != null) {
+                Dialog {
+                    if (createBoard == CreateBoardDialog.NAME_BOARD) {
+                        NameInputDialog(
+                            onEvent = onEvent,
 //                        onClose = { inputDialogVisible = false }
-                    )
-                }
-                CreateBoardDialog.CHOOSE_ICON -> {
-                    IconInputDialog(
-                        onEvent = onEvent,
+                        )
+                    }
+                    if (createBoard == CreateBoardDialog.CHOOSE_ICON) {
+                        IconInputDialog(
+                            onEvent = onEvent,
 //                        onClose = { inputDialogVisible = false }
-                    )
-
+                        )
+                    }
                 }
-                null -> {}
             }
+
         }
     }
 }
