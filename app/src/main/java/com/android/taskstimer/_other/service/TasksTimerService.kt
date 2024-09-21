@@ -17,8 +17,10 @@ import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.domain.model.resetTimer
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
@@ -79,6 +81,9 @@ class TasksTimerService : LifecycleService() {
 
     @Inject
     lateinit var boardsRepo: BoardsRepository
+
+    @Inject
+    lateinit var userPreferencesRepo: UserPreferencesRepository
 
     private val binder = MyBinder()
 

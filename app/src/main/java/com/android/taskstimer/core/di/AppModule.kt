@@ -2,11 +2,7 @@ package com.android.taskstimer.core.di
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
-import com.android.taskstimer.core.data.local.board.BoardEntity
-import com.android.taskstimer.core.data.local.timer.TimerEntity
 import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
 import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
 import com.android.taskstimer.core.domain.repository.BoardsRepository
@@ -19,14 +15,10 @@ import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import com.android.taskstimer.timer.domain.use_case.AddTimer
 import com.android.taskstimer.timer.domain.use_case.GetTimerStream
-import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
 
@@ -141,6 +133,4 @@ object AppModule {
     ): GetTimerStream {
         return GetTimerStream(timersRepository)
     }
-
-
 }

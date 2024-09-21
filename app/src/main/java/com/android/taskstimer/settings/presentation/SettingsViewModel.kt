@@ -1,10 +1,12 @@
 package com.android.taskstimer.settings.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 data class SettingsUiState(
@@ -13,18 +15,34 @@ data class SettingsUiState(
     val useMediaVolumeHeadphones: Boolean = true
 )
 
-//@HiltViewModel
-class SettingsViewModel: ViewModel() {
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository,
+): ViewModel() {
 
-    private var _uiState = MutableStateFlow(SettingsUiState())
-    val uiState = _uiState.asStateFlow()
-
+    val uiState = userPreferencesRepository.userPreferencesFlow.map{
+        SettingsUiState(
+            ignoreSilentMode = it.ignoreSilentMode,
+            timeIntervalBetweenTimers = it.timeIntervalBetweenTimers,
+            useMediaVolumeHeadphones = it.useMediaVolumeHeadphones
+        )
+    }
 
     fun onEvent(event: SettingsEvent){
         when (event){
-            is SettingsEvent.SetIgnoreSilentMode -> _uiState.update {it.copy(ignoreSilentMode = event.active) }
-            is SettingsEvent.SetTimeInterval -> _uiState.update { it.copy(timeIntervalBetweenTimers = event.time) }
-            is SettingsEvent.SetUseMediaVolumeHeadphones -> _uiState.update { it.copy(useMediaVolumeHeadphones = event.active) }
+            is SettingsEvent.SetIgnoreSilentMode -> {
+                viewModelScope.launch {
+                    userPreferencesRepository.updateIgnoreSilentMode(event.active)
+                }
+            }
+            is SettingsEvent.SetTimeInterval -> {
+                viewModelScope.launch { userPreferencesRepository.updateTimerInterval(event.time) }
+            }
+            is SettingsEvent.SetUseMediaVolumeHeadphones -> {
+                viewModelScope.launch {
+                    userPreferencesRepository.updateUseMediaVolumeHeadphones(event.active)
+                }
+            }
         }
     }
 

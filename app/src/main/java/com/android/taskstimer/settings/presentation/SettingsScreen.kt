@@ -64,7 +64,7 @@ private fun SettingsScreenContent(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     var displayDialog: Boolean by remember { mutableStateOf(false) }
-    val uiState: SettingsUiState by viewModel.uiState.collectAsState()
+    val uiState: SettingsUiState by viewModel.uiState.collectAsState(SettingsUiState())
     val onEvent = viewModel::onEvent
 
     Scaffold(
