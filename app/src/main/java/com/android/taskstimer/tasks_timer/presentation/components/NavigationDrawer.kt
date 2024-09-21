@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,13 +40,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
-import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.core.presentation.ui.settingsIcon
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 private data class DrawerItem(
     val text: String,
-    val icon: ImageVector = Icons.Filled.CheckCircle,
+    val icon: ImageVector,
     val selected: Boolean = false,
     val onClick: () -> Unit = {}
 )
@@ -85,7 +86,8 @@ fun NavigationDrawer(
                 NavDrawerItem(
                     item = DrawerItem(
                         text = "Simple Timer",
-                        onClick = {}
+                        onClick = {},
+                        icon = timerIcon
                     )
                 )
             }
@@ -119,6 +121,17 @@ fun NavigationDrawer(
             LazyColumn(modifier = Modifier.weight(0.5f)) {
 
                 itemsIndexed(boards) {index, board ->
+                    val drawerItem = DrawerItem(
+                        text = board.name,
+                        onClick = {
+                            tasksTimerService.selectBoard(board.id)
+                            onEvent(HomeScreenEvent.SelectBoard(index))
+                        },
+                        icon = board.iconKey.icon
+                    )
+                    println(board.iconKey)
+
+
                     NavDrawerItem(
                         modifier = Modifier.testTag("${TestTags.BOARD} ${board.name}"),
                         closeDrawer = closeDrawer,
@@ -130,13 +143,7 @@ fun NavigationDrawer(
                                     tint = Color.White
                                 )
                         },
-                        item = DrawerItem(
-                            text = board.name,
-                            onClick = {
-                                tasksTimerService.selectBoard(board.id)
-                                onEvent(HomeScreenEvent.SelectBoard(index))
-                            }
-                        )
+                        item = drawerItem
                     )
                 }
                 if (editBoards) item {
@@ -176,7 +183,8 @@ fun NavigationDrawer(
             NavDrawerItem(
                 item = DrawerItem(
                     text = "Settings",
-                    onClick = {navigateToSettings()}
+                    onClick = {navigateToSettings()},
+                    icon = settingsIcon
                 )
             )
 
