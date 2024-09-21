@@ -45,6 +45,9 @@ import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.tasks_timer.presentation.components.board.IconInputDialog
+import com.android.taskstimer.tasks_timer.presentation.components.board.NameInputDialog
+import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
 
 private data class DrawerItem(
     val text: String,
@@ -64,6 +67,9 @@ fun NavigationDrawer(
 ) {
 
     var inputDialogVisible by remember { mutableStateOf(false) }
+
+    var chooseIconDialogVisible by remember { mutableStateOf(true) }
+
     ModalDrawerSheet(
         modifier = Modifier.testTag(TestTags.DRAWER),
         drawerShape = RectangleShape
@@ -189,7 +195,13 @@ fun NavigationDrawer(
             )
 
             if (inputDialogVisible)
-                InputDialog(
+                NameInputDialog(
+                    onEvent = onEvent,
+                    close = { inputDialogVisible = false }
+                )
+
+            if (chooseIconDialogVisible)
+                IconInputDialog(
                     onEvent = onEvent,
                     close = { inputDialogVisible = false }
 
