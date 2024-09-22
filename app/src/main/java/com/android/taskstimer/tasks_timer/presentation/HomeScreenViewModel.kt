@@ -185,6 +185,10 @@ class HomeViewModel @Inject constructor(
 
 
             }
+
+            HomeScreenEvent.CancelCreateNewBoard -> {
+                _uiState.update { it.copy(createBoard = null) }
+            }
         }
     }
 

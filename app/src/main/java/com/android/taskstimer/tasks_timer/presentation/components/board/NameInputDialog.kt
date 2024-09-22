@@ -83,7 +83,8 @@ fun NameInputDialog(
             }
             TextButton(
                 modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
-                onClick = { onClose() }) {
+                onClick = { onEvent(HomeScreenEvent.CancelCreateNewBoard) })
+            {
                 Text(
                     text = "Cancel",
                     color = Color(0xFFFF9B88)

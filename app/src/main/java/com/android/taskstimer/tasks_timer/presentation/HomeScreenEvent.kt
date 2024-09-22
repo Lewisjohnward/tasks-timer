@@ -17,6 +17,7 @@ sealed interface HomeScreenEvent {
 
 
     data object CreateNewBoard: HomeScreenEvent
+    data object CancelCreateNewBoard:HomeScreenEvent
     data class NameNewBoard(val name: String) : HomeScreenEvent
     data class AssignIconNewBoard(val iconKey: IconKey): HomeScreenEvent
 
