@@ -194,6 +194,7 @@ fun NavigationDrawer(
                     if (createBoard == CreateBoardDialog.NAME_BOARD) {
                         NameInputDialog(
                             onEvent = onEvent,
+                            confirmEnabled = false,
 //                        onClose = { inputDialogVisible = false }
                         )
                     }

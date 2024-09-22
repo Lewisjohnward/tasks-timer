@@ -11,6 +11,7 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -25,9 +26,9 @@ fun Dialog(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(50.dp))
                 .background(BackgroundDarkGray)
-                .padding(20.dp)
+                .padding(start = 25.dp ,top = 40.dp, end = 25.dp, bottom = 40.dp)
         ) {
             content()
 

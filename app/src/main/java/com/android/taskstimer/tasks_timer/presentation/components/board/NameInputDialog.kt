@@ -19,8 +19,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.taskstimer.R
+import com.android.taskstimer.core.presentation.ui.theme.Coral
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
@@ -29,23 +33,28 @@ fun NameInputDialog(
     myNewBoardName: String = "My awesome new board",
     onClose: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {},
+    confirmEnabled: Boolean,
 ) {
     // TODO: On process death this will be lost it needs
     // save state handle in the viewmodel
     var input by remember { mutableStateOf("") }
 
+    val confirmEnabled = input != ""
+
     Column(
+//        modifier = Modifier.padding(start = 5.dp ,top = 20.dp, end = 5.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
-            text = "New board name",
+            text = stringResource(R.string.new_board_name),
+            fontSize = 20.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
         TextField(
             modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
             value = input,
-            placeholder = { Text(text = "My awesome new board") },
+            placeholder = { Text(text = stringResource(R.string.add_new_board_placeholder)) },
             onValueChange = { input = it },
             leadingIcon = {
                 Icon(
@@ -72,13 +81,14 @@ fun NameInputDialog(
         ) {
             TextButton(
                 modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
+                enabled = confirmEnabled,
                 onClick = {
                     onEvent(HomeScreenEvent.NameNewBoard(input))
                     onClose()
                 }) {
                 Text(
-                    text = "confirm",
-                    color = Color(0xFFFF9B88)
+                    text = stringResource(R.string.confirm),
+                    color = if (confirmEnabled) Coral else Coral.copy(alpha = 0.3f)
                 )
             }
             TextButton(
@@ -86,7 +96,7 @@ fun NameInputDialog(
                 onClick = { onEvent(HomeScreenEvent.CancelCreateNewBoard) })
             {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     color = Color(0xFFFF9B88)
 
                 )
