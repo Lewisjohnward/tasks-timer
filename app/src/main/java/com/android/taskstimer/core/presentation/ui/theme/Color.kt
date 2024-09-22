@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 
 val BackgroundDarkGray = Color(0xFF263238)
+val Coral = Color(0xFFFF9B88)
 val Green = Color(0xFF629D61)
 val Red =  Color(0xFFFF5447)
 val SlateGray = Color(0xFF3C6071)
