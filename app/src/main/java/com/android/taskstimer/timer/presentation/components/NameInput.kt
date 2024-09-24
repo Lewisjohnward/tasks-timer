@@ -2,6 +2,7 @@ package com.android.taskstimer.timer.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +17,10 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.taskstimer.core.presentation.ui.theme.Gainsboro
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.timer.presentation.TimerEvent
 
@@ -29,20 +32,21 @@ fun NameInput(
     Column(
         modifier = Modifier.background(Color.Transparent),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         BasicTextField(
             modifier = Modifier.testTag(TestTags.INPUT_FIELD),
             value = name,
             textStyle = TextStyle(
                 fontSize = 30.sp,
-                color = Color.White
+                color = Color.White,
+                textAlign = TextAlign.Center
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
             enabled = true,
             maxLines = 1,
-            cursorBrush = SolidColor(Color.White),
+            cursorBrush = SolidColor(Gainsboro),
             onValueChange = {onEvent(TimerEvent.UpdateName(it))},
         )
         Spacer(
