@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.timer.TimerState
+import com.android.taskstimer.timer.TimerStateManager
 import com.android.taskstimer.timer.domain.use_case.AddTimer
 import com.android.taskstimer.timer.domain.use_case.GetTimerStream
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,10 +32,12 @@ class TimerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val addTimer: AddTimer,
     private val getTimerStream: GetTimerStream,
-    private val timerState: TimerState
+    private val timerStateManager: TimerStateManager
 ) : ViewModel() {
 
-    val test = timerState.myFlow.asStateFlow()
+
+    // TODO: TURN MAP TOSTRING() HERE
+    val timerState = timerStateManager.state.asStateFlow()
 
     private val boardId: Int = checkNotNull(savedStateHandle[TimerDestination.boardIdArg])
     private val timerId: Int = checkNotNull(savedStateHandle[TimerDestination.timerIdArg])
@@ -56,42 +58,55 @@ class TimerViewModel @Inject constructor(
                         isEntryValid = true
                     )
                 }
+                timerStateManager.setTime(timer.presetTime.toInt())
             }
         }
     }
 
-    private fun addTimer(timer: TimerItem) {
-        viewModelScope.launch {
-            addTimer.invoke(timer)
-        }
-    }
 
     fun onEvent(event: TimerEvent) {
         when (event) {
             is TimerEvent.AddTimer -> {
-                addTimer(
-                    TimerItem(
-                        id = timerId,
-                        boardId = boardId,
-                        name = uiState.value.timer.name,
-                        presetTime = "125",
-                        remainingTime = "125"
-                    )
-                )
+                println(timerStateManager.getInputValueAsSeconds())
+                addTimer()
             }
 
-            is TimerEvent.UpdateName -> {
-                _uiState.update {
-                    val updatedTimer = TimerItem(
-                        name = event.name
-                    )
-                    it.copy(
-                        timer = updatedTimer,
-                        isEntryValid = validateInput(updatedTimer)
-                    )
-                }
-            }
+            is TimerEvent.UpdateTimer -> updateTimer(event.name)
 
+            is TimerEvent.ChangeFocus -> timerStateManager.changeFocus(event.side)
+            TimerEvent.Increment -> timerStateManager.increment()
+            TimerEvent.Decrement -> timerStateManager.decrement()
+            is TimerEvent.InputValue -> timerStateManager.inputValue(event.value)
+            TimerEvent.Delete -> timerStateManager.delete()
+            TimerEvent.Add -> timerStateManager.add()
+        }
+    }
+
+
+
+
+    private fun updateTimer(name: String){
+        _uiState.update {
+            val updatedTimer = TimerItem(
+                name = name
+            )
+            it.copy(
+                timer = updatedTimer,
+                isEntryValid = validateInput(updatedTimer)
+            )
+        }
+    }
+
+    private fun addTimer() {
+        val newTimerItem = TimerItem(
+            id = timerId,
+            boardId = boardId,
+            name = uiState.value.timer.name,
+            presetTime = "125",
+            remainingTime = "125"
+        )
+        viewModelScope.launch {
+            addTimer.invoke(newTimerItem)
         }
     }
 

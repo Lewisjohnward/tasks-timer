@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,8 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer.core.presentation.ui.theme.Green
-import com.android.taskstimer.timer.presentation.NumpadEvent
+import com.android.taskstimer.timer.presentation.TimerEvent
 
 
 class Key(
@@ -49,27 +47,16 @@ private val keys: List<Key> =
     )
 
 @Composable
-fun Numpad(onClick: (NumpadEvent) -> Unit) {
+fun Numpad(onClick: (TimerEvent) -> Unit) {
     val padding = 5.dp
-
-//    fun handleClick(key: String) {
-//        when (key) {
-//            "-1" -> onClick(NumpadEvent.Decrement)
-//            "+1" -> onClick(NumpadEvent.Increment)
-//            "0", "1", "2", "3", "4", "5", "6", "8", "9" -> onClick(NumpadEvent.Value(key.toInt()))
-//            "Add" -> onClick(NumpadEvent.Add)
-//            "Del" -> onClick(NumpadEvent.Delete)
-//        }
-//    }
-
 
     fun handleClick(key: String) {
         when (key) {
-            "-1" -> onClick(NumpadEvent.Decrement)
-            "+1" -> onClick(NumpadEvent.Increment)
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" -> onClick(NumpadEvent.Value(key.toInt()))
-            "Add" -> onClick(NumpadEvent.Add)
-            "Del" -> onClick(NumpadEvent.Delete)
+            "-1" -> onClick(TimerEvent.Decrement)
+            "+1" -> onClick(TimerEvent.Increment)
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" -> onClick(TimerEvent.InputValue(key.toInt()))
+            "Add" -> onClick(TimerEvent.Add)
+            "Del" -> onClick(TimerEvent.Delete)
         }
     }
 
@@ -128,7 +115,6 @@ private fun PadKey(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun NumPadPreview() {

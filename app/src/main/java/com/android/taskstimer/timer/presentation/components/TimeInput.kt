@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.Gainsboro
-import com.android.taskstimer.timer.presentation.InputState
-import com.android.taskstimer.timer.presentation.UserAction
-import com.android.taskstimer.timer.presentation.displayValue
+import com.android.taskstimer.timer.InputState
+import com.android.taskstimer.timer.displayValue
+import com.android.taskstimer.timer.presentation.TimerEvent
 
 
 enum class Side {
@@ -36,7 +36,7 @@ val ROUNDED_DP = 25.dp
 const val FOCUS_BG = 0XFF999999
 
 @Composable
-fun TimeInput(state: List<InputState>, onClick: (UserAction) -> Unit) {
+fun TimeInput(state: List<InputState>, onEvent: (TimerEvent) -> Unit) {
     val weight: Float = 1 / 3f
 
     Row(
@@ -44,7 +44,7 @@ fun TimeInput(state: List<InputState>, onClick: (UserAction) -> Unit) {
     ) {
         state.forEach { input ->
             Input(
-                modifier = Modifier.clickable { onClick(UserAction.Click(input.side)) },
+                modifier = Modifier.clickable { onEvent(TimerEvent.ChangeFocus(input.side)) },
                 focus = input.focus,
                 value = input.displayValue(),
                 weight = 0.33f,

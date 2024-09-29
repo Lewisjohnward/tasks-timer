@@ -2,7 +2,6 @@ package com.android.taskstimer.timer.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,7 @@ fun NameInput(
             enabled = true,
             maxLines = 1,
             cursorBrush = SolidColor(Gainsboro),
-            onValueChange = {onEvent(TimerEvent.UpdateName(it))},
+            onValueChange = {onEvent(TimerEvent.UpdateTimer(it))},
         )
         Spacer(
             modifier = Modifier
