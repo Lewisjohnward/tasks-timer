@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.timer.TimerState
 import com.android.taskstimer.timer.domain.use_case.AddTimer
 import com.android.taskstimer.timer.domain.use_case.GetTimerStream
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,8 +31,11 @@ data class TimerUiState(
 class TimerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val addTimer: AddTimer,
-    private val getTimerStream: GetTimerStream
+    private val getTimerStream: GetTimerStream,
+    private val timerState: TimerState
 ) : ViewModel() {
+
+    val test = timerState.myFlow.asStateFlow()
 
     private val boardId: Int = checkNotNull(savedStateHandle[TimerDestination.boardIdArg])
     private val timerId: Int = checkNotNull(savedStateHandle[TimerDestination.timerIdArg])

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,10 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.taskstimer.core.presentation.ui.theme.Green
+import com.android.taskstimer.timer.presentation.NumpadEvent
 
 
-private data class Key(
-    val key: String,
+class Key(
+    val key : String,
     val color: Color = Color.Black
 )
 
@@ -48,8 +49,32 @@ private val keys: List<Key> =
     )
 
 @Composable
-fun Numpad() {
+fun Numpad(onClick: (NumpadEvent) -> Unit) {
     val padding = 5.dp
+
+//    fun handleClick(key: String) {
+//        when (key) {
+//            "-1" -> onClick(NumpadEvent.Decrement)
+//            "+1" -> onClick(NumpadEvent.Increment)
+//            "0", "1", "2", "3", "4", "5", "6", "8", "9" -> onClick(NumpadEvent.Value(key.toInt()))
+//            "Add" -> onClick(NumpadEvent.Add)
+//            "Del" -> onClick(NumpadEvent.Delete)
+//        }
+//    }
+
+
+    fun handleClick(key: String) {
+        when (key) {
+            "-1" -> onClick(NumpadEvent.Decrement)
+            "+1" -> onClick(NumpadEvent.Increment)
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" -> onClick(NumpadEvent.Value(key.toInt()))
+            "Add" -> onClick(NumpadEvent.Add)
+            "Del" -> onClick(NumpadEvent.Delete)
+        }
+    }
+
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,8 +85,8 @@ fun Numpad() {
             modifier = Modifier.padding(bottom = padding),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            PadKey(modifier = Modifier.weight(0.5f), key = "-1")
-            PadKey(modifier = Modifier.weight(0.5f), key = "+1")
+            PadKey(modifier = Modifier.weight(0.5f), key = "-1", onClick = { handleClick("-1") })
+            PadKey(modifier = Modifier.weight(0.5f), key = "+1", onClick = { handleClick("+1") })
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(count = 3),
@@ -71,7 +96,8 @@ fun Numpad() {
             items(keys) { key ->
                 PadKey(
                     key = key.key,
-                    color = key.color
+                    color = key.color,
+                    onClick = { handleClick(key.key) }
                 )
             }
 
@@ -80,10 +106,15 @@ fun Numpad() {
 }
 
 @Composable
-private fun PadKey(modifier: Modifier = Modifier, key: String, color: Color = Color.Black) {
+private fun PadKey(
+    modifier: Modifier = Modifier,
+    key: String,
+    color: Color = Color.Black,
+    onClick: () -> Unit
+) {
     Button(
         modifier = modifier,
-        onClick = {},
+        onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(
             containerColor = color
         ),
@@ -101,9 +132,9 @@ private fun PadKey(modifier: Modifier = Modifier, key: String, color: Color = Co
 @Preview(showBackground = true)
 @Composable
 private fun NumPadPreview() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Numpad()
-    }
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        Numpad()
+//    }
 }
 
 
