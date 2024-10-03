@@ -3,6 +3,7 @@ package com.android.taskstimer.tasks_timer.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -166,6 +167,7 @@ private fun HomeScreenContent(
                 Box(modifier = Modifier.padding(innerPadding)) {
                     if (tasksTimerService.state.value.timers.isNotEmpty())
                         LazyColumn(
+                            contentPadding = PaddingValues(top = 5.dp),
                             modifier = Modifier
 //                .weight(0.8f)
                                 .fillMaxWidth()
