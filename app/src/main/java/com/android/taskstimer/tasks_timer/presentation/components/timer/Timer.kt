@@ -1,6 +1,7 @@
 package com.android.taskstimer.tasks_timer.presentation.components.timer
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,10 +40,12 @@ import com.android.taskstimer._other.service.RUNSTATE
 import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
+import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.Green
 import com.android.taskstimer.core.presentation.ui.theme.Red
 import com.android.taskstimer.core.presentation.ui.theme.SlateGray
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.core.presentation.util.shadow
 
 
 @Composable
@@ -105,15 +108,12 @@ fun Timer(
                 timer.presetTime != timer.remainingTime
 
 
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = Color.White.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(0.dp)
-            )
+            .shadow(color = Color.Black, offsetX = 1.dp, offsetY = 1.dp, blurRadius = 5.dp)
+            .background(BackgroundDarkGray)
+            .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(0.dp))
             .padding(10.dp)
     ) {
         TimerDetails(
@@ -134,6 +134,7 @@ fun Timer(
                 editTimer = { editTimer() }
             )
         }
+
     }
 }
 
@@ -302,3 +303,4 @@ private fun TimerPreview() {
         timer = previewTimerItem,
     )
 }
+
