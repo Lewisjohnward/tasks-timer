@@ -169,7 +169,7 @@ private fun HomeScreenContent(
                             modifier = Modifier
 //                .weight(0.8f)
                                 .fillMaxWidth()
-                                .padding(top = 0.dp, start = 20.dp, end = 10.dp),
+                                .padding(top = 0.dp, start = 10.dp, end = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             itemsIndexed(tasksTimerService.state.value.timers) { index, timer ->
