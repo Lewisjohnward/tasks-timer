@@ -5,10 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,9 +19,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +42,8 @@ import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.ui.theme.ButtonShadowColorBottom
+import com.android.taskstimer.core.presentation.ui.theme.ButtonShadowColorTop
 import com.android.taskstimer.core.presentation.ui.theme.Green
 import com.android.taskstimer.core.presentation.ui.theme.Red
 import com.android.taskstimer.core.presentation.ui.theme.SlateGray
@@ -111,7 +114,12 @@ fun Timer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(color = Color.Black, offsetX = 1.dp, offsetY = 1.dp, blurRadius = 5.dp)
+            .shadow(
+                color = Color.Black.copy(alpha = 0.6f),
+                offsetX = 1.dp,
+                offsetY = 1.dp,
+                blurRadius = 5.dp
+            )
             .background(BackgroundDarkGray)
             .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(0.dp))
             .padding(10.dp)
@@ -261,32 +269,44 @@ private fun ControlButton(
 
     val disabledAlphaModifier = 0.3f
 
-
-    Button(
-        modifier = Modifier.defaultMinSize(
-            minWidth = 1.dp,
-            minHeight = 1.dp
-        ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = color,
-            disabledContainerColor = color
-        ),
-        contentPadding = padding,
-        shape = RoundedCornerShape(10.dp),
-        enabled = enabled,
-        onClick = { onClick() }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(50.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .background(color)
+            .clickable { onClick() }
     ) {
-        Icon(
-            modifier = Modifier.size(30.dp),
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = if (enabled) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize(fraction = 0.8f)
+                .shadow(
+                    color = ButtonShadowColorTop,
+                    offsetX = (-4).dp,
+                    offsetY = (-4).dp,
+                    blurRadius = 8.dp,
+                )
+                .shadow(
+                    color = ButtonShadowColorBottom,
+                    offsetX = (4).dp,
+                    offsetY = (4).dp,
+                    blurRadius = 8.dp,
+                )
+                .clip(MaterialTheme.shapes.medium)
+                .background(color)
+        ) {
+            Icon(
+                modifier = Modifier.size(30.dp),
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = if (enabled) {
 
-                Color.White
-            } else Color.White.copy(alpha = disabledAlphaModifier)
-        )
+                    Color.White
+                } else Color.White.copy(alpha = disabledAlphaModifier)
+            )
+        }
     }
-
 }
 
 
@@ -303,4 +323,3 @@ private fun TimerPreview() {
         timer = previewTimerItem,
     )
 }
-
