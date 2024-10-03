@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.Gainsboro
+import com.android.taskstimer.core.presentation.util.thenIf
 import com.android.taskstimer.timer.InputState
 import com.android.taskstimer.timer.displayValue
 import com.android.taskstimer.timer.presentation.TimerEvent
@@ -124,6 +125,3 @@ fun RowScope.Input(
 //}
 
 
-inline fun Modifier.thenIf(predicate: Boolean, modify: () -> Modifier): Modifier {
-    return this.then(if (predicate) modify() else Modifier)
-}
