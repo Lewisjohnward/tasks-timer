@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -26,8 +25,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
 import com.android.taskstimer._other.service.RUNSTATE
 import com.android.taskstimer._other.service.TasksTimerService
+import com.android.taskstimer.core.presentation.dragDropList.DragDropList
+import com.android.taskstimer.core.presentation.dragDropList.DragDropListState
+import com.android.taskstimer.core.presentation.dragDropList.rememberDragDropListState
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.util.TestTags
@@ -82,6 +86,9 @@ private fun HomeScreenContent(
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
+    val dragDropListState: DragDropListState = rememberDragDropListState(
+        onMove = { fromIndex, toIndex -> println("Drag drop from $fromIndex to $toIndex") }
+    )
 
     fun openDrawer() {
         viewModel.onEvent(HomeScreenEvent.EditBoards(false))
@@ -110,14 +117,12 @@ private fun HomeScreenContent(
         viewModel.boardToLoad.value = null
     }
 
-
-
     ModalNavigationDrawer(
         drawerContent = {
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
-                navigateToSettings = {navigateToSettings()},
+                navigateToSettings = { navigateToSettings() },
                 tasksTimerService = tasksTimerService,
                 boards = uiState.boards,
                 editBoards = uiState.editBoards,
@@ -166,22 +171,28 @@ private fun HomeScreenContent(
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
                     if (tasksTimerService.state.value.timers.isNotEmpty())
-                        LazyColumn(
+                        DragDropList(
+                            dragDropListState = dragDropListState,
                             contentPadding = PaddingValues(top = 5.dp),
-                            modifier = Modifier
-//                .weight(0.8f)
-                                .fillMaxWidth()
-                                .padding(top = 0.dp, start = 10.dp, end = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
+
                             itemsIndexed(tasksTimerService.state.value.timers) { index, timer ->
                                 val tasksTimerActive = tasksTimerService.state.value.active
                                 val timerActive = if (
                                     tasksTimerService.state.value.currentTimer == index &&
                                     tasksTimerActive == RUNSTATE.RUNNING
                                 ) RUNSTATE.RUNNING else RUNSTATE.STOPPED
-
                                 Timer(
+                                    modifier = Modifier.composed {
+                                        val offsetOrNull =
+                                            dragDropListState.elementDisplacement.takeIf {
+                                                index == dragDropListState.currentIndexOfDraggedItem
+                                            }
+                                        Modifier.graphicsLayer {
+                                            translationY = offsetOrNull ?: 0f
+                                        }
+                                    },
                                     tasksTimerActive = tasksTimerActive,
                                     timerActive = timerActive,
                                     index = index,
@@ -198,9 +209,11 @@ private fun HomeScreenContent(
                                 )
                             }
                             item {
-                                Spacer(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(75.dp))
+                                Spacer(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(75.dp)
+                                )
                             }
                         }
                 }

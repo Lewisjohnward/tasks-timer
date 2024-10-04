@@ -53,6 +53,7 @@ import com.android.taskstimer.core.presentation.util.shadow
 
 @Composable
 fun Timer(
+    modifier: Modifier = Modifier,
     index: Int,
     timer: TimerItem,
     deleteTimer: () -> Unit = {},
@@ -112,7 +113,7 @@ fun Timer(
 
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .shadow(
                 color = Color.Black.copy(alpha = 0.6f),
