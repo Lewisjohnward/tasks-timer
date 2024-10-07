@@ -1,6 +1,5 @@
 package com.android.taskstimer.tasks_timer.presentation.components.timer
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer._other.service.RUNSTATE
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -58,6 +56,9 @@ fun Timer(
     timer: TimerItem,
     deleteTimer: () -> Unit = {},
     editTimer: () -> Unit = {},
+    startTimer: () -> Unit = {},
+    pauseTimer: () -> Unit = {},
+    resetTimer: () -> Unit = {},
     tasksTimerActive: RUNSTATE = RUNSTATE.STOPPED,
     timerActive: RUNSTATE = RUNSTATE.STOPPED
 ) {
@@ -69,41 +70,6 @@ fun Timer(
     fun handleDeleteTimer() {
         menuVisible = false
         deleteTimer()
-    }
-
-    fun handleStart() {
-        val intent = Intent(context, TasksTimerService::class.java)
-        intent.putExtra(
-            TasksTimerService.SERVICE_ACTION,
-            TasksTimerService.START
-        )
-        intent.putExtra(
-            TasksTimerService.TIMER_INDEX,
-            index.toString()
-        )
-        context.startService(intent)
-    }
-
-    fun handlePause() {
-        val intent = Intent(context, TasksTimerService::class.java)
-        intent.putExtra(
-            TasksTimerService.SERVICE_ACTION,
-            TasksTimerService.PAUSE
-        )
-        context.startService(intent)
-    }
-
-    fun handleReset() {
-        val intent = Intent(context, TasksTimerService::class.java)
-        intent.putExtra(
-            TasksTimerService.SERVICE_ACTION,
-            TasksTimerService.RESET
-        )
-        intent.putExtra(
-            TasksTimerService.TIMER_INDEX,
-            index.toString()
-        )
-        context.startService(intent)
     }
 
     val enabledPlayButton = tasksTimerActive != RUNSTATE.RUNNING
@@ -130,11 +96,11 @@ fun Timer(
             name = timer.name,
             time = timer.formatTime(),
             onMenuClick = { menuVisible = true },
-            onStart = { handleStart() },
+            onStart = { startTimer() },
             enabledPlayButton = enabledPlayButton,
             enabledResetButton = enabledResetButton,
-            onReset = { handleReset() },
-            onPause = { handlePause() }
+            onReset = { resetTimer() },
+            onPause = { pauseTimer() }
         )
         if (menuVisible) {
             TimerMenu(
@@ -143,7 +109,6 @@ fun Timer(
                 editTimer = { editTimer() }
             )
         }
-
     }
 }
 

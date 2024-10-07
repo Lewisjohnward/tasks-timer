@@ -84,6 +84,9 @@ private fun HomeScreenContent(
 ) {
 
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
+    // TODO: PUT THIS WITH VIEWMODEL STATE
+    val tasksTimerManagerState by viewModel.tasksTimerManagerState.collectAsState()
+
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
     val dragDropListState: DragDropListState = rememberDragDropListState(
@@ -100,21 +103,10 @@ private fun HomeScreenContent(
         coroutineScope.launch { drawerState.close() }
     }
 
-//     After adding a timer causes the service to load the timers
+//     Ensure that board up to date
     LaunchedEffect(true) {
-        if (uiState.boards.isNotEmpty()) {
-            tasksTimerService.selectBoard(uiState.boards[uiState.currentBoardIndex].id)
-        }
-    }
-
-    // Triggered when choosing a board or deleting a board/timer
-    LaunchedEffect(key1 = viewModel.boardToLoad.value) {
-        if (viewModel.boardToLoad.value == null) return@LaunchedEffect
-        when (val boardToLoad: BoardToLoad = viewModel.boardToLoad.value!!) {
-            is BoardToLoad.BoardId -> tasksTimerService.selectBoard(boardToLoad.int)
-            is BoardToLoad.NullBoard -> tasksTimerService.selectBoard(null)
-        }
-        viewModel.boardToLoad.value = null
+        // TODO: ON FIRST LAUNCH NO BOARD PRESENT SO BLANK SCREEN
+        viewModel.loadBoard()
     }
 
     ModalNavigationDrawer(
@@ -137,7 +129,7 @@ private fun HomeScreenContent(
                 containerColor = BackgroundDarkGray,
                 topBar = {
                     TimerTopBar(
-                        title = tasksTimerService.state.value.boardItem.name,
+                        title = tasksTimerManagerState.board,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
@@ -170,18 +162,18 @@ private fun HomeScreenContent(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    if (tasksTimerService.state.value.timers.isNotEmpty())
+                    if (tasksTimerManagerState.timers.isNotEmpty())
                         DragDropList(
                             dragDropListState = dragDropListState,
                             contentPadding = PaddingValues(top = 5.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
 
-                            itemsIndexed(tasksTimerService.state.value.timers) { index, timer ->
-                                val tasksTimerActive = tasksTimerService.state.value.active
+                            itemsIndexed(tasksTimerManagerState.timers) { index, timer ->
+                                val tasksTimerActive = tasksTimerManagerState.active
                                 val timerActive = if (
-                                    tasksTimerService.state.value.currentTimer == index &&
-                                    tasksTimerActive == RUNSTATE.RUNNING
+                                    tasksTimerManagerState.currentTimer == index &&
+                                    tasksTimerManagerState.active == RUNSTATE.RUNNING
                                 ) RUNSTATE.RUNNING else RUNSTATE.STOPPED
                                 Timer(
                                     modifier = Modifier.composed {
@@ -205,7 +197,10 @@ private fun HomeScreenContent(
                                             timer.boardId,
                                             timer.id
                                         )
-                                    }
+                                    },
+                                    startTimer = {viewModel.startTimer(index)},
+                                    pauseTimer = {viewModel.pauseTimer()},
+                                    resetTimer = {viewModel.resetTimer(index)}
                                 )
                             }
                             item {
@@ -223,7 +218,7 @@ private fun HomeScreenContent(
             ) {
                 BoardMenu(
                     rename = {},
-                    delete = { onEvent(HomeScreenEvent.DeleteBoard(tasksTimerService.state.value.boardItem)) },
+                    delete = { onEvent(HomeScreenEvent.DeleteBoard) },
                 )
             }
             if (uiState.displayConfirmDialog != null)

@@ -1,11 +1,11 @@
 package com.android.taskstimer.tasks_timer.presentation
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer._other.service.TasksTimerManager
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.presentation.ui.IconKey
 import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
@@ -22,11 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-sealed interface BoardToLoad {
-    data class BoardId(val int: Int) : BoardToLoad
-    data object NullBoard : BoardToLoad
-}
 
 enum class CreateBoardDialog {
     NAME_BOARD,
@@ -59,15 +54,16 @@ class HomeViewModel @Inject constructor(
     private val insertBoard: InsertBoard,
     private val getBoardsFlow: GetBoardsFlow,
     private val deleteBoard: DeleteBoard,
-    private val deleteTimer: DeleteTimer
+    private val deleteTimer: DeleteTimer,
+    private val tasksTimerManager: TasksTimerManager,
+    // TODO: THIS NEEDS TO BE A USECASE
+    private val boardsRepo: BoardsRepository
 ) : ViewModel() {
-
-
-    var boardToLoad: MutableState<BoardToLoad?> = mutableStateOf(null)
 
 
     private val _boards = getBoardsFlow()
     private val _uiState = MutableStateFlow(HomeScreenUiState())
+    val tasksTimerManagerState = tasksTimerManager.state
 
     val uiState =
         combine(
@@ -85,17 +81,53 @@ class HomeViewModel @Inject constructor(
             initialValue = HomeScreenUiState()
         )
 
+
+    init {
+        loadInitialBoard()
+    }
+
+    // TODO: CREATE USECASE FOR INIT BOARD
+    private fun loadInitialBoard() {
+        viewModelScope.launch {
+            val board = boardsRepo.getInitBoard()
+            if (board != null) {
+                tasksTimerManager.loadBoard(board.id)
+            }
+        }
+    }
+
+    // TODO: PUT THIS AS AN EVENT
+    fun loadBoard() {
+        if (uiState.value.boards.isNotEmpty()) {
+            // TODO: THIS IS UGLY
+            val board = uiState.value.boards[uiState.value.currentBoardIndex]
+            tasksTimerManager.loadBoard(board.id)
+        }
+    }
+
+    // TODO: PUT IN EVENTS
+    fun startTimer(index: Int) {
+        tasksTimerManager.startTimer(index)
+    }
+
+    fun pauseTimer() {
+        tasksTimerManager.stopTimer()
+    }
+
+    fun resetTimer(timerIndex: Int) {
+        tasksTimerManager.resetTimer(timerIndex)
+    }
+
     fun onEvent(event: HomeScreenEvent) {
         when (event) {
             is HomeScreenEvent.EditBoards -> {
                 _uiState.update { it.copy(editBoards = event.edit) }
             }
 
-
             is HomeScreenEvent.DeleteBoard -> {
                 _uiState.update {
                     it.copy(
-                        displayConfirmDialog = DeleteDialog.Board(board = event.board)
+                        displayConfirmDialog = DeleteDialog.Board(uiState.value.boards[uiState.value.currentBoardIndex])
                     )
                 }
             }
@@ -116,11 +148,7 @@ class HomeViewModel @Inject constructor(
                             is DeleteDialog.Timer -> deleteTimer(timer = deleteDialog.timer)
                         }
                     }
-
-
                 }
-
-
             }
 
             is HomeScreenEvent.DialogCancel -> {
@@ -132,6 +160,8 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.SelectBoard -> {
+                tasksTimerManager.loadBoard(event.boardId)
+
                 _uiState.update {
                     it.copy(
                         currentBoardIndex = event.boardIndex,
@@ -155,8 +185,6 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
-
-
             }
 
             is HomeScreenEvent.AssignIconNewBoard -> {
@@ -169,21 +197,20 @@ class HomeViewModel @Inject constructor(
                     )
                 }
 
-
                 viewModelScope.launch {
-                    insertBoard(BoardItem(
-                        name = _uiState.value.newBoardDetails.name,
-                        iconKey = _uiState.value.newBoardDetails.iconKey
-                    ))
+                    insertBoard(
+                        BoardItem(
+                            name = _uiState.value.newBoardDetails.name,
+                            iconKey = _uiState.value.newBoardDetails.iconKey
+                        )
+                    )
                     // If this is the first board created load into service/ui
                     if (uiState.value.boards.isEmpty()) {
                         if (getBoardsFlow().first().isNotEmpty()) {
-                            boardToLoad.value = BoardToLoad.BoardId(getBoardsFlow().first()[0].id)
+                            loadBoard()
                         }
                     }
                 }
-
-
             }
 
             HomeScreenEvent.CancelCreateNewBoard -> {
@@ -195,8 +222,7 @@ class HomeViewModel @Inject constructor(
     private fun deleteTimer(timer: TimerItem) = viewModelScope.launch {
         deleteTimer.invoke(timer)
 
-        boardToLoad.value =
-            BoardToLoad.BoardId(uiState.value.boards[uiState.value.currentBoardIndex].id)
+        loadBoard()
 
         _uiState.update {
             it.copy(
@@ -204,50 +230,48 @@ class HomeViewModel @Inject constructor(
                 displayBoardMenu = false
             )
         }
-
     }
 
 
     private fun deleteBoard(board: BoardItem) = viewModelScope.launch {
         deleteBoard.invoke(board)
-        val boardIndexToLoad = boardIndexToLoad(
-            boardCount = getBoardsFlow().first().size,
-            deletedBoard = uiState.value.currentBoardIndex
+        val boardIndexToLoad = determineBoardIndexToLoad(
+            boardCount = _boards.first().size,
+            deletedBoardIndex = uiState.value.currentBoardIndex
         )
-
-
         if (boardIndexToLoad != null) {
-            boardToLoad.value =
-                BoardToLoad.BoardId(uiState.value.boards[boardIndexToLoad].id)
-            _uiState.update { it.copy(currentBoardIndex = boardIndexToLoad) }
-        } else {
-            boardToLoad.value = BoardToLoad.NullBoard
             _uiState.update {
                 it.copy(
-                    currentBoardIndex = 0,
-                    boardMenuEnabled = false
+                    currentBoardIndex = boardIndexToLoad,
+                    displayConfirmDialog = null,
+                    displayBoardMenu = false
                 )
             }
+            loadBoard()
+            return@launch
         }
-
 
         _uiState.update {
             it.copy(
+                currentBoardIndex = 0,
+                boardMenuEnabled = false,
                 displayConfirmDialog = null,
                 displayBoardMenu = false
             )
         }
-    }
-
-    private fun boardIndexToLoad(boardCount: Int, deletedBoard: Int): Int? {
-        // First board
-        if (deletedBoard == 0 && boardCount > 0) return 0
-        // Middle board
-        if (boardCount != deletedBoard) return boardCount - 1
-        // Last board
-        if (boardCount > 0) return boardCount - 1
-        // All boards deleted
-        return null
+        tasksTimerManager.unloadBoard()
     }
 }
+
+private fun determineBoardIndexToLoad(boardCount: Int, deletedBoardIndex: Int): Int? {
+    // First board
+    if (deletedBoardIndex == 0 && boardCount > 0) return 0
+    // Middle board
+    if (boardCount != deletedBoardIndex) return boardCount - 1
+    // Last board
+    if (boardCount > 0) return boardCount - 1
+    // All boards deleted
+    return null
+}
+
 

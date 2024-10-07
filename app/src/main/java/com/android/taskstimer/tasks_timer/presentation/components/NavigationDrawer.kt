@@ -125,13 +125,13 @@ fun NavigationDrawer(
                     val drawerItem = DrawerItem(
                         text = board.name,
                         onClick = {
-                            tasksTimerService.selectBoard(board.id)
-                            onEvent(HomeScreenEvent.SelectBoard(index))
+                            onEvent(HomeScreenEvent.SelectBoard(
+                                boardIndex = index,
+                                boardId = board.id
+                            ))
                         },
                         icon = board.iconKey.icon
                     )
-                    println(board.iconKey)
-
 
                     NavDrawerItem(
                         modifier = Modifier.testTag("${TestTags.BOARD} ${board.name}"),

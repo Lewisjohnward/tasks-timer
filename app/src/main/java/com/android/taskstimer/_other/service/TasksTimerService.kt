@@ -10,20 +10,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.lifecycleScope
+import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.formatTime
-import com.android.taskstimer.core.domain.model.resetTimer
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
-import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import java.util.Timer
-import java.util.TimerTask
 import javax.inject.Inject
 
 
@@ -96,36 +91,6 @@ class TasksTimerService : LifecycleService() {
         return binder
     }
 
-    fun selectBoard(boardId: Int? = null) {
-        lifecycleScope.launch {
-            if (boardId == null) {
-                val board = boardsRepo.getInitBoard()
-                if (board != null) {
-                    state.value = state.value.copy(
-                        boardItem = board,
-                        timers = timersRepo.getTimers(board.id)
-                    )
-                } else {
-                    state.value = state.value.copy(
-                        boardItem = BoardItem(name = ""),
-                        timers = emptyList()
-                    )
-                }
-            } else {
-                state.value = state.value.copy(
-                    boardItem = boardsRepo.getBoard(boardId),
-                    timers = timersRepo.getTimers(boardId)
-                )
-            }
-        }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        println("service: onCreate")
-        selectBoard()
-        context = this
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("Intent recieved")
@@ -133,9 +98,9 @@ class TasksTimerService : LifecycleService() {
         val timerIndex = intent?.getStringExtra(TIMER_INDEX)?.toInt()
 
         when (action) {
-            START -> timerIndex?.let { index -> startTasksTimer(index) }
-            PAUSE -> stopTimer()
-            RESET -> timerIndex?.let { index -> resetTimer(index) }
+//            START -> timerIndex?.let { index -> startTasksTimer(index) }
+//            PAUSE -> stopTimer()
+//            RESET -> timerIndex?.let { index -> resetTimer(index) }
             MOVE_TO_FOREGROUND -> moveToForeground()
             MOVE_TO_BACKGROUND -> moveToBackground()
         }
@@ -154,103 +119,6 @@ class TasksTimerService : LifecycleService() {
         if (activeTimer == null) return
         isFgService = false
         stopForeground(STOP_FOREGROUND_REMOVE)
-    }
-
-    private fun startTasksTimer(timerIndex: Int) {
-        lifecycleScope.launch {
-            if (state.value.timers.isEmpty()) return@launch
-            if (activeTimer != null) return@launch
-
-
-            activeTimer = Timer()
-            setCurrentTimer(timerIndex)
-            setTimerActiveState(RUNSTATE.RUNNING)
-
-            if (remainingTimeOfCurrentTimerIsZero()) {
-                incrementCurrentTimer()
-            }
-
-            activeTimer?.schedule(object : TimerTask() {
-                override fun run() {
-                    decrementTime()
-                    if (remainingTimeOfCurrentTimerIsZero()) {
-                        if (lastTimerInList()) {
-                            incrementCurrentTimer()
-                        } else {
-                            stopTimer()
-                            resetTimers()
-                            resetCurrentTimer()
-                        }
-                    }
-                    if (isFgService) updateNotification()
-
-//                    if (timeElapsed == 5) Mp.play(context)
-//                    if (timeElapsed == 6) stopTimer()
-                }
-            }, 0, 100)
-
-        }
-    }
-
-    private fun resetTimer(index: Int) {
-        state.value = state.value.copy(
-            timers = state.value.timers.mapIndexed { i, timer ->
-                if (index == i) {
-                    timer.resetTimer()
-                } else timer
-            }
-        )
-    }
-
-    private fun lastTimerInList(): Boolean {
-        return state.value.currentTimer < state.value.timers.size - 1
-    }
-
-    private fun incrementCurrentTimer() {
-        state.value = state.value.copy(
-            currentTimer = state.value.currentTimer + 1
-        )
-    }
-
-    private fun setCurrentTimer(index: Int) {
-        state.value = state.value.copy(currentTimer = index)
-    }
-
-    private fun setTimerActiveState(runState: RUNSTATE) {
-        state.value = state.value.copy(active = runState)
-    }
-
-    private fun resetCurrentTimer() {
-        state.value = state.value.copy(currentTimer = 0)
-    }
-
-    private fun resetTimers() {
-        state.value = state.value.copy(
-            timers = state.value.timers.map { timer -> timer.resetTimer() }
-        )
-    }
-
-    private fun stopTimer() {
-        activeTimer?.cancel()
-        activeTimer = null
-        setTimerActiveState(RUNSTATE.STOPPED)
-    }
-
-    private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
-        return state.value.timers[state.value.currentTimer].remainingTime.toInt() <= 0
-    }
-
-    private fun decrementTime() {
-        println(state.value.currentTimer)
-        state.value = state.value.copy(
-            timers = state.value.timers.mapIndexed { index, timer ->
-                if (index == state.value.currentTimer) {
-                    val updatedTimer =
-                        timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
-                    updatedTimer
-                } else timer
-            }
-        )
     }
 
     @SuppressLint("MissingPermission")
