@@ -13,7 +13,6 @@ import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,8 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 
@@ -100,7 +97,7 @@ class HomeViewModel @Inject constructor(
                 count++
             }
             val board = boardsRepo.getInitBoard()
-                if (board != null) {
+            if (board != null) {
                     tasksTimerManager.loadBoard(board.id)
             }
         }
