@@ -13,6 +13,8 @@ import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -20,6 +22,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 
@@ -89,9 +93,15 @@ class HomeViewModel @Inject constructor(
     // TODO: CREATE USECASE FOR INIT BOARD
     private fun loadInitialBoard() {
         viewModelScope.launch {
+            // TODO: IS THERE A BETTER WAY THAN LOOP ON FIRST LAUNCH?
+            var count = 0
+            while(boardsRepo.getInitBoard() == null && count < 2){
+                delay(100)
+                count++
+            }
             val board = boardsRepo.getInitBoard()
-            if (board != null) {
-                tasksTimerManager.loadBoard(board.id)
+                if (board != null) {
+                    tasksTimerManager.loadBoard(board.id)
             }
         }
     }
