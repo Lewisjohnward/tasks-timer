@@ -172,7 +172,7 @@ private fun HomeScreenContent(
                             itemsIndexed(tasksTimerManagerState.timers) { index, timer ->
                                 val tasksTimerActive = tasksTimerManagerState.active
                                 val timerActive = if (
-                                    tasksTimerManagerState.currentTimer == index &&
+                                    tasksTimerManagerState.currentTimerIndex == index &&
                                     tasksTimerManagerState.active == RUNSTATE.RUNNING
                                 ) RUNSTATE.RUNNING else RUNSTATE.STOPPED
                                 Timer(

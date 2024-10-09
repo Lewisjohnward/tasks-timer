@@ -1,5 +1,6 @@
 package com.android.taskstimer._other.service
 
+import com.android.taskstimer._other.mediaPlayer.MediaPlayerManager
 import com.android.taskstimer.core.di.ApplicationScope
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.resetTimer
@@ -23,7 +24,7 @@ data class TasksTimerManagerState(
     val active: RUNSTATE = RUNSTATE.STOPPED,
     val board: String = "",
     val timers: List<TimerItem> = emptyList(),
-    val currentTimer: Int = 0
+    val currentTimerIndex: Int = 0
 )
 
 @Singleton
@@ -31,7 +32,8 @@ class TasksTimerManager @Inject constructor(
     private val boardsRepo: BoardsRepository,
     private val timersRepo: TimersRepository,
     @ApplicationScope private val coroutineScope: CoroutineScope,
-    private val singleThreadDispatcher: ExecutorCoroutineDispatcher
+    private val singleThreadDispatcher: ExecutorCoroutineDispatcher,
+    private val mediaPlayer: MediaPlayerManager
 ) {
 
     private val _timers = MutableStateFlow<List<TimerItem>>(emptyList())
@@ -40,17 +42,20 @@ class TasksTimerManager @Inject constructor(
     private val _active = MutableStateFlow(RUNSTATE.STOPPED)
     private var timer: Timer? = null
 
+
+    private val playSoundAtTimerFinish = true
+
     val state = combine(
         _timers,
         _currentTimerIndex,
         _board,
         _active
-    ) { timers, currentTimer, board, active ->
+    ) { timers, currentTimerIndex, board, active ->
         TasksTimerManagerState(
             active = active,
             board = board,
             timers = timers,
-            currentTimer = currentTimer
+            currentTimerIndex = currentTimerIndex
         )
     }.stateIn(
         scope = coroutineScope,
@@ -84,14 +89,15 @@ class TasksTimerManager @Inject constructor(
             setCurrentTimer(timerIndex)
             setTimerActiveState(RUNSTATE.RUNNING)
 
-            if (remainingTimeOfCurrentTimerIsZero()) {
+            if (isRemainingTimerOfCurrentTimerZero()) {
                 incrementCurrentTimer()
             }
 
             timer?.schedule(object : TimerTask() {
                 override fun run() {
-                    if (remainingTimeOfCurrentTimerIsZero()) {
-                        if (isLastTimerInList()) {
+                    if (isRemainingTimerOfCurrentTimerZero()) {
+                        if (playSoundAtTimerFinish) mediaPlayer.play()
+                        if (isNotLastTimerInList()) {
                             incrementCurrentTimer()
                         } else {
                             stopTimer()
@@ -102,7 +108,6 @@ class TasksTimerManager @Inject constructor(
                     decrementTime()
 //                    if (isFgService) updateNotification()
 
-//                    if (timeElapsed == 5) Mp.play(context)
 //                    if (timeElapsed == 6) stopTimer()
                 }
             }, 0, 100)
@@ -126,8 +131,8 @@ class TasksTimerManager @Inject constructor(
         }
     }
 
-    private fun isLastTimerInList(): Boolean {
-        return state.value.currentTimer < state.value.timers.size - 1
+    private fun isNotLastTimerInList(): Boolean {
+        return state.value.currentTimerIndex < state.value.timers.size - 1
     }
 
     private fun incrementCurrentTimer() {
@@ -152,8 +157,8 @@ class TasksTimerManager @Inject constructor(
         }
     }
 
-    private fun remainingTimeOfCurrentTimerIsZero(): Boolean {
-        return state.value.timers[state.value.currentTimer].remainingTime.toInt() <= 0
+    private fun isRemainingTimerOfCurrentTimerZero(): Boolean {
+        return state.value.timers[state.value.currentTimerIndex].remainingTime.toInt() == 0
     }
 
     private fun decrementTime() {
