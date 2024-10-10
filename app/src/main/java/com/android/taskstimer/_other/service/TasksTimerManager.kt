@@ -33,7 +33,8 @@ class TasksTimerManager @Inject constructor(
     private val timersRepo: TimersRepository,
     @ApplicationScope private val coroutineScope: CoroutineScope,
     private val singleThreadDispatcher: ExecutorCoroutineDispatcher,
-    private val mediaPlayer: MediaPlayerManager
+    private val mediaPlayer: MediaPlayerManager,
+    private val vibrator: VibrateManager,
 ) {
 
     private val _timers = MutableStateFlow<List<TimerItem>>(emptyList())
@@ -42,8 +43,13 @@ class TasksTimerManager @Inject constructor(
     private val _active = MutableStateFlow(RUNSTATE.STOPPED)
     private var timer: Timer? = null
 
-
+    // TODO: PUT IN PREFERENCES DATASTORE
     private val playSoundAtTimerFinish = true
+
+    fun alertUserTimerFinished() {
+        vibrator.vibrate()
+        mediaPlayer.play()
+    }
 
     val state = combine(
         _timers,
@@ -96,7 +102,7 @@ class TasksTimerManager @Inject constructor(
             timer?.schedule(object : TimerTask() {
                 override fun run() {
                     if (isRemainingTimerOfCurrentTimerZero()) {
-                        if (playSoundAtTimerFinish) mediaPlayer.play()
+                        if (playSoundAtTimerFinish) alertUserTimerFinished()
                         if (isNotLastTimerInList()) {
                             incrementCurrentTimer()
                         } else {
@@ -104,8 +110,9 @@ class TasksTimerManager @Inject constructor(
                             resetTimers()
                             resetCurrentTimer()
                         }
+                    } else {
+                        decrementTime()
                     }
-                    decrementTime()
 //                    if (isFgService) updateNotification()
 
 //                    if (timeElapsed == 6) stopTimer()
