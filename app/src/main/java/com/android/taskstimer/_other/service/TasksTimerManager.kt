@@ -1,6 +1,7 @@
 package com.android.taskstimer._other.service
 
 import com.android.taskstimer._other.mediaPlayer.MediaPlayerManager
+import com.android.taskstimer._other.mediaPlayer.VibrateManager
 import com.android.taskstimer.core.di.ApplicationScope
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.model.resetTimer
@@ -111,6 +112,7 @@ class TasksTimerManager @Inject constructor(
                             stopTimer()
                             resetTimers()
                             resetCurrentTimer()
+                            tasksTimerServiceManager.stopTasksTimerService()
                         }
                     } else {
                         decrementTime()
@@ -119,7 +121,7 @@ class TasksTimerManager @Inject constructor(
 
 //                    if (timeElapsed == 6) stopTimer()
                 }
-            }, 0, 200)
+            }, 0, 1000)
 
         }
     }

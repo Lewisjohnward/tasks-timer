@@ -17,69 +17,53 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
-    private lateinit var tasksTimerService: TasksTimerService
-    private var isBound by mutableStateOf(false)
-
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-            val service = binder as TasksTimerService.MyBinder
-            tasksTimerService = service.getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-                TasksTimerApp()
+            TasksTimerApp()
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        println("onDestroy")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        println("onResume - view -> background - stop fg service IF timer is active")
-        val intent = Intent(this, TasksTimerService::class.java)
-        intent.putExtra(
-            TasksTimerService.SERVICE_ACTION,
-            TasksTimerService.MOVE_TO_BACKGROUND
-        )
-        startService(intent)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        println("onPause - view -> background - start fg service IF timer is active")
-
-        val intent = Intent(this, TasksTimerService::class.java)
-        intent.putExtra(
-            TasksTimerService.SERVICE_ACTION,
-            TasksTimerService.MOVE_TO_FOREGROUND
-        )
-        startService(intent)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        println("onStart")
-        Intent(this, TasksTimerService::class.java).also {
-            bindService(it, connection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
-    }
-
 }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        println("onDestroy")
+//    }
+
+//    override fun onResume() {
+//        super.onResume()
+//        println("onResume - view -> background - stop fg service IF timer is active")
+//        val intent = Intent(this, TasksTimerService::class.java)
+//        intent.putExtra(
+//            TasksTimerService.SERVICE_ACTION,
+//            TasksTimerService.MOVE_TO_BACKGROUND
+//        )
+//        startService(intent)
+//    }
+
+//    override fun onPause() {
+//        super.onPause()
+//        println("onPause - view -> background - start fg service IF timer is active")
+//
+//        val intent = Intent(this, TasksTimerService::class.java)
+//        intent.putExtra(
+//            TasksTimerService.SERVICE_ACTION,
+//            TasksTimerService.MOVE_TO_FOREGROUND
+//        )
+//        startService(intent)
+//    }
+
+//    override fun onStart() {
+//        super.onStart()
+//        println("onStart")
+//        Intent(this, TasksTimerService::class.java).also {
+//            bindService(it, connection, Context.BIND_AUTO_CREATE)
+//        }
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//        unbindService(connection)
+//    }
+
+//}

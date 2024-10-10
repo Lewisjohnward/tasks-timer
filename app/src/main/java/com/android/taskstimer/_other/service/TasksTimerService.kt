@@ -2,10 +2,9 @@ package com.android.taskstimer._other.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -13,11 +12,14 @@ import androidx.lifecycle.LifecycleService
 import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
-import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
+import com.android.taskstimer.core.presentation.MainActivity
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.util.Timer
 import javax.inject.Inject
 
@@ -80,65 +82,109 @@ class TasksTimerService : LifecycleService() {
     @Inject
     lateinit var userPreferencesRepo: UserPreferencesRepository
 
-    private val binder = MyBinder()
+    @Inject
+    lateinit var tasksTimerManager: TasksTimerManager
 
-    inner class MyBinder : Binder() {
-        fun getService() = this@TasksTimerService
+    private val serviceScope = CoroutineScope(SupervisorJob())
+
+
+    // TODO: NEEDS TO GO INTO MAINACTIVITY
+    // ONLY HEADS UP WHEN NOT IN FOREGROUND!
+    private var silentNotification = true
+    private var appOpen = false
+
+
+    override fun onCreate() {
+        super.onCreate()
+        context = this
     }
-
-    override fun onBind(intent: Intent): IBinder {
-        super.onBind(intent)
-        return binder
-    }
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         println("Intent recieved")
         val action = intent?.getStringExtra(SERVICE_ACTION)
         val timerIndex = intent?.getStringExtra(TIMER_INDEX)?.toInt()
 
-        when (action) {
-//            START -> timerIndex?.let { index -> startTasksTimer(index) }
-//            PAUSE -> stopTimer()
-//            RESET -> timerIndex?.let { index -> resetTimer(index) }
-            MOVE_TO_FOREGROUND -> moveToForeground()
-            MOVE_TO_BACKGROUND -> moveToBackground()
+
+        startForeground(
+            1,
+            buildNotification(
+                silent = silentNotification,
+                timer = tasksTimerManager.state.value.timers[tasksTimerManager.state.value.currentTimerIndex].name
+            )
+        )
+
+        serviceScope.launch {
+            tasksTimerManager.state.collect { state ->
+                println(state)
+                updateNotification(
+                    silentNotification = silentNotification,
+                    timer = tasksTimerManager.state.value.timers[tasksTimerManager.state.value.currentTimerIndex].name
+                )
+            }
         }
-        return super.onStartCommand(intent, flags, startId)
+
+        return START_STICKY
     }
 
 
     //
     private fun moveToForeground() {
-        if (activeTimer == null) return
-        isFgService = true
-        startForeground(1, buildNotification())
+//        if (activeTimer == null) return
+//        isFgService = true
+//        startForeground(
+//            1, buildNotification(
+//                silent = silentNotification,
+//                timer = timer
+//            )
+//        )
     }
 
     private fun moveToBackground() {
-        if (activeTimer == null) return
-        isFgService = false
+//        if (activeTimer == null) return
+//        isFgService = false
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     @SuppressLint("MissingPermission")
     // TODO: HANDLE PERMISSIONS
-    private fun updateNotification() {
+    private fun updateNotification(
+        silentNotification: Boolean,
+        timer: String
+    ) {
         notificationManager.notify(
             1,
-            buildNotification()
+            buildNotification(
+                silent = silentNotification,
+                timer = timer
+            )
         )
     }
 
-    private fun buildNotification(): Notification {
-        val currentTimer = state.value.currentTimer
+    private fun buildNotification(
+        silent: Boolean,
+        timer: String,
+    ): Notification {
 
-        val initialTime = state.value.timers[currentTimer].presetTime.toInt()
-        val elapsedTime = initialTime - state.value.timers[currentTimer].remainingTime.toInt()
+
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+//        val currentTimer = state.value.currentTimer
+
+//        val initialTime = state.value.timers[currentTimer].presetTime.toInt()
+//        val elapsedTime = initialTime - state.value.timers[currentTimer].remainingTime.toInt()
         return notification
-            .setContentTitle("${state.value.timers[currentTimer].name} -${currentTimer}/${state.value.timers.size}")
-            .setContentText(state.value.timers[currentTimer].formatTime())
-            .setProgress(initialTime, elapsedTime, false)
+//            .setContentTitle("test")
+            .setContentText("test content")
+            .setContentTitle(timer)
+//            .setContentTitle("${state.value.timers[currentTimer].name} -${currentTimer}/${state.value.timers.size}")
+//            .setContentText(state.value.timers[currentTimer].formatTime())
+//            .setProgress(initialTime, elapsedTime, false)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setFullScreenIntent(pendingIntent, true)
+            .setSilent(silent)
             .build()
     }
 }
