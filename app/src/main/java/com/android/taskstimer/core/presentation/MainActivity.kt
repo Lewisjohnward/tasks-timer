@@ -36,24 +36,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val appViewModel: AppViewModel by viewModels()
-//        val scheduler = AndroidAlarmScheduler(this)
-//        var alarmItem: AlarmItem? = null
-
         setContent {
-//            val uiState by appViewModel.uiState.collectAsState()
-//            HomeScreen()
-//            AddTimer()
             if (isBound) {
                 TasksTimerApp(tasksTimerService = tasksTimerService)
             }
-
-//            if(isBound){
-//                Button(onClick = {mService.setRunning()}) {
-//                    Text(text = if(mService.running.value) "start" else "stop")
-//                }
-//            }
-
         }
     }
 
