@@ -15,6 +15,10 @@ import javax.inject.Singleton
 class MediaPlayerManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+
+    // TODO: PLAY OUT OF HEADPHONES AND SPEAKER
+
+
     private var mediaPlayer: MediaPlayer? = null
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -57,12 +61,13 @@ class MediaPlayerManager @Inject constructor(
             result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED &&
             mediaPlayer == null
         ) {
-            mediaPlayer = MediaPlayer.create(context, R.raw.alarm)
+            mediaPlayer = MediaPlayer.create(context, R.raw.bell)
             mediaPlayer?.start()
             mediaPlayer?.setOnCompletionListener {
                 audioManager.abandonAudioFocusRequest(
                     focusRequest
                 )
+                it.reset()
                 it.release()
                 mediaPlayer = null
             }
