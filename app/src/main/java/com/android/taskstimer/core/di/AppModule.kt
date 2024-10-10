@@ -1,7 +1,10 @@
 package com.android.taskstimer.core.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import com.android.taskstimer._other.service.TasksTimerServiceManager
+import com.android.taskstimer._other.service.TasksTimerServiceManagerImpl
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
 import com.android.taskstimer.core.data.repository.BoardsRepositoryImpl
 import com.android.taskstimer.core.data.repository.TimersRepositoryImpl
@@ -18,6 +21,7 @@ import com.android.taskstimer.timer.domain.use_case.GetTimerStream
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +35,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+class AppModule {
 
 
     @Singleton
@@ -148,6 +152,14 @@ object AppModule {
         return GetTimerStream(timersRepository)
     }
 
+    @Provides
+    @Singleton
+    fun provideTasksTimerServiceManager(
+        @ApplicationContext applicationContext: Context,
+    ): TasksTimerServiceManager {
+        return TasksTimerServiceManagerImpl(applicationContext)
+    }
+
 
     @ApplicationScope
     @Singleton
@@ -159,7 +171,6 @@ object AppModule {
     fun provideSingleThreadDispatcher(): ExecutorCoroutineDispatcher =
         Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 }
-
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier

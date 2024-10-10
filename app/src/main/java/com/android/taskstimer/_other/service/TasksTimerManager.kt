@@ -35,6 +35,7 @@ class TasksTimerManager @Inject constructor(
     private val singleThreadDispatcher: ExecutorCoroutineDispatcher,
     private val mediaPlayer: MediaPlayerManager,
     private val vibrator: VibrateManager,
+    private val tasksTimerServiceManager: TasksTimerServiceManager
 ) {
 
     private val _timers = MutableStateFlow<List<TimerItem>>(emptyList())
@@ -89,6 +90,7 @@ class TasksTimerManager @Inject constructor(
         coroutineScope.launch {
             if (state.value.timers.isEmpty()) return@launch
             if (timer != null) return@launch
+            tasksTimerServiceManager.startTasksTimerService()
 
             timer = Timer()
             _active.update { RUNSTATE.RUNNING }
@@ -117,7 +119,7 @@ class TasksTimerManager @Inject constructor(
 
 //                    if (timeElapsed == 6) stopTimer()
                 }
-            }, 0, 100)
+            }, 0, 200)
 
         }
     }
