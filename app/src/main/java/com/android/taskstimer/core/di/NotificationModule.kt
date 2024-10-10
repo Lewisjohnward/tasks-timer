@@ -35,7 +35,7 @@ object NotificationModule {
             val channel = NotificationChannel(
                 TasksTimerService.CHANNEL_ID,
                 "Counter",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
             channel.description = "Used for the increment counter notifications"
             notificationManager.createNotificationChannel(channel)
