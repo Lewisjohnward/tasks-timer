@@ -1,4 +1,4 @@
-package com.android.taskstimer._other.service
+package com.android.taskstimer._other.mediaPlayer
 
 import android.content.Context
 import android.media.Ringtone
