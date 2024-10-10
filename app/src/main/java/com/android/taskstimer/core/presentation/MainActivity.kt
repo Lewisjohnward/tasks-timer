@@ -37,9 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            if (isBound) {
-                TasksTimerApp(tasksTimerService = tasksTimerService)
-            }
+                TasksTimerApp()
         }
     }
 

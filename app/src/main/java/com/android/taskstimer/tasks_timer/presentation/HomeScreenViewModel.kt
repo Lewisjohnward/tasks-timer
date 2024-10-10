@@ -2,6 +2,7 @@ package com.android.taskstimer.tasks_timer.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.taskstimer._other.service.RUNSTATE
 import com.android.taskstimer._other.service.TasksTimerManager
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
@@ -44,10 +45,15 @@ data class HomeScreenUiState(
     val createBoard: CreateBoardDialog? = null,
     val newBoardDetails: NewBoardDetails = NewBoardDetails(),
 
+    val timers: List<TimerItem> = listOf(),
     val boards: List<BoardItem> = listOf(),
 
+    val boardTitle: String = "",
+    val boardId: Int = 0,
+    val currentBoardIndex: Int = 0,
 
-    val currentBoardIndex: Int = 0
+    val active: RUNSTATE = RUNSTATE.STOPPED,
+    val currentTimerIndex: Int = 0,
 )
 
 @HiltViewModel
@@ -64,17 +70,25 @@ class HomeViewModel @Inject constructor(
 
     private val _boards = getBoardsFlow()
     private val _uiState = MutableStateFlow(HomeScreenUiState())
-    val tasksTimerManagerState = tasksTimerManager.state
+    private val _tasksTimerManagerState = tasksTimerManager.state
 
     val uiState =
         combine(
-            _uiState,
             _boards,
-        ) { uiState, boards ->
+            _uiState,
+            _tasksTimerManagerState
+        ) { boards,
+            uiState,
+            tasksTimerMangerState
+            ->
             val boardMenuEnabled = boards.isNotEmpty()
             uiState.copy(
+                boardTitle = tasksTimerMangerState.board,
                 boards = boards,
-                boardMenuEnabled = boardMenuEnabled
+                boardMenuEnabled = boardMenuEnabled,
+                timers = tasksTimerMangerState.timers,
+                active = tasksTimerMangerState.active,
+                currentTimerIndex = tasksTimerMangerState.currentTimerIndex
             )
         }.stateIn(
             scope = viewModelScope,
@@ -92,13 +106,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             // TODO: IS THERE A BETTER WAY THAN LOOP ON FIRST LAUNCH?
             var count = 0
-            while(boardsRepo.getInitBoard() == null && count < 2){
+            while (boardsRepo.getInitBoard() == null && count < 2) {
                 delay(100)
                 count++
             }
             val board = boardsRepo.getInitBoard()
             if (board != null) {
-                    tasksTimerManager.loadBoard(board.id)
+                tasksTimerManager.loadBoard(board.id)
             }
         }
     }
@@ -169,9 +183,11 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.SelectBoard -> {
                 tasksTimerManager.loadBoard(event.boardId)
 
+                // TODO: the timer manager should be the single source of board truth?
                 _uiState.update {
                     it.copy(
                         currentBoardIndex = event.boardIndex,
+                        boardId = event.boardId,
                         boardMenuEnabled = true
                     )
                 }

@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.taskstimer.R
 import com.android.taskstimer._other.service.RUNSTATE
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.presentation.dragDropList.DragDropList
 import com.android.taskstimer.core.presentation.dragDropList.DragDropListState
 import com.android.taskstimer.core.presentation.dragDropList.rememberDragDropListState
@@ -64,12 +63,10 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     navigateToTimer: (Int, Int) -> Unit,
     navigateToSettings: () -> Unit,
-    tasksTimerService: TasksTimerService,
 ) {
     HomeScreenContent(
         navigateToTimer = navigateToTimer,
         navigateToSettings = navigateToSettings,
-        tasksTimerService = tasksTimerService
     )
 }
 
@@ -79,14 +76,10 @@ private fun HomeScreenContent(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     viewModel: HomeViewModel = hiltViewModel(),
     navigateToTimer: (Int, Int) -> Unit,
-    tasksTimerService: TasksTimerService,
     navigateToSettings: () -> Unit,
 ) {
 
     val uiState: HomeScreenUiState by viewModel.uiState.collectAsState()
-    // TODO: PUT THIS WITH VIEWMODEL STATE
-    val tasksTimerManagerState by viewModel.tasksTimerManagerState.collectAsState()
-
     val onEvent: (HomeScreenEvent) -> Unit = viewModel::onEvent
 
     val dragDropListState: DragDropListState = rememberDragDropListState(
@@ -105,7 +98,6 @@ private fun HomeScreenContent(
 
 //     Ensure that board up to date
     LaunchedEffect(true) {
-        // TODO: ON FIRST LAUNCH NO BOARD PRESENT SO BLANK SCREEN
         viewModel.loadBoard()
     }
 
@@ -115,7 +107,6 @@ private fun HomeScreenContent(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
                 navigateToSettings = { navigateToSettings() },
-                tasksTimerService = tasksTimerService,
                 boards = uiState.boards,
                 editBoards = uiState.editBoards,
                 createBoard = uiState.createBoard
@@ -129,7 +120,7 @@ private fun HomeScreenContent(
                 containerColor = BackgroundDarkGray,
                 topBar = {
                     TimerTopBar(
-                        title = tasksTimerManagerState.board,
+                        title = uiState.boardTitle,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
@@ -144,7 +135,7 @@ private fun HomeScreenContent(
                         modifier = Modifier.testTag(TestTags.ADD_TIMER_FAB),
                         onClick = {
                             navigateToTimer(
-                                tasksTimerService.state.value.boardItem.id,
+                                uiState.boardId,
                                 ADD_TIMER
                             )
                         },
@@ -162,18 +153,18 @@ private fun HomeScreenContent(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    if (tasksTimerManagerState.timers.isNotEmpty())
+                    if (uiState.timers.isNotEmpty())
                         DragDropList(
                             dragDropListState = dragDropListState,
                             contentPadding = PaddingValues(top = 5.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
 
-                            itemsIndexed(tasksTimerManagerState.timers) { index, timer ->
-                                val tasksTimerActive = tasksTimerManagerState.active
+                            itemsIndexed(uiState.timers) { index, timer ->
+                                val tasksTimerActive = uiState.active
                                 val timerActive = if (
-                                    tasksTimerManagerState.currentTimerIndex == index &&
-                                    tasksTimerManagerState.active == RUNSTATE.RUNNING
+                                    uiState.currentTimerIndex == index &&
+                                    uiState.active == RUNSTATE.RUNNING
                                 ) RUNSTATE.RUNNING else RUNSTATE.STOPPED
                                 Timer(
                                     modifier = Modifier.composed {
@@ -198,9 +189,10 @@ private fun HomeScreenContent(
                                             timer.id
                                         )
                                     },
-                                    startTimer = {viewModel.startTimer(index)},
-                                    pauseTimer = {viewModel.pauseTimer()},
-                                    resetTimer = {viewModel.resetTimer(index)}
+                                    // TODO: THESE NEED TO BE EVENTS
+                                    startTimer = { viewModel.startTimer(index) },
+                                    pauseTimer = { viewModel.pauseTimer() },
+                                    resetTimer = { viewModel.resetTimer(index) }
                                 )
                             }
                             item {

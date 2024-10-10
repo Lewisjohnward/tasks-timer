@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.presentation.ui.settingsIcon
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
@@ -60,7 +59,6 @@ fun NavigationDrawer(
     navigateToSettings: () -> Unit = {},
     closeDrawer: () -> Unit = {},
     editBoards: Boolean = true,
-    tasksTimerService: TasksTimerService,
     createBoard: CreateBoardDialog?,
 ) {
 
@@ -125,10 +123,12 @@ fun NavigationDrawer(
                     val drawerItem = DrawerItem(
                         text = board.name,
                         onClick = {
-                            onEvent(HomeScreenEvent.SelectBoard(
-                                boardIndex = index,
-                                boardId = board.id
-                            ))
+                            onEvent(
+                                HomeScreenEvent.SelectBoard(
+                                    boardIndex = index,
+                                    boardId = board.id
+                                )
+                            )
                         },
                         icon = board.iconKey.icon
                     )

@@ -7,7 +7,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.android.taskstimer._other.service.TasksTimerService
 import com.android.taskstimer.settings.presentation.SettingsDestination
 import com.android.taskstimer.settings.presentation.SettingsScreen
 import com.android.taskstimer.tasks_timer.presentation.HomeDestination
@@ -20,7 +19,6 @@ import com.android.taskstimer.timer.presentation.TimerScreen
 fun TasksTimerNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    tasksTimerService: TasksTimerService,
 ) {
     NavHost(
         navController = navController,
@@ -38,9 +36,7 @@ fun TasksTimerNavHost(
                     navController.navigate(
                         SettingsDestination.route
                     )
-
                 },
-                tasksTimerService = tasksTimerService
             )
         }
 
