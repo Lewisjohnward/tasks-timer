@@ -41,6 +41,7 @@ import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.CreateBoardDialog
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
+import com.android.taskstimer.tasks_timer.presentation.NewBoardDetails
 import com.android.taskstimer.tasks_timer.presentation.components.board.IconInputDialog
 import com.android.taskstimer.tasks_timer.presentation.components.board.NameInputDialog
 import com.android.taskstimer.tasks_timer.presentation.components.dialog.Dialog
@@ -60,6 +61,7 @@ fun NavigationDrawer(
     closeDrawer: () -> Unit = {},
     editBoards: Boolean = true,
     createBoard: CreateBoardDialog?,
+    newBoardDetails: NewBoardDetails,
 ) {
 
 
@@ -193,6 +195,7 @@ fun NavigationDrawer(
                 Dialog {
                     if (createBoard == CreateBoardDialog.NAME_BOARD) {
                         NameInputDialog(
+                            // TODO: PASS NEW BOARD DETAILS HERE INSTEAD OF USING MutableStateOf
                             onEvent = onEvent,
                             confirmEnabled = false,
 //                        onClose = { inputDialogVisible = false }
@@ -200,6 +203,7 @@ fun NavigationDrawer(
                     }
                     if (createBoard == CreateBoardDialog.CHOOSE_ICON) {
                         IconInputDialog(
+                            selectedIcon = newBoardDetails.iconKey,
                             onEvent = onEvent,
 //                        onClose = { inputDialogVisible = false }
                         )

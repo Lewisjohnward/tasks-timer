@@ -215,13 +215,19 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.AssignIconNewBoard -> {
                 _uiState.update {
                     it.copy(
-                        createBoard = null,
                         newBoardDetails = it.newBoardDetails.copy(
                             iconKey = event.iconKey
                         )
                     )
                 }
+            }
 
+            is HomeScreenEvent.AcceptNewBoard -> {
+                _uiState.update {
+                    it.copy(
+                        createBoard = null,
+                    )
+                }
                 viewModelScope.launch {
                     insertBoard(
                         BoardItem(

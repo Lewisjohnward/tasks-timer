@@ -109,7 +109,8 @@ private fun HomeScreenContent(
                 navigateToSettings = { navigateToSettings() },
                 boards = uiState.boards,
                 editBoards = uiState.editBoards,
-                createBoard = uiState.createBoard
+                createBoard = uiState.createBoard,
+                newBoardDetails = uiState.newBoardDetails
             )
         },
         drawerState = drawerState,

@@ -27,6 +27,7 @@ import com.android.taskstimer.R
 import com.android.taskstimer.core.presentation.ui.IconKey
 import com.android.taskstimer.core.presentation.ui.theme.Coral
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.core.presentation.util.thenIf
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 @Composable
@@ -34,6 +35,7 @@ fun IconInputDialog(
     myNewBoardName: String = "My awesome new board",
     onClose: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {},
+    selectedIcon: IconKey,
 ) {
 
     // TODO: Add check to make sure icon is selected
@@ -53,8 +55,16 @@ fun IconInputDialog(
         ) {
             items(IconKey.entries.toTypedArray()) { iconKey ->
                 IconButton(
-                    modifier = Modifier.padding(10.dp).border(1.dp, Color.White, RoundedCornerShape(5.dp)),
-                    onClick = {},
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .thenIf(iconKey == selectedIcon) {
+                            Modifier.border(
+                                1.dp,
+                                Color.White,
+                                RoundedCornerShape(5.dp)
+                            )
+                        },
+                    onClick = { onEvent(HomeScreenEvent.AssignIconNewBoard(iconKey)) },
                 ) {
                     Icon(
                         modifier = Modifier
@@ -74,8 +84,7 @@ fun IconInputDialog(
                 modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
                 enabled = confirmEnabled,
                 onClick = {
-//                    onEvent( onEvent(HomeScreenEvent.AssignIconNewBoard(iconKey)) )
-//                    onClose()
+                    onEvent(HomeScreenEvent.AcceptNewBoard)
                 }) {
                 Text(
                     text = stringResource(R.string.confirm),
