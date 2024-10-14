@@ -10,14 +10,22 @@ import javax.inject.Singleton
 @Singleton
 class TasksTimerServiceManagerImpl @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
-): TasksTimerServiceManager{
+) : TasksTimerServiceManager {
     override fun startTasksTimerService() {
         val serviceIntent = Intent(applicationContext, TasksTimerService::class.java)
+        serviceIntent.putExtra(
+            TasksTimerService.SERVICE_ACTION,
+            TasksTimerService.LAUNCH_SERVICE
+        )
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
     override fun stopTasksTimerService() {
         val serviceIntent = Intent(applicationContext, TasksTimerService::class.java)
-        applicationContext.stopService(serviceIntent)
+        serviceIntent.putExtra(
+            TasksTimerService.SERVICE_ACTION,
+            TasksTimerService.STOP_SERVICE
+        )
+        ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 }

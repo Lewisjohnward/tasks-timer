@@ -126,10 +126,18 @@ class TasksTimerManager @Inject constructor(
         }
     }
 
+    fun handleNotificationPause() {
+        timer?.cancel()
+        timer = null
+        setTimerActiveState(RUNSTATE.STOPPED)
+        tasksTimerServiceManager.stopTasksTimerService()
+    }
+
     fun stopTimer() {
         timer?.cancel()
         timer = null
         setTimerActiveState(RUNSTATE.STOPPED)
+        tasksTimerServiceManager.stopTasksTimerService()
     }
 
     fun resetTimer(index: Int) {

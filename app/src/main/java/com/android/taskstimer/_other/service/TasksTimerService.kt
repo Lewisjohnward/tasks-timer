@@ -1,20 +1,15 @@
 package com.android.taskstimer._other.service
 
-import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.LifecycleService
 import com.android.taskstimer.core.data.repository.UserPreferencesRepository
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
-import com.android.taskstimer.core.presentation.MainActivity
 import com.android.taskstimer.tasks_timer.domain.use_case.UpdateTimer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -31,9 +26,10 @@ data class State(
     val currentTimer: Int = 0,
 )
 
+// TODO THIS NEEDS TO BE IN TASKSTIMERMANAGER
 enum class RUNSTATE {
     RUNNING,
-    STOPPED
+    STOPPED,
 }
 
 @AndroidEntryPoint
@@ -48,9 +44,11 @@ class TasksTimerService : LifecycleService() {
         const val PAUSE = "PAUSE"
         const val RESET = "RESET"
         const val GET_STATUS = "GET_STATUS"
-        const val MOVE_TO_FOREGROUND = "MOVE_TO_FOREGROUND"
-        const val MOVE_TO_BACKGROUND = "MOVE_TO_BACKGROUND"
+        const val SCREEN_IN_BACKGROUND = "MOVE_TO_FOREGROUND"
+        const val SCREEN_IN_FOREGROUND = "MOVE_TO_BACKGROUND"
         const val TIMER_INDEX = "TIMER_INDEX"
+        const val LAUNCH_SERVICE = "LAUNCH SERVICE"
+        const val STOP_SERVICE = "STOP SERVICE"
 
         // Intent Extras
         const val SERVICE_ACTION = "STOPWATCH_ACTION"
@@ -68,12 +66,6 @@ class TasksTimerService : LifecycleService() {
     lateinit var updateTimer: UpdateTimer
 
     @Inject
-    lateinit var notificationManager: NotificationManagerCompat
-
-    @Inject
-    lateinit var notification: NotificationCompat.Builder
-
-    @Inject
     lateinit var timersRepo: TimersRepository
 
     @Inject
@@ -84,6 +76,9 @@ class TasksTimerService : LifecycleService() {
 
     @Inject
     lateinit var tasksTimerManager: TasksTimerManager
+
+    @Inject
+    lateinit var notificationManager: NotificationManager
 
     private val serviceScope = CoroutineScope(SupervisorJob())
 
@@ -103,28 +98,49 @@ class TasksTimerService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         println("Intent recieved")
         val action = intent?.getStringExtra(SERVICE_ACTION)
-        val timerIndex = intent?.getStringExtra(TIMER_INDEX)?.toInt()
 
+        // TODO: CREATE ENUM TO REPRESENT?
+        when (action) {
+            SCREEN_IN_BACKGROUND -> println("screen moved to background")
+            SCREEN_IN_FOREGROUND -> println("screen moved to foreground")
+            LAUNCH_SERVICE -> launchService()
+            STOP_SERVICE -> stopService()
+        }
+        return START_STICKY
+    }
 
+    private fun stopService(){
+        stopSelf()
+    }
+
+    private fun launchService() {
         startForeground(
+            // TODO: TIMER_SERVICE_NOTIFICATION_ID
             1,
-            buildNotification(
-                silent = silentNotification,
-                timer = tasksTimerManager.state.value.timers[tasksTimerManager.state.value.currentTimerIndex].name
-            )
+            notificationManager.getBaseTimerServiceNotification().build()
         )
 
         serviceScope.launch {
-            tasksTimerManager.state.collect { state ->
-                println(state)
-                updateNotification(
+            tasksTimerManager.state.collect { tasksTimerState ->
+                if(tasksTimerState.active != RUNSTATE.RUNNING) {
+                    return@collect
+                }
+                val timers = tasksTimerState.timers
+                val currentTimerIndex = tasksTimerState.currentTimerIndex
+                val timer = timers[currentTimerIndex]
+
+                notificationManager.updateNotification(
                     silentNotification = silentNotification,
-                    timer = tasksTimerManager.state.value.timers[tasksTimerManager.state.value.currentTimerIndex].name
+                    boardName = tasksTimerState.board,
+                    timerName = timer.name,
+                    totalTime = timer.presetTime,
+                    totalTimers = timers.size.toString(),
+                    currentTimerIndex = (tasksTimerState.currentTimerIndex + 1).toString(),
+                    timerRemaining = timer.formatTime()
                 )
             }
         }
 
-        return START_STICKY
     }
 
 
@@ -144,47 +160,5 @@ class TasksTimerService : LifecycleService() {
 //        if (activeTimer == null) return
 //        isFgService = false
         stopForeground(STOP_FOREGROUND_REMOVE)
-    }
-
-    @SuppressLint("MissingPermission")
-    // TODO: HANDLE PERMISSIONS
-    private fun updateNotification(
-        silentNotification: Boolean,
-        timer: String
-    ) {
-        notificationManager.notify(
-            1,
-            buildNotification(
-                silent = silentNotification,
-                timer = timer
-            )
-        )
-    }
-
-    private fun buildNotification(
-        silent: Boolean,
-        timer: String,
-    ): Notification {
-
-
-        val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent =
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-//        val currentTimer = state.value.currentTimer
-
-//        val initialTime = state.value.timers[currentTimer].presetTime.toInt()
-//        val elapsedTime = initialTime - state.value.timers[currentTimer].remainingTime.toInt()
-        return notification
-//            .setContentTitle("test")
-            .setContentText("test content")
-            .setContentTitle(timer)
-//            .setContentTitle("${state.value.timers[currentTimer].name} -${currentTimer}/${state.value.timers.size}")
-//            .setContentText(state.value.timers[currentTimer].formatTime())
-//            .setProgress(initialTime, elapsedTime, false)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setFullScreenIntent(pendingIntent, true)
-            .setSilent(silent)
-            .build()
     }
 }

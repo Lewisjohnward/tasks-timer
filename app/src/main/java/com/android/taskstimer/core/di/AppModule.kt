@@ -3,6 +3,8 @@ package com.android.taskstimer.core.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.android.taskstimer._other.service.NotificationManager
+import com.android.taskstimer._other.service.NotificationManagerImpl
 import com.android.taskstimer._other.service.TasksTimerServiceManager
 import com.android.taskstimer._other.service.TasksTimerServiceManagerImpl
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
@@ -152,6 +154,8 @@ class AppModule {
         return GetTimerStream(timersRepository)
     }
 
+
+    // TODO: THIS CAN BE @bind, but needs to be in abstract class?
     @Provides
     @Singleton
     fun provideTasksTimerServiceManager(
@@ -160,6 +164,16 @@ class AppModule {
         return TasksTimerServiceManagerImpl(applicationContext)
     }
 
+    // TODO: THIS CAN BE @bind, but needs to be in abstract class?
+    @Provides
+    @Singleton
+    fun provideNotificationManager(
+        @ApplicationContext applicationContext: Context,
+    ): NotificationManager {
+        return NotificationManagerImpl(
+            applicationContext
+        )
+    }
 
     @ApplicationScope
     @Singleton

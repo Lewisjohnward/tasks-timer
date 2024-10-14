@@ -103,6 +103,7 @@ class HomeViewModel @Inject constructor(
 
     // TODO: CREATE USECASE FOR INIT BOARD
     private fun loadInitialBoard() {
+        if (tasksTimerManager.state.value.active != RUNSTATE.STOPPED) return
         viewModelScope.launch {
             // TODO: IS THERE A BETTER WAY THAN LOOP ON FIRST LAUNCH?
             var count = 0
@@ -119,6 +120,7 @@ class HomeViewModel @Inject constructor(
 
     // TODO: PUT THIS AS AN EVENT
     fun loadBoard() {
+        if (tasksTimerManager.state.value.active != RUNSTATE.STOPPED) return
         if (uiState.value.boards.isNotEmpty()) {
             // TODO: THIS IS UGLY
             val board = uiState.value.boards[uiState.value.currentBoardIndex]

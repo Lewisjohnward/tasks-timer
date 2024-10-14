@@ -17,7 +17,7 @@ class AndroidAlarmScheduler(
     @SuppressLint("ScheduleExactAlarm")
     override fun schedule(item: AlarmItem) {
 
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
+        val intent = Intent(context, TasksTimerBroadcastReceiver::class.java).apply {
             putExtra("EXTRA_MESSAGE", item.message)
         }
 
@@ -38,7 +38,7 @@ class AndroidAlarmScheduler(
             PendingIntent.getBroadcast(
                 context,
                 item.hashCode(),
-                Intent(context,  AlarmReceiver::class.java),
+                Intent(context,  TasksTimerBroadcastReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
