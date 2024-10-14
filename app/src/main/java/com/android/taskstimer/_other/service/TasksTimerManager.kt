@@ -181,13 +181,18 @@ class TasksTimerManager @Inject constructor(
     }
 
     private fun decrementTime() {
-        _timers.update { currentTimers ->
-            currentTimers.mapIndexed { index, timer ->
-                if (index == _currentTimerIndex.value) {
-                    val updatedTimer =
-                        timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
-                    updatedTimer
-                } else timer
+        val timer: TimerItem = _timers.value[_currentTimerIndex.value]
+        val updatedTimer: TimerItem =
+            timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
+
+        coroutineScope.launch {
+            timersRepo.updateTimer(updatedTimer)
+            _timers.update { currentTimers ->
+                currentTimers.mapIndexed { index, timer ->
+                    if (index == _currentTimerIndex.value) {
+                        updatedTimer
+                    } else timer
+                }
             }
         }
     }
