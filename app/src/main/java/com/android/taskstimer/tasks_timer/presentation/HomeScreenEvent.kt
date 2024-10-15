@@ -6,6 +6,7 @@ import com.android.taskstimer.core.presentation.ui.IconKey
 sealed interface HomeScreenEvent {
     data class EditBoards(val edit: Boolean) : HomeScreenEvent
     data object DeleteBoard : HomeScreenEvent
+    data object RenameBoard : HomeScreenEvent
     data class DeleteTimer(val timer: TimerItem) : HomeScreenEvent
     data class SelectBoard(
         val boardIndex: Int,
@@ -17,7 +18,8 @@ sealed interface HomeScreenEvent {
     data class DisplayMenu(val displayMenu: Boolean) : HomeScreenEvent
     data object CreateNewBoard : HomeScreenEvent
     data object CancelCreateNewBoard : HomeScreenEvent
-    data class NameNewBoard(val name: String) : HomeScreenEvent
+    data class UpdateNewBoardName(val name: String): HomeScreenEvent
+    data object NameNewBoard : HomeScreenEvent
     data class AssignIconNewBoard(val iconKey: IconKey) : HomeScreenEvent
     data object AcceptNewBoard: HomeScreenEvent
 

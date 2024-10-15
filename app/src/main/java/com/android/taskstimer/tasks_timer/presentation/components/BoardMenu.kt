@@ -15,7 +15,7 @@ fun BoardMenu(
 ){
     MenuPopupItem(
         testTag = TestTags.BOARD_MENU_RENAME_BOARD,
-        icon = Icons.Filled.Edit, text = "Rename Board", onClick = {rename}
+        icon = Icons.Filled.Edit, text = "Rename Board", onClick = {rename()}
     )
     MenuPopupItem(
         testTag = TestTags.BOARD_MENU_DELETE_BOARD,

@@ -210,7 +210,7 @@ private fun HomeScreenContent(
                 dismiss = { onEvent(HomeScreenEvent.DisplayMenu(false)) },
             ) {
                 BoardMenu(
-                    rename = {},
+                    rename = { onEvent(HomeScreenEvent.RenameBoard) },
                     delete = { onEvent(HomeScreenEvent.DeleteBoard) },
                 )
             }

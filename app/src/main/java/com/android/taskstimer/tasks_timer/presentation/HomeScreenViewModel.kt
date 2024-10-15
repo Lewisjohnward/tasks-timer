@@ -30,7 +30,13 @@ enum class CreateBoardDialog {
     CHOOSE_ICON
 }
 
+enum class CreateBoardType {
+    UPDATE,
+    NEW
+}
+
 data class NewBoardDetails(
+    val id: Int = 0,
     val name: String = "",
     val iconKey: IconKey = IconKey.DEFAULT
 )
@@ -43,6 +49,7 @@ data class HomeScreenUiState(
     val boardMenuEnabled: Boolean = false,
 
     val createBoard: CreateBoardDialog? = null,
+    val boardType: CreateBoardType = CreateBoardType.NEW,
     val newBoardDetails: NewBoardDetails = NewBoardDetails(),
 
     val timers: List<TimerItem> = listOf(),
@@ -150,7 +157,24 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.DeleteBoard -> {
                 _uiState.update {
                     it.copy(
-                        displayConfirmDialog = DeleteDialog.Board(uiState.value.boards[uiState.value.currentBoardIndex])
+                        displayConfirmDialog = DeleteDialog.Board(uiState.value.boards[uiState.value.currentBoardIndex]),
+                        displayBoardMenu = false
+                    )
+                }
+            }
+
+            HomeScreenEvent.RenameBoard -> {
+                val boardToEdit = uiState.value.boards[uiState.value.currentBoardIndex]
+                _uiState.update {
+                    it.copy(
+                        createBoard = CreateBoardDialog.NAME_BOARD,
+                        boardType = CreateBoardType.UPDATE,
+                        newBoardDetails = NewBoardDetails(
+                            id = boardToEdit.id,
+                            name = boardToEdit.name,
+                            iconKey = boardToEdit.iconKey
+                        ),
+                        displayBoardMenu = false
                     )
                 }
             }
@@ -197,7 +221,20 @@ class HomeViewModel @Inject constructor(
 
             is HomeScreenEvent.CreateNewBoard -> {
                 _uiState.update {
-                    it.copy(createBoard = CreateBoardDialog.NAME_BOARD)
+                    it.copy(
+                        createBoard = CreateBoardDialog.NAME_BOARD,
+                        boardType = CreateBoardType.NEW
+                    )
+                }
+            }
+
+            is HomeScreenEvent.UpdateNewBoardName -> {
+                _uiState.update {
+                    it.copy(
+                        newBoardDetails = it.newBoardDetails.copy(
+                            name = event.name
+                        )
+                    )
                 }
             }
 
@@ -205,9 +242,6 @@ class HomeViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         createBoard = CreateBoardDialog.CHOOSE_ICON,
-                        newBoardDetails = it.newBoardDetails.copy(
-                            name = event.name
-                        )
                     )
                 }
             }
@@ -223,16 +257,12 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.AcceptNewBoard -> {
-                _uiState.update {
-                    it.copy(
-                        createBoard = null,
-                    )
-                }
                 viewModelScope.launch {
                     insertBoard(
                         BoardItem(
-                            name = _uiState.value.newBoardDetails.name,
-                            iconKey = _uiState.value.newBoardDetails.iconKey
+                            id = uiState.value.newBoardDetails.id,
+                            name = uiState.value.newBoardDetails.name,
+                            iconKey = uiState.value.newBoardDetails.iconKey
                         )
                     )
                     // If this is the first board created load into service/ui
@@ -241,11 +271,26 @@ class HomeViewModel @Inject constructor(
                             loadBoard()
                         }
                     }
+                    if (uiState.value.boardType == CreateBoardType.UPDATE){
+                        tasksTimerManager.loadBoard(uiState.value.newBoardDetails.id)
+                    }
+                    _uiState.update {
+                        it.copy(
+                            createBoard = null,
+                            boardType = CreateBoardType.NEW,
+                            newBoardDetails = NewBoardDetails()
+                        )
+                    }
                 }
             }
 
             HomeScreenEvent.CancelCreateNewBoard -> {
-                _uiState.update { it.copy(createBoard = null) }
+                _uiState.update {
+                    it.copy(
+                        createBoard = null,
+                        newBoardDetails = NewBoardDetails()
+                    )
+                }
             }
         }
     }

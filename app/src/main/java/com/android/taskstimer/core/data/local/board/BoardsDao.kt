@@ -20,7 +20,7 @@ interface BoardDao {
     @Query("SELECT * from boards WHERE id = :boardId")
     suspend fun getBoard(boardId: Int): BoardEntity
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(board: BoardEntity)
 
     @Delete

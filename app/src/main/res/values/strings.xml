@@ -7,7 +7,7 @@
     <string name="use_media_volume_when_headphones_are_connected">Use media volume when headphones are connected</string>
     <string name="use_media_volume_when_headphones_are_connected_description">When a headset is connected, the individual alarm volume is ignored, and the alarm sound is output according to the default media volume of the phone\n\nIt is recommended to enable this option as it may surprise you when the volume suddenly changes whilst playing music</string>
     <string name="choose_an_icon_for_the_new_board">Choose an icon</string>
-    <string name="new_board_name">New board name</string>
+    <string name="new_board_name">Board name</string>
     <string name="add_new_board_placeholder">My awesome new board</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>

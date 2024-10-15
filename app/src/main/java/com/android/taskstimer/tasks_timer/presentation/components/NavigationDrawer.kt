@@ -195,17 +195,15 @@ fun NavigationDrawer(
                 Dialog {
                     if (createBoard == CreateBoardDialog.NAME_BOARD) {
                         NameInputDialog(
-                            // TODO: PASS NEW BOARD DETAILS HERE INSTEAD OF USING MutableStateOf
                             onEvent = onEvent,
                             confirmEnabled = false,
-//                        onClose = { inputDialogVisible = false }
+                            newBoardName = newBoardDetails.name
                         )
                     }
                     if (createBoard == CreateBoardDialog.CHOOSE_ICON) {
                         IconInputDialog(
                             selectedIcon = newBoardDetails.iconKey,
-                            onEvent = onEvent,
-//                        onClose = { inputDialogVisible = false }
+                            onEvent = onEvent
                         )
                     }
                 }

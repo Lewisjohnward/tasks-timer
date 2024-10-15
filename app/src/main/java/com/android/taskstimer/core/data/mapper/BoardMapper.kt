@@ -4,17 +4,10 @@ import com.android.taskstimer.core.data.local.board.BoardEntity
 import com.android.taskstimer.core.domain.model.BoardItem
 
 
-fun BoardItem.toBoardEntityForInsert(): BoardEntity {
+fun BoardItem.toBoardEntity(): BoardEntity {
     return BoardEntity(
-        name = name,
-        iconKey = iconKey
-    )
-}
-
-fun BoardItem.toBoardEntityForDelete(): BoardEntity {
-    return BoardEntity(
-        name = name,
         id = id,
+        name = name,
         iconKey = iconKey
     )
 }

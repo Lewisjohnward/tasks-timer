@@ -1,8 +1,7 @@
 package com.android.taskstimer.core.data.repository
 
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
-import com.android.taskstimer.core.data.mapper.toBoardEntityForDelete
-import com.android.taskstimer.core.data.mapper.toBoardEntityForInsert
+import com.android.taskstimer.core.data.mapper.toBoardEntity
 import com.android.taskstimer.core.data.mapper.toBoardItem
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.repository.BoardsRepository
@@ -26,9 +25,9 @@ class BoardsRepositoryImpl(
 
 
     override suspend fun insertBoard(board: BoardItem) =
-        boardDao.insert(board.toBoardEntityForInsert())
+        boardDao.insert(board.toBoardEntity())
 
     override suspend fun deleteBoard(board: BoardItem) =
-        boardDao.delete(board.toBoardEntityForDelete())
+        boardDao.delete(board.toBoardEntity())
 
 }

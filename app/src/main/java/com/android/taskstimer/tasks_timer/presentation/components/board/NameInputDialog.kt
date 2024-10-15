@@ -30,16 +30,12 @@ import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 
 @Composable
 fun NameInputDialog(
-    myNewBoardName: String = "My awesome new board",
     onClose: () -> Unit = {},
     onEvent: (HomeScreenEvent) -> Unit = {},
     confirmEnabled: Boolean,
+    newBoardName: String,
 ) {
-    // TODO: On process death this will be lost it needs
-    // save state handle in the viewmodel
-    var input by remember { mutableStateOf("") }
-
-    val confirmEnabled = input != ""
+    val confirmEnabled = newBoardName != ""
 
     Column(
 //        modifier = Modifier.padding(start = 5.dp ,top = 20.dp, end = 5.dp, bottom = 20.dp),
@@ -53,9 +49,9 @@ fun NameInputDialog(
         )
         TextField(
             modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_INPUT_FIELD),
-            value = input,
+            value = newBoardName,
             placeholder = { Text(text = stringResource(R.string.add_new_board_placeholder)) },
-            onValueChange = { input = it },
+            onValueChange = { onEvent(HomeScreenEvent.UpdateNewBoardName(it)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -83,7 +79,7 @@ fun NameInputDialog(
                 modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
                 enabled = confirmEnabled,
                 onClick = {
-                    onEvent(HomeScreenEvent.NameNewBoard(input))
+                    onEvent(HomeScreenEvent.NameNewBoard)
                     onClose()
                 }) {
                 Text(
