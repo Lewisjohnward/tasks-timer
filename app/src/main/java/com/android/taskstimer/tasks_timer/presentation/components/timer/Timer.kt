@@ -1,5 +1,6 @@
 package com.android.taskstimer.tasks_timer.presentation.components.timer
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +63,6 @@ fun Timer(
     tasksTimerActive: RUNSTATE = RUNSTATE.STOPPED,
     timerActive: RUNSTATE = RUNSTATE.STOPPED
 ) {
-    val context = LocalContext.current
     var menuVisible by remember {
         mutableStateOf(false)
     }
@@ -129,6 +128,8 @@ private fun TimerDetails(
     menuButtonEnabled: Boolean,
 ) {
 
+    val animatedAlpha by animateFloatAsState(targetValue = if (!menuButtonEnabled) 1f else 0.1f)
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -147,14 +148,14 @@ private fun TimerDetails(
             )
             IconButton(
                 modifier = Modifier.size(25.dp),
-                onClick = {onMenuClick()},
+                onClick = { onMenuClick() },
                 enabled = !menuButtonEnabled,
             ) {
                 Icon(
                     modifier = Modifier.testTag("${TestTags.TIMER_MENU} $name"),
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "Edit timer",
-                    tint = if(!menuButtonEnabled) Color.White else Color.White.copy(alpha = 0.1f)
+                    tint = if (!menuButtonEnabled) Color.White else Color.White.copy(alpha = animatedAlpha)
                 )
             }
         }
@@ -221,9 +222,7 @@ private fun Control(
                     enabled = enabledPlayButton,
                     onClick = { onStart() }
                 )
-
             }
-
         }
     }
 }
@@ -237,8 +236,9 @@ private fun ControlButton(
     enabled: Boolean = true,
     contentDescription: String
 ) {
-
-    val disabledAlphaModifier = 0.3f
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if (enabled) 1f else 0.3f,
+    )
 
     Box(
         contentAlignment = Alignment.Center,
@@ -272,9 +272,8 @@ private fun ControlButton(
                 imageVector = icon,
                 contentDescription = contentDescription,
                 tint = if (enabled) {
-
                     Color.White
-                } else Color.White.copy(alpha = disabledAlphaModifier)
+                } else Color.White.copy(alpha = animatedAlpha)
             )
         }
     }
