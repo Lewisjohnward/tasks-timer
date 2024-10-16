@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +93,7 @@ fun Timer(
             .padding(10.dp)
     ) {
         TimerDetails(
+            menuButtonEnabled = tasksTimerActive == RUNSTATE.RUNNING,
             isActive = timerActive,
             name = timer.name,
             time = timer.formatTime(),
@@ -124,6 +126,7 @@ private fun TimerDetails(
     onMenuClick: () -> Unit = {},
     onStart: () -> Unit = {},
     onPause: () -> Unit = {},
+    menuButtonEnabled: Boolean,
 ) {
 
 
@@ -142,16 +145,18 @@ private fun TimerDetails(
                 fontSize = 20.sp,
                 color = Color.White
             )
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        onMenuClick()
-                    }
-                    .testTag("${TestTags.TIMER_MENU} $name"),
-                imageVector = Icons.Filled.MoreVert,
-                contentDescription = "Edit timer",
-                tint = Color.White
-            )
+            IconButton(
+                modifier = Modifier.size(25.dp),
+                onClick = {onMenuClick()},
+                enabled = !menuButtonEnabled,
+            ) {
+                Icon(
+                    modifier = Modifier.testTag("${TestTags.TIMER_MENU} $name"),
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "Edit timer",
+                    tint = if(!menuButtonEnabled) Color.White else Color.White.copy(alpha = 0.1f)
+                )
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -163,7 +163,6 @@ private fun HomeScreenContent(
                         ) {
 
                             itemsIndexed(uiState.timers) { index, timer ->
-                                val tasksTimerActive = uiState.active
                                 val timerActive = if (
                                     uiState.currentTimerIndex == index &&
                                     uiState.active == RUNSTATE.RUNNING
@@ -178,7 +177,7 @@ private fun HomeScreenContent(
                                             translationY = offsetOrNull ?: 0f
                                         }
                                     },
-                                    tasksTimerActive = tasksTimerActive,
+                                    tasksTimerActive = uiState.active,
                                     timerActive = timerActive,
                                     index = index,
                                     timer = timer,
