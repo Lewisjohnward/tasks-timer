@@ -88,9 +88,8 @@ class TasksTimerManager @Inject constructor(
     }
 
     fun startTimer(timerIndex: Int) {
-        coroutineScope.launch {
-            if (state.value.timers.isEmpty()) return@launch
-            if (timer != null) return@launch
+            if (state.value.timers.isEmpty()) return
+            if (timer != null) return
             tasksTimerServiceManager.startTasksTimerService()
 
             timer = Timer()
@@ -122,8 +121,6 @@ class TasksTimerManager @Inject constructor(
 //                    if (timeElapsed == 6) stopTimer()
                 }
             }, 0, 1000)
-
-        }
     }
 
     fun handleNotificationPause() {
