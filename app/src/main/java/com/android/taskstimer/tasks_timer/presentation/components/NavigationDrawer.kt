@@ -62,6 +62,7 @@ fun NavigationDrawer(
     editBoards: Boolean = true,
     createBoard: CreateBoardDialog?,
     newBoardDetails: NewBoardDetails,
+    currentBoardIndex: Int = 0,
 ) {
 
 
@@ -132,7 +133,8 @@ fun NavigationDrawer(
                                 )
                             )
                         },
-                        icon = board.iconKey.icon
+                        icon = board.iconKey.icon,
+                        selected = index == currentBoardIndex
                     )
 
                     NavDrawerItem(
@@ -220,15 +222,10 @@ private fun NavDrawerItem(
     item: DrawerItem,
     dragHandle: @Composable () -> Unit = {}
 ) {
-    Row(
-        modifier = Modifier.padding(end = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
         NavigationDrawerItem(
-            modifier = modifier.weight(1f),
             label = { Text(text = item.text) },
             icon = { Icon(imageVector = item.icon, contentDescription = null) },
+            badge = {dragHandle()},
             selected = item.selected,
             shape = RoundedCornerShape(0.dp),
             onClick = {
@@ -236,16 +233,14 @@ private fun NavDrawerItem(
                 closeDrawer()
             },
             colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = Color.Red,
+                selectedContainerColor = Color.White.copy(alpha = 0.075f),
+                selectedTextColor = Color.White,
+                selectedIconColor = Color.White,
                 unselectedContainerColor = Color.Transparent,
                 unselectedIconColor = Color.White,
                 unselectedTextColor = Color.White,
             )
         )
-        Row(modifier = Modifier.weight(0.1f)) {
-            dragHandle()
-        }
-    }
 }
 
 
