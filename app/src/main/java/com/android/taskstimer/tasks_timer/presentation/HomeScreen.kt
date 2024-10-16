@@ -1,5 +1,7 @@
 package com.android.taskstimer.tasks_timer.presentation
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -86,6 +89,13 @@ private fun HomeScreenContent(
         onMove = { fromIndex, toIndex -> println("Drag drop from $fromIndex to $toIndex") }
     )
 
+    val animatedOffsetY by animateDpAsState(
+        targetValue = if (uiState.active != RUNSTATE.RUNNING) 0.dp else 100.dp,
+        animationSpec = tween(
+            durationMillis = 500
+        )
+    )
+
     fun openDrawer() {
         viewModel.onEvent(HomeScreenEvent.EditBoards(false))
         coroutineScope.launch { drawerState.open() }
@@ -135,7 +145,9 @@ private fun HomeScreenContent(
                 },
                 floatingActionButton = {
                     FloatingActionBtn(
-                        modifier = Modifier.testTag(TestTags.ADD_TIMER_FAB),
+                        modifier = Modifier
+                            .offset(y = animatedOffsetY)
+                            .testTag(TestTags.ADD_TIMER_FAB),
                         onClick = {
                             navigateToTimer(
                                 uiState.boardId,
