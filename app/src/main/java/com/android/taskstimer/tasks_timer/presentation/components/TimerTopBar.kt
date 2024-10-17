@@ -34,11 +34,11 @@ fun TimerTopBar(
     actionIcon: ImageVector? = null,
     actionOnClick: () -> Unit = {},
     actionEnabled: Boolean = true,
-    menuEnabled: Boolean = false
+    iconEnabled: Boolean = false
 ) {
 
     val animatedAlpha by animateFloatAsState(
-        targetValue = if (menuEnabled) 1f else 0.3f,
+        targetValue = if (iconEnabled) 1f else 0.3f,
     )
 
 
@@ -70,12 +70,12 @@ fun TimerTopBar(
                     IconButton(
                         modifier = Modifier.testTag(TestTags.BOARD_MENU_BUTTON),
                         onClick = actionOnClick,
-                        enabled = menuEnabled
+                        enabled = iconEnabled
                     ) {
                         Icon(
                             imageVector = it,
                             contentDescription = null,
-                            tint = if (menuEnabled) Color.White else Color.White.copy(alpha = animatedAlpha)
+                            tint = if (iconEnabled) Color.White else Color.White.copy(alpha = animatedAlpha)
                         )
                     }
                 }
@@ -87,12 +87,12 @@ fun TimerTopBar(
                 IconButton(
                     modifier = Modifier.testTag(TestTags.OPEN_DRAWER_BUTTON),
                     onClick = iconOnclick,
-                    enabled = menuEnabled
+                    enabled = iconEnabled
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = "Back button",
-                        tint = if (menuEnabled) Color.White else Color.White.copy(alpha = animatedAlpha)
+                        tint = if (iconEnabled) Color.White else Color.White.copy(alpha = animatedAlpha)
                     )
                 }
             }

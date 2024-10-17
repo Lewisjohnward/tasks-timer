@@ -80,7 +80,8 @@ fun TimerScreen(
         topBar = {
             TimerTopBar(
                 title = uiState.title,
-                iconOnclick = navigateBack
+                iconOnclick = navigateBack,
+                iconEnabled = true
             )
         },
         containerColor = BackgroundDarkGray,

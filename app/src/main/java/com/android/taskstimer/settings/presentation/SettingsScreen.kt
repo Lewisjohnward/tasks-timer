@@ -72,7 +72,7 @@ private fun SettingsScreenContent(
             TimerTopBar(
                 title = "Settings",
                 iconOnclick = navigateBack,
-                menuEnabled = false
+                iconEnabled = true
             )
         },
         containerColor = BackgroundDarkGray

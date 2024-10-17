@@ -133,7 +133,7 @@ private fun HomeScreenContent(
                 topBar = {
                     TimerTopBar(
                         title = uiState.boardTitle,
-                        menuEnabled = uiState.active != RUNSTATE.RUNNING,
+                        iconEnabled = uiState.active != RUNSTATE.RUNNING,
                         displayIcon = true,
                         iconOnclick = { openDrawer() },
                         scrollBehavior = null,
