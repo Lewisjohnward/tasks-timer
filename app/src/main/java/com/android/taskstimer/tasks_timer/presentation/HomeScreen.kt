@@ -225,6 +225,7 @@ private fun HomeScreenContent(
                 BoardMenu(
                     rename = { onEvent(HomeScreenEvent.RenameBoard) },
                     delete = { onEvent(HomeScreenEvent.DeleteBoard) },
+                    resetAll = {onEvent(HomeScreenEvent.ResetAllTimers)}
                 )
             }
             if (uiState.displayConfirmDialog != null)

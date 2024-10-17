@@ -109,7 +109,7 @@ class TasksTimerManager @Inject constructor(
                             incrementCurrentTimer()
                         } else {
                             stopTimer()
-                            resetTimers()
+                            resetAllTimers()
                             resetCurrentTimer()
                             tasksTimerServiceManager.stopTasksTimerService()
                         }
@@ -138,11 +138,17 @@ class TasksTimerManager @Inject constructor(
     }
 
     fun resetTimer(index: Int) {
-        _timers.update { currentTimers ->
-            currentTimers.mapIndexed { i, timer ->
-                if (index == i) {
-                    timer.resetTimer()
-                } else timer
+
+        val resetTimer: TimerItem = _timers.value[index].resetTimer()
+
+        coroutineScope.launch {
+            timersRepo.updateTimer(resetTimer)
+            _timers.update { currentTimers ->
+                currentTimers.mapIndexed { i, timer ->
+                    if (index == i) {
+                        resetTimer
+                    } else timer
+                }
             }
         }
     }
@@ -167,10 +173,17 @@ class TasksTimerManager @Inject constructor(
         _currentTimerIndex.update { 0 }
     }
 
-    private fun resetTimers() {
-        _timers.update { currentTimers ->
-            currentTimers.map { timer -> timer.resetTimer() }
+    fun resetAllTimers() {
+        // TODO - NEEDS TO PERSIST IN DB
+
+        repeat(_timers.value.size){
+            resetTimer(it)
+
         }
+
+//        _timers.update { currentTimers ->
+//            currentTimers.map { timer -> timer.resetTimer() }
+//        }
     }
 
     private fun isRemainingTimerOfCurrentTimerZero(): Boolean {

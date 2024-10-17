@@ -22,5 +22,6 @@ sealed interface HomeScreenEvent {
     data object NameNewBoard : HomeScreenEvent
     data class AssignIconNewBoard(val iconKey: IconKey) : HomeScreenEvent
     data object AcceptNewBoard: HomeScreenEvent
+    data object ResetAllTimers : HomeScreenEvent
 
 }

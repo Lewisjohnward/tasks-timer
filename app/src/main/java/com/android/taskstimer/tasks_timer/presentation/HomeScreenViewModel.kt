@@ -174,9 +174,9 @@ class HomeViewModel @Inject constructor(
                             name = boardToEdit.name,
                             iconKey = boardToEdit.iconKey
                         ),
-                        displayBoardMenu = false
                     )
                 }
+                closeBoardMenu()
             }
 
             is HomeScreenEvent.DeleteTimer -> {
@@ -199,7 +199,8 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.DialogCancel -> {
-                _uiState.update { it.copy(displayConfirmDialog = null, displayBoardMenu = false) }
+                _uiState.update { it.copy(displayConfirmDialog = null) }
+                closeBoardMenu()
             }
 
             is HomeScreenEvent.DisplayMenu -> {
@@ -271,7 +272,7 @@ class HomeViewModel @Inject constructor(
                             loadBoard()
                         }
                     }
-                    if (uiState.value.boardType == CreateBoardType.UPDATE){
+                    if (uiState.value.boardType == CreateBoardType.UPDATE) {
                         tasksTimerManager.loadBoard(uiState.value.newBoardDetails.id)
                     }
                     _uiState.update {
@@ -292,6 +293,19 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            HomeScreenEvent.ResetAllTimers -> {
+                tasksTimerManager.resetAllTimers()
+                closeBoardMenu()
+            }
+        }
+    }
+
+    private fun closeBoardMenu() {
+        _uiState.update {
+            it.copy(
+                displayBoardMenu = false
+            )
         }
     }
 

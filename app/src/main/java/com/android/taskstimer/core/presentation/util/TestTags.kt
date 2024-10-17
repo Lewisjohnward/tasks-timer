@@ -2,6 +2,7 @@ package com.android.taskstimer.core.presentation.util
 
 object TestTags {
 
+
     // HomeScreen
     const val TOP_APP_BAR_TEXT = "TOP_APP_BAR_TEXT"
     const val ADD_TIMER_FAB = "ADD_TIMER_FAB"
@@ -24,6 +25,7 @@ object TestTags {
 
    // HomeScreen - Board Menu
     const val BOARD_MENU_RENAME_BOARD = "RENAME_BOARD"
+    const val BOARD_MENU_RESET_ALL_TIMERS = "RESET_ALL_TIMERS"
     const val BOARD_MENU_DELETE_BOARD = "DELETE_BOARD"
 
     // HomeScreen - Timer Menu
