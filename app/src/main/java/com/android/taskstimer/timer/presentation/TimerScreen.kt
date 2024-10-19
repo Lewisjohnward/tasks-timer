@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,6 +71,7 @@ fun TimerScreen(
             scaffoldState.bottomSheetState.expand()
         }
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     BottomSheetScaffold(
         sheetContent = { Numpad(onClick = onEvent) },
@@ -113,7 +115,10 @@ fun TimerScreen(
             TimeInput(
                 state = timerState,
                 onEvent = onEvent,
-                onFocus = { openNumpad() }
+                onFocus = {
+                    keyboardController?.hide()
+                    openNumpad()
+                }
             )
             Button(
                 modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
