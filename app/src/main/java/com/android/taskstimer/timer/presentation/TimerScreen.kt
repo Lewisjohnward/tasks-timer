@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,13 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.android.taskstimer.core.presentation.navigation.NavigationDestination
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
-import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.timer.InputState
 import com.android.taskstimer.timer.presentation.components.NameInput
@@ -59,7 +59,7 @@ fun TimerScreen(
     val onEvent = viewModel::onEvent
 
     val sheetState = SheetState(
-        skipPartiallyExpanded = false,
+        skipPartiallyExpanded = true,
         density = LocalDensity.current,
         initialValue = SheetValue.Expanded
     )
@@ -71,10 +71,32 @@ fun TimerScreen(
             scaffoldState.bottomSheetState.expand()
         }
     }
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    fun onNavigateBack() {
+        keyboardController?.hide()
+        navigateBack()
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner.lifecycle){
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewModel.navigationChannelFlow.collect { event ->
+                when(event) {
+                    NavigationEvent.NavigateBack -> onNavigateBack()
+                }
+            }
+        }
+    }
+
     BottomSheetScaffold(
-        sheetContent = { Numpad(onClick = onEvent) },
+        sheetContent = {
+            Numpad(
+                onClick = onEvent,
+                validEntry = uiState.isEntryValid,
+            )
+        },
         scaffoldState = scaffoldState,
         sheetPeekHeight = 25.dp,
         sheetContainerColor = Color.White,
@@ -88,7 +110,7 @@ fun TimerScreen(
         topBar = {
             TimerTopBar(
                 title = uiState.title,
-                iconOnclick = navigateBack,
+                iconOnclick = { onNavigateBack() },
                 iconEnabled = true
             )
         },
@@ -120,16 +142,6 @@ fun TimerScreen(
                     openNumpad()
                 }
             )
-            Button(
-                modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
-                onClick = {
-                    onEvent(TimerEvent.AddTimer)
-                    navigateBack()
-                },
-                enabled = uiState.isEntryValid
-            ) {
-                Text(text = "hello")
-            }
         }
     }
 }

@@ -23,7 +23,7 @@ import com.android.taskstimer.timer.presentation.TimerEvent
 
 
 class Key(
-    val key : String,
+    val key: String,
     val color: Color = Color.Black
 )
 
@@ -47,7 +47,7 @@ private val keys: List<Key> =
     )
 
 @Composable
-fun Numpad(onClick: (TimerEvent) -> Unit) {
+fun Numpad(onClick: (TimerEvent) -> Unit, validEntry: Boolean) {
     val padding = 5.dp
 
     fun handleClick(key: String) {
@@ -55,7 +55,7 @@ fun Numpad(onClick: (TimerEvent) -> Unit) {
             "-1" -> onClick(TimerEvent.Decrement)
             "+1" -> onClick(TimerEvent.Increment)
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" -> onClick(TimerEvent.InputValue(key.toInt()))
-            "Add" -> onClick(TimerEvent.Add)
+            "Add" -> onClick(TimerEvent.AddTimer)
             "Del" -> onClick(TimerEvent.Delete)
         }
     }
@@ -81,9 +81,14 @@ fun Numpad(onClick: (TimerEvent) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(padding)
         ) {
             items(keys) { key ->
+                val enabled = key.key == "Add" && !validEntry
+
                 PadKey(
+                    // TODO: BEST WAY TO ADD TEST TAG TO ADD BUTTON?
+//                    modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
                     key = key.key,
-                    color = key.color,
+                    color = if (enabled) key.color.copy(alpha = 0.6f) else key.color,
+                    enabled = !enabled,
                     onClick = { handleClick(key.key) }
                 )
             }
@@ -96,6 +101,7 @@ fun Numpad(onClick: (TimerEvent) -> Unit) {
 private fun PadKey(
     modifier: Modifier = Modifier,
     key: String,
+    enabled: Boolean = true,
     color: Color = Color.Black,
     onClick: () -> Unit
 ) {
@@ -105,7 +111,8 @@ private fun PadKey(
         colors = ButtonDefaults.buttonColors(
             containerColor = color
         ),
-        shape = RoundedCornerShape(5.dp)
+        shape = RoundedCornerShape(5.dp),
+        enabled = enabled
     ) {
         Text(
             text = key,

@@ -8,15 +8,17 @@ import com.android.taskstimer.timer.TimerStateManager
 import com.android.taskstimer.timer.domain.use_case.AddTimer
 import com.android.taskstimer.timer.domain.use_case.GetTimerStream
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-enum class ScreenTitle(val title: String){
+enum class ScreenTitle(val title: String) {
     ADD_TIMER("Add timer"),
     EDIT_TIMER("Edit timer")
 }
@@ -42,14 +44,16 @@ class TimerViewModel @Inject constructor(
     private val boardId: Int = checkNotNull(savedStateHandle[TimerDestination.boardIdArg])
     private val timerId: Int = checkNotNull(savedStateHandle[TimerDestination.timerIdArg])
 
+    private val navigationChannel = Channel<NavigationEvent>()
+    val navigationChannelFlow = navigationChannel.receiveAsFlow()
+
     private val _uiState = MutableStateFlow(TimerUiState())
     val uiState = _uiState.asStateFlow()
 
 
-
     init {
         timerStateManager.reset()
-        if (timerId != 0){
+        if (timerId != 0) {
             _uiState.update { it.copy(title = ScreenTitle.EDIT_TIMER.title) }
             viewModelScope.launch {
                 val timer = getTimerStream.invoke(timerId).first()
@@ -67,7 +71,7 @@ class TimerViewModel @Inject constructor(
 
     fun onEvent(event: TimerEvent) {
         when (event) {
-            is TimerEvent.AddTimer -> addTimer()
+            is TimerEvent.AddTimer ->  addTimer()
             is TimerEvent.UpdateTimer -> updateTimer(event.name)
             is TimerEvent.ChangeFocus -> timerStateManager.changeFocus(event.side)
             TimerEvent.Increment -> timerStateManager.increment()
@@ -78,9 +82,7 @@ class TimerViewModel @Inject constructor(
     }
 
 
-
-
-    private fun updateTimer(name: String){
+    private fun updateTimer(name: String) {
         _uiState.update {
             val updatedTimer = TimerItem(
                 name = name
@@ -103,12 +105,19 @@ class TimerViewModel @Inject constructor(
         )
         viewModelScope.launch {
             addTimer.invoke(newTimerItem)
+            navigationChannel.send(NavigationEvent.NavigateBack)
         }
     }
 
+    // TODO: NEED TO CHECK THAT TIME IS NOT 0
     private fun validateInput(timer: TimerItem = _uiState.value.timer): Boolean {
         return with(timer) {
             name.isNotBlank() // && name.isNotBlank() && presetTime.isNotBlank()
         }
     }
+}
+
+
+sealed interface NavigationEvent {
+    data object NavigateBack : NavigationEvent
 }
