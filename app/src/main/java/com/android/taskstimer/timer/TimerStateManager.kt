@@ -36,6 +36,14 @@ enum class Carry {
 @Singleton
 class TimerStateManager @Inject constructor() {
 
+
+    // TODO: SEPARATE OUT THE TIME COMPONENTS AND THEN COMBINE
+//    val _seconds = MutableStateFlow(0)
+//    val _minutes = MutableStateFlow(0)
+//    val _hours = MutableStateFlow(0)
+    // val _uiState = ??
+
+
     val state = MutableStateFlow(timeInput)
 
     fun changeFocus(side: Side) {
@@ -109,11 +117,27 @@ class TimerStateManager @Inject constructor() {
         }
     }
 
-    fun getInputValueAsSeconds(): Int{
-        val sum = state.value.reduce{ acc, el ->
-         return acc.value + el.value
-        }.value
-        return sum
+
+    fun getInputValueAsSeconds(): Int {
+        var timeInSeconds = 0
+        state.value.forEach {inputState ->
+            if (inputState.side == Side.LEFT){
+                val time = 60 * 60 * inputState.value
+                timeInSeconds += time
+                return@forEach
+            }
+            if (inputState.side == Side.MIDDLE){
+                val time = 60 * inputState.value
+                timeInSeconds += time
+                return@forEach
+            }
+            if (inputState.side == Side.RIGHT){
+                val time = inputState.value
+                timeInSeconds += time
+                return@forEach
+            }
+        }
+        return timeInSeconds
     }
 
 
@@ -124,12 +148,12 @@ class TimerStateManager @Inject constructor() {
 
         state.update {
             it.mapIndexed map@{ index, inputState ->
-                if(index == 0) return@map inputState.copy(value = hours)
-                if(index == 1) return@map inputState.copy(
+                if (index == 0) return@map inputState.copy(value = hours)
+                if (index == 1) return@map inputState.copy(
                     value = minutes,
                     wipeOnInput = true
                 )
-                if(index == 2) return@map inputState.copy(value = seconds)
+                if (index == 2) return@map inputState.copy(value = seconds)
                 inputState
             }
         }
