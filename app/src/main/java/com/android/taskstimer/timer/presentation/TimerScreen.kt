@@ -35,6 +35,7 @@ import com.android.taskstimer.timer.InputState
 import com.android.taskstimer.timer.presentation.components.NameInput
 import com.android.taskstimer.timer.presentation.components.Numpad
 import com.android.taskstimer.timer.presentation.components.TimeInput
+import kotlinx.coroutines.launch
 
 object TimerDestination : NavigationDestination {
     override val route = "timer"
@@ -56,14 +57,19 @@ fun TimerScreen(
     val timerState: List<InputState> by viewModel.timerState.collectAsState()
     val onEvent = viewModel::onEvent
 
-    var sheetState = SheetState(
+    val sheetState = SheetState(
         skipPartiallyExpanded = false,
         density = LocalDensity.current,
         initialValue = SheetValue.Expanded
     )
-    var scaffoldState = rememberBottomSheetScaffoldState(sheetState)
+    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
     val scope = rememberCoroutineScope()
 
+    fun openNumpad() = scope.launch {
+        if (!scaffoldState.bottomSheetState.isVisible) {
+            scaffoldState.bottomSheetState.expand()
+        }
+    }
 
     BottomSheetScaffold(
         sheetContent = { Numpad(onClick = onEvent) },
@@ -104,7 +110,11 @@ fun TimerScreen(
                 name = uiState.timer.name,
                 onEvent = onEvent
             )
-            TimeInput(state = timerState, onEvent = onEvent)
+            TimeInput(
+                state = timerState,
+                onEvent = onEvent,
+                onFocus = { openNumpad() }
+            )
             Button(
                 modifier = Modifier.testTag(TestTags.SAVE_BUTTON),
                 onClick = {

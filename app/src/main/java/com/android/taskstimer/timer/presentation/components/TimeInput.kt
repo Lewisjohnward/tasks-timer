@@ -37,7 +37,11 @@ val ROUNDED_DP = 25.dp
 const val FOCUS_BG = 0XFF999999
 
 @Composable
-fun TimeInput(state: List<InputState>, onEvent: (TimerEvent) -> Unit) {
+fun TimeInput(
+    state: List<InputState>,
+    onEvent: (TimerEvent) -> Unit,
+    onFocus: () -> Unit
+) {
     val weight: Float = 1 / 3f
 
     Row(
@@ -45,7 +49,10 @@ fun TimeInput(state: List<InputState>, onEvent: (TimerEvent) -> Unit) {
     ) {
         state.forEach { input ->
             Input(
-                modifier = Modifier.clickable { onEvent(TimerEvent.ChangeFocus(input.side)) },
+                modifier = Modifier.clickable {
+                    onFocus()
+                    onEvent(TimerEvent.ChangeFocus(input.side))
+                },
                 focus = input.focus,
                 value = input.displayValue(),
                 weight = 0.33f,
