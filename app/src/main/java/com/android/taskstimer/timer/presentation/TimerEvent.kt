@@ -13,7 +13,6 @@ sealed interface TimerEvent{
     data object Decrement : TimerEvent
     data object Delete : TimerEvent
     data class InputValue(val value: Int) : TimerEvent
-    data object Add : TimerEvent
 
 
 }

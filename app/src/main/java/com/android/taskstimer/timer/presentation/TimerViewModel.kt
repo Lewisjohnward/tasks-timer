@@ -48,6 +48,7 @@ class TimerViewModel @Inject constructor(
 
 
     init {
+        timerStateManager.reset()
         if (timerId != 0){
             _uiState.update { it.copy(title = ScreenTitle.EDIT_TIMER.title) }
             viewModelScope.launch {
@@ -66,19 +67,13 @@ class TimerViewModel @Inject constructor(
 
     fun onEvent(event: TimerEvent) {
         when (event) {
-            is TimerEvent.AddTimer -> {
-                println(timerStateManager.getInputValueAsSeconds())
-                addTimer()
-            }
-
+            is TimerEvent.AddTimer -> addTimer()
             is TimerEvent.UpdateTimer -> updateTimer(event.name)
-
             is TimerEvent.ChangeFocus -> timerStateManager.changeFocus(event.side)
             TimerEvent.Increment -> timerStateManager.increment()
             TimerEvent.Decrement -> timerStateManager.decrement()
             is TimerEvent.InputValue -> timerStateManager.inputValue(event.value)
             TimerEvent.Delete -> timerStateManager.delete()
-            TimerEvent.Add -> timerStateManager.add()
         }
     }
 
@@ -98,12 +93,13 @@ class TimerViewModel @Inject constructor(
     }
 
     private fun addTimer() {
+        val time: String = timerStateManager.getInputValueAsSeconds()
         val newTimerItem = TimerItem(
             id = timerId,
             boardId = boardId,
             name = uiState.value.timer.name,
-            presetTime = "125",
-            remainingTime = "125"
+            presetTime = time,
+            remainingTime = time
         )
         viewModelScope.launch {
             addTimer.invoke(newTimerItem)
