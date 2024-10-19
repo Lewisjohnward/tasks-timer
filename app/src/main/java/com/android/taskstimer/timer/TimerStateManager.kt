@@ -118,7 +118,7 @@ class TimerStateManager @Inject constructor() {
     }
 
 
-    fun getInputValueAsSeconds(): Int {
+    fun getInputValueAsSeconds(): String {
         var timeInSeconds = 0
         state.value.forEach {inputState ->
             if (inputState.side == Side.LEFT){
@@ -137,7 +137,7 @@ class TimerStateManager @Inject constructor() {
                 return@forEach
             }
         }
-        return timeInSeconds
+        return timeInSeconds.toString()
     }
 
 
@@ -183,18 +183,20 @@ class TimerStateManager @Inject constructor() {
         return updatedValues
     }
 
-
-    // TODO: THIS SHOULD GO IN VIEWMODEL INSTEAD?
-    fun add() {
-        println("Add")
-    }
-
     fun delete() {
         state.update { prevState ->
             prevState.map {
                 if (it.focus) it.copy(value = 0) else it
             }
 
+        }
+    }
+
+    fun reset(){
+        state.update { currentState ->
+            currentState.map {
+                it.copy(value = 0)
+            }
         }
     }
 }
