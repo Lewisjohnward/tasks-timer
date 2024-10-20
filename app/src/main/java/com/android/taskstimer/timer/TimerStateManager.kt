@@ -73,7 +73,7 @@ class TimerStateManager @Inject constructor() {
     fun decrement() {
         state.update { prevState ->
             val updatedValues = prevState.map { input ->
-                if (input.inFocus) {
+                if (input.inFocus && input.value != 0) {
                     input.copy(value = input.value - 1)
                 } else input
             }
