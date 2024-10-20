@@ -17,7 +17,7 @@ fun TimerItem.formatTime(): String {
 
     return if (hours > 0) {
         // Format as "hh:mm:ss"
-        String.format("%d:%02d:%02d", hours, minutes, remainingSeconds)
+        String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
     } else {
         // Format as "mm:ss"
         String.format("%02d:%02d", minutes, remainingSeconds)
