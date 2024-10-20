@@ -116,7 +116,10 @@ private fun HomeScreenContent(
             NavigationDrawer(
                 closeDrawer = { closeDrawer() },
                 onEvent = onEvent,
-                navigateToSettings = { navigateToSettings() },
+                navigateToSettings = {
+                    closeDrawer()
+                    navigateToSettings()
+                },
                 boards = uiState.boards,
                 currentBoardIndex = uiState.currentBoardIndex,
                 editBoards = uiState.editBoards,
@@ -225,7 +228,7 @@ private fun HomeScreenContent(
                 BoardMenu(
                     rename = { onEvent(HomeScreenEvent.RenameBoard) },
                     delete = { onEvent(HomeScreenEvent.DeleteBoard) },
-                    resetAll = {onEvent(HomeScreenEvent.ResetAllTimers)}
+                    resetAll = { onEvent(HomeScreenEvent.ResetAllTimers) }
                 )
             }
             if (uiState.displayConfirmDialog != null)
