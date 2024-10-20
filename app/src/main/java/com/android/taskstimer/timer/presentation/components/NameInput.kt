@@ -46,7 +46,7 @@ fun NameInput(
             enabled = true,
             maxLines = 1,
             cursorBrush = SolidColor(Gainsboro),
-            onValueChange = {onEvent(TimerEvent.UpdateTimer(it))},
+            onValueChange = {onEvent(TimerEvent.UpdateTimerName(it))},
         )
         Spacer(
             modifier = Modifier

@@ -72,20 +72,23 @@ class TimerViewModel @Inject constructor(
     fun onEvent(event: TimerEvent) {
         when (event) {
             is TimerEvent.AddTimer ->  addTimer()
-            is TimerEvent.UpdateTimer -> updateTimer(event.name)
+            is TimerEvent.UpdateTimerName -> updateTimer(event.name)
             is TimerEvent.ChangeFocus -> timerStateManager.changeFocus(event.side)
             TimerEvent.Increment -> timerStateManager.increment()
             TimerEvent.Decrement -> timerStateManager.decrement()
             is TimerEvent.InputValue -> timerStateManager.inputValue(event.value)
             TimerEvent.Delete -> timerStateManager.delete()
         }
+        updateTimer(_uiState.value.timer.name)
     }
 
-
     private fun updateTimer(name: String) {
+        val time: String = timerStateManager.getInputValueAsSeconds()
         _uiState.update {
             val updatedTimer = TimerItem(
-                name = name
+                name = name,
+                presetTime = time,
+                remainingTime = time
             )
             it.copy(
                 timer = updatedTimer,
@@ -109,11 +112,12 @@ class TimerViewModel @Inject constructor(
         }
     }
 
-    // TODO: NEED TO CHECK THAT TIME IS NOT 0
     private fun validateInput(timer: TimerItem = _uiState.value.timer): Boolean {
-        return with(timer) {
-            name.isNotBlank() // && name.isNotBlank() && presetTime.isNotBlank()
+        var validTime = false
+        if (timer.presetTime != ""){
+            validTime = timer.presetTime.toInt() != 0
         }
+        return timer.name.isNotBlank() && validTime
     }
 }
 

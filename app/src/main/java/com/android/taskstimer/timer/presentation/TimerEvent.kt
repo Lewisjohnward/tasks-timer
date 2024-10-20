@@ -4,7 +4,7 @@ import com.android.taskstimer.timer.presentation.components.Side
 
 sealed interface TimerEvent{
     data object AddTimer : TimerEvent
-    data class UpdateTimer(val name: String): TimerEvent
+    data class UpdateTimerName(val name: String): TimerEvent
 
 
 
