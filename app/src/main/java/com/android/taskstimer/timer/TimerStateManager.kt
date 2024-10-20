@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 
 data class InputState(
-    val focus: Boolean = false,
+    val inFocus: Boolean = false,
     val value: Int = 0,
     val unit: String,
     val side: Side,
@@ -23,7 +23,7 @@ fun InputState.displayValue(): String {
 
 val timeInput = listOf(
     InputState(unit = "H", side = Side.LEFT),
-    InputState(focus = true, unit = "M", side = Side.MIDDLE),
+    InputState(inFocus = true, unit = "M", side = Side.MIDDLE),
     InputState(unit = "S", side = Side.RIGHT),
 )
 
@@ -50,10 +50,10 @@ class TimerStateManager @Inject constructor() {
         state.update { prevState ->
             prevState.map { input ->
                 if (side == input.side) input.copy(
-                    focus = true,
+                    inFocus = true,
                     wipeOnInput = true
                 )
-                else input.copy(focus = false)
+                else input.copy(inFocus = false)
             }
 
         }
@@ -62,7 +62,7 @@ class TimerStateManager @Inject constructor() {
     fun increment() {
         state.update { prevState ->
             val updatedValues = prevState.map { input ->
-                if (input.focus) {
+                if (input.inFocus) {
                     input.copy(value = input.value + 1)
                 } else input
             }
@@ -73,7 +73,7 @@ class TimerStateManager @Inject constructor() {
     fun decrement() {
         state.update { prevState ->
             val updatedValues = prevState.map { input ->
-                if (input.focus) {
+                if (input.inFocus) {
                     input.copy(value = input.value - 1)
                 } else input
             }
@@ -86,7 +86,7 @@ class TimerStateManager @Inject constructor() {
         state.update { prevState ->
             val updatedValues = prevState.mapIndexed map@{ index, it ->
 
-                if (!it.focus) return@map it
+                if (!it.inFocus) return@map it
 
                 if (it.value == 0 || it.wipeOnInput) return@map it.copy(
                     value = value,
@@ -108,8 +108,8 @@ class TimerStateManager @Inject constructor() {
             val updatedFocus =
                 if (focusInput != null) {
                     carriedValues.mapIndexed map@{ index, it ->
-                        if (index != focusInput) return@map it.copy(focus = false)
-                        it.copy(focus = true)
+                        if (index != focusInput) return@map it.copy(inFocus = false)
+                        it.copy(inFocus = true)
                     }
                 } else carriedValues
 
@@ -186,7 +186,7 @@ class TimerStateManager @Inject constructor() {
     fun delete() {
         state.update { prevState ->
             prevState.map {
-                if (it.focus) it.copy(value = 0) else it
+                if (it.inFocus) it.copy(value = 0) else it
             }
 
         }

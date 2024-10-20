@@ -53,7 +53,7 @@ fun TimeInput(
                     onFocus()
                     onEvent(TimerEvent.ChangeFocus(input.side))
                 },
-                focus = input.focus,
+                focus = input.inFocus,
                 value = input.displayValue(),
                 weight = 0.33f,
                 unit = input.unit,
