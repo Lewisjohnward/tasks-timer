@@ -120,6 +120,12 @@ class HomeViewModel @Inject constructor(
             }
             val board = boardsRepo.getInitBoard()
             if (board != null) {
+                // TODO: the timer manager should be the single source of board truth? why store id in vm?
+                _uiState.update {
+                    it.copy(
+                        boardId = board.id,
+                    )
+                }
                 tasksTimerManager.loadBoard(board.id)
             }
         }
@@ -210,7 +216,7 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.SelectBoard -> {
                 tasksTimerManager.loadBoard(event.boardId)
 
-                // TODO: the timer manager should be the single source of board truth?
+                // TODO: the timer manager should be the single source of board truth? why store id in vm?
                 _uiState.update {
                     it.copy(
                         currentBoardIndex = event.boardIndex,
