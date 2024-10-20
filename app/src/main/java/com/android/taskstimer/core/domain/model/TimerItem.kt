@@ -11,23 +11,17 @@ data class TimerItem(
 fun TimerItem.formatTime(): String {
     val seconds = remainingTime.toInt()
 
-    if (seconds == 0) {
-        return "00:00"
-    } else if (seconds < 60) {
-        return if (seconds < 10) ("00:0${seconds}")
-        else ("00:${seconds}")
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val remainingSeconds = seconds % 60
+
+    return if (hours > 0) {
+        // Format as "hh:mm:ss"
+        String.format("%d:%02d:%02d", hours, minutes, remainingSeconds)
     } else {
-        val remainingSeconds = seconds % 60
-        val remainingMinutes = (seconds - remainingSeconds) / 60
-
-        val secondsString =
-            if (remainingSeconds < 10) ("0$remainingSeconds") else remainingSeconds.toString()
-        val minutesString =
-            if (remainingMinutes < 10) ("0$remainingMinutes") else remainingMinutes.toString()
-
-        return ("$minutesString:$secondsString")
-    }
-}
+        // Format as "mm:ss"
+        String.format("%02d:%02d", minutes, remainingSeconds)
+    }}
 
 fun TimerItem.resetTimer(): TimerItem {
     return this.copy(remainingTime = presetTime)
