@@ -109,7 +109,7 @@ fun Timer(
                 deleteTimer = { handleDeleteTimer() },
                 editTimer = { editTimer() }
             )
-        }
+        } else Box{}
     }
 }
 
