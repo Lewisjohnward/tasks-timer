@@ -28,7 +28,7 @@ class FakeTimersRepositoryImpl(
         timerDao.getTimerStream(timerId).map { it.toTimerItem() }
 
     override suspend fun insertTimer(timer: TimerItem) =
-        timerDao.insert(timer.toTimerEntityForInsert())
+        timerDao.insert(timer.toTimerEntity())
 
 
     override suspend fun updateTimer(timer: TimerItem) =

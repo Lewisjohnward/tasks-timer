@@ -2,7 +2,6 @@ package com.android.taskstimer.core.data.repository
 
 import com.android.taskstimer.core.data.local.TasksTimerDatabase
 import com.android.taskstimer.core.data.mapper.toTimerEntity
-import com.android.taskstimer.core.data.mapper.toTimerEntityForInsert
 import com.android.taskstimer.core.data.mapper.toTimerItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.TimersRepository

@@ -104,7 +104,8 @@ class TimerViewModel @Inject constructor(
             boardId = boardId,
             name = uiState.value.timer.name,
             presetTime = time,
-            remainingTime = time
+            remainingTime = time,
+            lastEndedAt = uiState.value.timer.lastEndedAt
         )
         viewModelScope.launch {
             addTimer.invoke(newTimerItem)

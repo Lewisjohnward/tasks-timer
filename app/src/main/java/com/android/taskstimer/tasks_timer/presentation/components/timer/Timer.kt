@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.taskstimer._other.service.RUNSTATE
 import com.android.taskstimer.core.domain.model.TimerItem
+import com.android.taskstimer.core.domain.model.formatLastEndedAt
 import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.ButtonShadowColorBottom
@@ -92,16 +93,17 @@ fun Timer(
             .padding(10.dp)
     ) {
         TimerDetails(
-            menuButtonEnabled = tasksTimerActive == RUNSTATE.RUNNING,
             isActive = timerActive,
             name = timer.name,
             time = timer.formatTime(),
-            onMenuClick = { menuVisible = true },
-            onStart = { startTimer() },
             enabledPlayButton = enabledPlayButton,
             enabledResetButton = enabledResetButton,
             onReset = { resetTimer() },
-            onPause = { pauseTimer() }
+            onMenuClick = { menuVisible = true },
+            onStart = { startTimer() },
+            onPause = { pauseTimer() },
+            menuButtonEnabled = tasksTimerActive == RUNSTATE.RUNNING,
+            lastEndedAt = timer.formatLastEndedAt()
         )
         if (menuVisible) {
             TimerMenu(
@@ -109,7 +111,7 @@ fun Timer(
                 deleteTimer = { handleDeleteTimer() },
                 editTimer = { editTimer() }
             )
-        } else Box{}
+        } else Box {}
     }
 }
 
@@ -126,6 +128,7 @@ private fun TimerDetails(
     onStart: () -> Unit = {},
     onPause: () -> Unit = {},
     menuButtonEnabled: Boolean,
+    lastEndedAt: String,
 ) {
 
     val animatedAlpha by animateFloatAsState(targetValue = if (!menuButtonEnabled) 1f else 0.1f)
@@ -164,11 +167,19 @@ private fun TimerDetails(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = time,
-                fontSize = 45.sp,
-                color = Color.White
-            )
+            Column{
+                Text(
+                    text = time,
+                    fontSize = 45.sp,
+                    color = Color.White
+                )
+                Text(
+                    text = lastEndedAt,
+//                    text = "Ended",
+                    color = Color.White,
+                    fontSize = 15.sp
+                )
+            }
             Control(
                 isActive = isActive,
                 enabledPlayButton = enabledPlayButton,

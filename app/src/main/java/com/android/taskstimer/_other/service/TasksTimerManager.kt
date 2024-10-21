@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
@@ -105,6 +106,7 @@ class TasksTimerManager @Inject constructor(
                 override fun run() {
                     if (isRemainingTimerOfCurrentTimerZero()) {
                         if (playSoundAtTimerFinish) alertUserTimerFinished()
+                        saveLastEndedAt()
                         if (isNotLastTimerInList()) {
                             incrementCurrentTimer()
                         } else {
@@ -121,6 +123,25 @@ class TasksTimerManager @Inject constructor(
 //                    if (timeElapsed == 6) stopTimer()
                 }
             }, 0, 1000)
+    }
+
+    private fun saveLastEndedAt() {
+        val timer: TimerItem = _timers.value[_currentTimerIndex.value]
+        val updatedTimer: TimerItem =
+            timer.copy(
+                lastEndedAt = Calendar.getInstance().timeInMillis
+        )
+
+        coroutineScope.launch {
+            timersRepo.updateTimer(updatedTimer)
+            _timers.update { currentTimers ->
+                currentTimers.mapIndexed { index, timer ->
+                    if (index == _currentTimerIndex.value) {
+                        updatedTimer
+                    } else timer
+                }
+            }
+        }
     }
 
     fun handleNotificationPause() {
@@ -193,7 +214,9 @@ class TasksTimerManager @Inject constructor(
     private fun decrementTime() {
         val timer: TimerItem = _timers.value[_currentTimerIndex.value]
         val updatedTimer: TimerItem =
-            timer.copy(remainingTime = (timer.remainingTime.toInt() - 1).toString())
+            timer.copy(
+                remainingTime = (timer.remainingTime.toInt() - 1).toString(),
+            )
 
         coroutineScope.launch {
             timersRepo.updateTimer(updatedTimer)
