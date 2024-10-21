@@ -171,7 +171,6 @@ private fun HomeScreenContent(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    if (uiState.timers.isNotEmpty())
                         DragDropList(
                             dragDropListState = dragDropListState,
                             contentPadding = PaddingValues(top = 5.dp),
