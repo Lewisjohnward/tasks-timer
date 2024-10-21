@@ -80,17 +80,7 @@ fun IconInputDialog(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            TextButton(
-                modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
-                enabled = confirmEnabled,
-                onClick = {
-                    onEvent(HomeScreenEvent.AcceptNewBoard)
-                }) {
-                Text(
-                    text = stringResource(R.string.confirm),
-                    color = if (confirmEnabled) Coral else Coral.copy(alpha = 0.3f)
-                )
-            }
+
             TextButton(
                 modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CANCEL),
                 onClick = { onEvent(HomeScreenEvent.CancelCreateNewBoard) })
@@ -100,6 +90,17 @@ fun IconInputDialog(
                     color = Color(0xFFFF9B88)
 
                 )
+                TextButton(
+                    modifier = Modifier.testTag(TestTags.DIALOG_ADD_BOARD_CONFIRM),
+                    enabled = confirmEnabled,
+                    onClick = {
+                        onEvent(HomeScreenEvent.AcceptNewBoard)
+                    }) {
+                    Text(
+                        text = stringResource(R.string.confirm),
+                        color = if (confirmEnabled) Coral else Coral.copy(alpha = 0.3f)
+                    )
+                }
             }
         }
     }
