@@ -11,4 +11,6 @@
     <string name="add_new_board_placeholder">My awesome new board</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="default_time_when_adding_a_new_timer">Default time when adding a new timer</string>
+    <string name="the_default_time_when_adding_a_new_timer_to_a_board">The default time when adding a new timer to a board</string>
 </resources>

@@ -52,20 +52,28 @@ object SettingsDestination : NavigationDestination {
 }
 
 @Composable
-fun SettingsScreen(navigateBack: () -> Unit) {
+fun SettingsScreen(
+    navigateBack: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
+    val uiState: SettingsUiState by viewModel.uiState.collectAsState(SettingsUiState())
+    val onEvent: (SettingsEvent) -> Unit = viewModel::onEvent
+
     SettingsScreenContent(
-        navigateBack = navigateBack
-    )
+        navigateBack = navigateBack,
+        uiState = uiState,
+        onEvent = onEvent,
+
+        )
 }
 
 @Composable
 private fun SettingsScreenContent(
     navigateBack: () -> Unit = {},
-    viewModel: SettingsViewModel = hiltViewModel()
+    uiState: SettingsUiState,
+    onEvent: (SettingsEvent) -> Unit
 ) {
     var displayDialog: Boolean by remember { mutableStateOf(false) }
-    val uiState: SettingsUiState by viewModel.uiState.collectAsState(SettingsUiState())
-    val onEvent = viewModel::onEvent
 
     Scaffold(
         topBar = {
@@ -114,6 +122,17 @@ private fun SettingsScreenContent(
                     )
                 }
             )
+            // TODO: NEED TO IMPLEMENT THIS
+//            SettingsItem(
+//                text = stringResource(R.string.default_time_when_adding_a_new_timer),
+//                description = stringResource(R.string.the_default_time_when_adding_a_new_timer_to_a_board),
+//                input = {
+//                    Switch(
+//                        onClick = { onEvent(SettingsEvent.SetUseMediaVolumeHeadphones(it)) },
+//                        checked = uiState.useMediaVolumeHeadphones
+//                    )
+//                }
+//            )
         }
         if (displayDialog) {
             NumberPickerDialog(
@@ -276,6 +295,9 @@ private fun ColumnScope.Time(
 @Composable
 fun SettingsScreenPreview() {
     TasksTimerTheme {
-        SettingsScreenContent()
+        SettingsScreenContent(
+            uiState = SettingsUiState(),
+            onEvent = {}
+        )
     }
 }
