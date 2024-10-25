@@ -9,6 +9,8 @@ import com.android.taskstimer.core.domain.repository.BoardsRepository
 import com.android.taskstimer.core.domain.repository.TimersRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -16,8 +18,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.Timer
-import java.util.TimerTask
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,7 +44,7 @@ class TasksTimerManager @Inject constructor(
     private val _currentTimerIndex = MutableStateFlow(0)
     private val _board = MutableStateFlow<String>("")
     private val _active = MutableStateFlow(RUNSTATE.STOPPED)
-    private var timer: Timer? = null
+    private var timer: Job? = null
 
     // TODO: PUT IN PREFERENCES DATASTORE
     private val playSoundAtTimerFinish = true
@@ -89,40 +89,40 @@ class TasksTimerManager @Inject constructor(
     }
 
     fun startTimer(timerIndex: Int) {
-            if (state.value.timers.isEmpty()) return
-            if (timer != null) return
-            tasksTimerServiceManager.startTasksTimerService()
+        if (state.value.timers.isEmpty()) return
+        if (timer != null) return
+        tasksTimerServiceManager.startTasksTimerService()
 
-            timer = Timer()
-            _active.update { RUNSTATE.RUNNING }
-            setCurrentTimer(timerIndex)
-            setTimerActiveState(RUNSTATE.RUNNING)
+        _active.update { RUNSTATE.RUNNING }
+        setCurrentTimer(timerIndex)
+        setTimerActiveState(RUNSTATE.RUNNING)
 
-            if (isRemainingTimerOfCurrentTimerZero()) {
-                incrementCurrentTimer()
-            }
+        if (isRemainingTimerOfCurrentTimerZero()) {
+            incrementCurrentTimer()
+        }
 
-            timer?.schedule(object : TimerTask() {
-                override fun run() {
-                    if (isRemainingTimerOfCurrentTimerZero()) {
-                        if (playSoundAtTimerFinish) alertUserTimerFinished()
-                        saveLastEndedAt()
-                        if (isNotLastTimerInList()) {
-                            incrementCurrentTimer()
-                        } else {
-                            stopTimer()
-                            resetAllTimers()
-                            resetCurrentTimer()
-                            tasksTimerServiceManager.stopTasksTimerService()
-                        }
+        timer = coroutineScope.launch {
+            while (true) {
+                delay(1000L)
+                if (isRemainingTimerOfCurrentTimerZero()) {
+                    if (playSoundAtTimerFinish) alertUserTimerFinished()
+                    saveLastEndedAt()
+                    if (isNotLastTimerInList()) {
+                        incrementCurrentTimer()
                     } else {
-                        decrementTime()
+                        stopTimer()
+                        resetAllTimers()
+                        resetCurrentTimer()
+                        tasksTimerServiceManager.stopTasksTimerService()
                     }
+                } else {
+                    decrementTime()
+                }
 //                    if (isFgService) updateNotification()
 
 //                    if (timeElapsed == 6) stopTimer()
-                }
-            }, 0, 1000)
+            }
+        }
     }
 
     private fun saveLastEndedAt() {
@@ -130,7 +130,7 @@ class TasksTimerManager @Inject constructor(
         val updatedTimer: TimerItem =
             timer.copy(
                 lastEndedAt = Calendar.getInstance().timeInMillis
-        )
+            )
 
         coroutineScope.launch {
             timersRepo.updateTimer(updatedTimer)
@@ -195,11 +195,8 @@ class TasksTimerManager @Inject constructor(
     }
 
     fun resetAllTimers() {
-        // TODO - NEEDS TO PERSIST IN DB
-
-        repeat(_timers.value.size){
+        repeat(_timers.value.size) {
             resetTimer(it)
-
         }
 
 //        _timers.update { currentTimers ->
