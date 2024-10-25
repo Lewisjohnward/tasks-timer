@@ -24,4 +24,7 @@ sealed interface HomeScreenEvent {
     data object AcceptNewBoard: HomeScreenEvent
     data object ResetAllTimers : HomeScreenEvent
 
+    data object UndoDelete: HomeScreenEvent
+    data object ClearDeleteItem: HomeScreenEvent
+
 }

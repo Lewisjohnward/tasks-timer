@@ -7,6 +7,7 @@ import com.android.taskstimer._other.service.TasksTimerManager
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.domain.model.TimerItem
 import com.android.taskstimer.core.domain.repository.BoardsRepository
+import com.android.taskstimer.core.domain.repository.TimersRepository
 import com.android.taskstimer.core.presentation.ui.IconKey
 import com.android.taskstimer.tasks_timer.domain.data.DeleteDialog
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
@@ -23,6 +24,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 
 enum class CreateBoardDialog {
@@ -61,6 +64,16 @@ data class HomeScreenUiState(
 
     val active: RUNSTATE = RUNSTATE.STOPPED,
     val currentTimerIndex: Int = 0,
+
+    val showSnackBarEvent: SnackBarEvent? = null,
+    val fabVisible: Boolean = true,
+    val deletedBoard: BoardItem? = null,
+    val deletedTimer: TimerItem? = null
+)
+
+data class SnackBarEvent(
+    val timeMark: TimeMark? = null,
+    val message: String = "",
 )
 
 @HiltViewModel
@@ -71,7 +84,9 @@ class HomeViewModel @Inject constructor(
     private val deleteTimer: DeleteTimer,
     private val tasksTimerManager: TasksTimerManager,
     // TODO: THIS NEEDS TO BE A USECASE
-    private val boardsRepo: BoardsRepository
+    private val boardsRepo: BoardsRepository,
+    // TODO: THIS NEEDS TO BE A USECASE
+    private val timersRepo: TimersRepository
 ) : ViewModel() {
 
 
@@ -79,14 +94,18 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeScreenUiState())
     private val _tasksTimerManagerState = tasksTimerManager.state
 
+    private val _showSnackBarEvent = MutableStateFlow<SnackBarEvent?>(null)
+
     val uiState =
         combine(
             _boards,
             _uiState,
-            _tasksTimerManagerState
+            _tasksTimerManagerState,
+            _showSnackBarEvent,
         ) { boards,
             uiState,
-            tasksTimerMangerState
+            tasksTimerMangerState,
+            showSnackBarEvent
             ->
             val boardMenuEnabled = boards.isNotEmpty()
             uiState.copy(
@@ -95,7 +114,8 @@ class HomeViewModel @Inject constructor(
                 boardMenuEnabled = boardMenuEnabled,
                 timers = tasksTimerMangerState.timers,
                 active = tasksTimerMangerState.active,
-                currentTimerIndex = tasksTimerMangerState.currentTimerIndex
+                currentTimerIndex = tasksTimerMangerState.currentTimerIndex,
+                showSnackBarEvent = showSnackBarEvent
             )
         }.stateIn(
             scope = viewModelScope,
@@ -146,10 +166,12 @@ class HomeViewModel @Inject constructor(
         tasksTimerManager.startTimer(index)
     }
 
+    // TODO: PUT IN EVENTS
     fun pauseTimer() {
         tasksTimerManager.stopTimer()
     }
 
+    // TODO: PUT IN EVENTS
     fun resetTimer(timerIndex: Int) {
         tasksTimerManager.resetTimer(timerIndex)
     }
@@ -186,11 +208,8 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.DeleteTimer -> {
-                _uiState.update {
-                    it.copy(
-                        displayConfirmDialog = DeleteDialog.Timer(timer = event.timer)
-                    )
-                }
+                deleteTimer(timer = event.timer)
+                displaySnackBar("${event.timer.name} deleted")
             }
 
             is HomeScreenEvent.DialogConfirm -> {
@@ -304,6 +323,40 @@ class HomeViewModel @Inject constructor(
                 tasksTimerManager.resetAllTimers()
                 closeBoardMenu()
             }
+
+            HomeScreenEvent.UndoDelete -> {
+                _showSnackBarEvent.update { null }
+                // TODO: DELETE LOGIC COULD GO INTO A MANAGER CLASS?
+                if (uiState.value.deletedTimer != null) {
+                    val insertTimerJob = viewModelScope.launch {
+                        timersRepo.insertTimer(uiState.value.deletedTimer!!)
+                        loadBoard()
+                        _uiState.update {
+                            it.copy(
+                                deletedTimer = null,
+                                fabVisible = true,
+                            )
+                        }
+                        _showSnackBarEvent.update { null }
+                    }
+                    return
+                }
+                if (uiState.value.deletedBoard != null) {
+                    // TODO: RESTORE BOARD
+                    return
+                }
+            }
+
+            HomeScreenEvent.ClearDeleteItem -> {
+                _uiState.update {
+                    it.copy(
+                        deletedTimer = null,
+                        deletedBoard = null,
+                        fabVisible = true
+                    )
+                }
+                _showSnackBarEvent.update { null }
+            }
         }
     }
 
@@ -323,7 +376,8 @@ class HomeViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 displayConfirmDialog = null,
-                displayBoardMenu = false
+                displayBoardMenu = false,
+                deletedTimer = timer
             )
         }
     }
@@ -356,6 +410,16 @@ class HomeViewModel @Inject constructor(
             )
         }
         tasksTimerManager.unloadBoard()
+    }
+
+    private fun displaySnackBar(message: String) {
+        _showSnackBarEvent.update {
+            SnackBarEvent(
+                timeMark = TimeSource.Monotonic.markNow(),
+                message = message
+            )
+        }
+        _uiState.update { it.copy(fabVisible = false) }
     }
 }
 
