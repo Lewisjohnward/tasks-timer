@@ -68,6 +68,7 @@ data class HomeScreenUiState(
     val showSnackBarEvent: SnackBarEvent? = null,
     val fabVisible: Boolean = true,
     val deletedBoard: BoardItem? = null,
+    val deletedTimers: List<TimerItem> = emptyList(),
     val deletedTimer: TimerItem? = null
 )
 
@@ -215,9 +216,12 @@ class HomeViewModel @Inject constructor(
             is HomeScreenEvent.DialogConfirm -> {
                 viewModelScope.launch {
                     uiState.value.displayConfirmDialog?.let { deleteDialog ->
+                        // TODO: I DON'T THINK THIS IS NEEDED
                         when (deleteDialog) {
-                            is DeleteDialog.Board -> deleteBoard(board = deleteDialog.board)
-                            is DeleteDialog.Timer -> deleteTimer(timer = deleteDialog.timer)
+                            is DeleteDialog.Board -> {
+                                deleteBoard(board = deleteDialog.board)
+                                displaySnackBar("${deleteDialog.board.name} deleted")
+                            }
                         }
                     }
                 }
@@ -328,7 +332,7 @@ class HomeViewModel @Inject constructor(
                 _showSnackBarEvent.update { null }
                 // TODO: DELETE LOGIC COULD GO INTO A MANAGER CLASS?
                 if (uiState.value.deletedTimer != null) {
-                    val insertTimerJob = viewModelScope.launch {
+                    viewModelScope.launch {
                         timersRepo.insertTimer(uiState.value.deletedTimer!!)
                         loadBoard()
                         _uiState.update {
@@ -337,12 +341,28 @@ class HomeViewModel @Inject constructor(
                                 fabVisible = true,
                             )
                         }
-                        _showSnackBarEvent.update { null }
                     }
                     return
                 }
                 if (uiState.value.deletedBoard != null) {
-                    // TODO: RESTORE BOARD
+                    viewModelScope.launch {
+                        insertBoard.invoke(_uiState.value.deletedBoard!!)
+                        _uiState.value.deletedTimers.forEach { timer ->
+                            timersRepo.insertTimer(timer)
+                        }
+                        // TODO: WORKING HERE
+                        println(_uiState.value.deletedBoard)
+//                        println(boardsRepo.getAllBoardsFlow().first())
+                        println(uiState.value.boards)
+//                        loadBoard()
+                        _uiState.update {
+                            it.copy(
+                                deletedBoard = null,
+                                deletedTimers = emptyList(),
+                                fabVisible = true,
+                            )
+                        }
+                    }
                     return
                 }
             }
@@ -352,6 +372,7 @@ class HomeViewModel @Inject constructor(
                     it.copy(
                         deletedTimer = null,
                         deletedBoard = null,
+                        deletedTimers = emptyList(),
                         fabVisible = true
                     )
                 }
@@ -383,34 +404,45 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    private fun deleteBoard(board: BoardItem) = viewModelScope.launch {
-        deleteBoard.invoke(board)
-        val boardIndexToLoad = determineBoardIndexToLoad(
-            boardCount = _boards.first().size,
-            deletedBoardIndex = uiState.value.currentBoardIndex
-        )
-        if (boardIndexToLoad != null) {
+    private fun deleteBoard(board: BoardItem) =
+        viewModelScope.launch {
+
+            // TODO: SHOULD BE USE CASE
+            val deletedTimers = timersRepo.getTimersFlow(board.id).first()
+
+
+            deleteBoard.invoke(board)
+            val boardIndexToLoad = determineBoardIndexToLoad(
+                boardCount = _boards.first().size,
+                deletedBoardIndex = uiState.value.currentBoardIndex
+            )
+            // TODO: THIS COULD BE CLEANED UP BECAUSE ALL THE CODE IS REPEATED BELOW
+            if (boardIndexToLoad != null) {
+                _uiState.update {
+                    it.copy(
+                        currentBoardIndex = boardIndexToLoad,
+                        displayConfirmDialog = null,
+                        displayBoardMenu = false,
+                        deletedBoard = board,
+                        deletedTimers = deletedTimers
+                    )
+                }
+                loadBoard()
+                return@launch
+            }
+
             _uiState.update {
                 it.copy(
-                    currentBoardIndex = boardIndexToLoad,
+                    currentBoardIndex = 0,
+                    boardMenuEnabled = false,
                     displayConfirmDialog = null,
-                    displayBoardMenu = false
+                    displayBoardMenu = false,
+                    deletedBoard = board,
+                    deletedTimers = deletedTimers
                 )
             }
-            loadBoard()
-            return@launch
+            tasksTimerManager.unloadBoard()
         }
-
-        _uiState.update {
-            it.copy(
-                currentBoardIndex = 0,
-                boardMenuEnabled = false,
-                displayConfirmDialog = null,
-                displayBoardMenu = false
-            )
-        }
-        tasksTimerManager.unloadBoard()
-    }
 
     private fun displaySnackBar(message: String) {
         _showSnackBarEvent.update {

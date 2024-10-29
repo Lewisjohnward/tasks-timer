@@ -14,6 +14,4 @@ sealed class DeleteDialog(
     val icon: ImageVector = Icons.Filled.Delete
 ) {
     data class Board( val board: BoardItem): DeleteDialog(dialog = "$message board")
-
-    data class Timer( val timer: TimerItem): DeleteDialog(dialog = "$message timer")
 }
