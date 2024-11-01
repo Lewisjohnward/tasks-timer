@@ -8,7 +8,8 @@ fun BoardItem.toBoardEntity(): BoardEntity {
     return BoardEntity(
         id = id,
         name = name,
-        iconKey = iconKey
+        iconKey = iconKey,
+        selected = selected
     )
 }
 
@@ -16,6 +17,7 @@ fun BoardEntity.toBoardItem(): BoardItem {
     return BoardItem(
         name = name,
         id = id,
-        iconKey = iconKey
+        iconKey = iconKey,
+        selected = selected
     )
 }

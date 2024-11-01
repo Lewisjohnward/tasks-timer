@@ -10,5 +10,6 @@ data class BoardEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
-    val iconKey: IconKey
+    val iconKey: IconKey,
+    val selected: Boolean = false
 )

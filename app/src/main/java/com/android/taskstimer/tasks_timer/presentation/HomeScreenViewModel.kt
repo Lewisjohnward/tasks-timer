@@ -142,13 +142,32 @@ class HomeViewModel @Inject constructor(
             }
             val board = boardsRepo.getInitBoard()
             if (board != null) {
-                // TODO: the timer manager should be the single source of board truth? why store id in vm?
-                _uiState.update {
-                    it.copy(
-                        boardId = board.id,
-                    )
+                // If there is a selected board load that
+                val selectedBoard = _boards.first().filter { b -> b.selected}
+
+                if (selectedBoard.isNotEmpty()){
+                    val boardId = selectedBoard[0].id
+                    _uiState.update {
+                        it.copy(
+                            boardId = boardId,
+                        )
+                    }
+                    tasksTimerManager.loadBoard(boardId)
+                } else {
+                    // TODO: the timer manager should be the single source of board truth? why store id in vm?
+                    _uiState.update {
+                        it.copy(
+                            boardId = board.id,
+                        )
+                    }
+                    // TODO: USECASE
+                    boardsRepo.insertBoard(board.copy(selected = true))
+                    tasksTimerManager.loadBoard(board.id)
+
                 }
-                tasksTimerManager.loadBoard(board.id)
+
+
+
             }
         }
     }
@@ -424,11 +443,11 @@ class HomeViewModel @Inject constructor(
                         currentBoardIndex = boardIndexToLoad,
                         displayConfirmDialog = null,
                         displayBoardMenu = false,
-                        deletedBoard = board,
+                        deletedBoard = board.copy(selected = false),
                         deletedTimers = deletedTimers
                     )
                 }
-                loadBoard()
+                tasksTimerManager.loadBoard(_boards.first()[boardIndexToLoad].id)
                 return@launch
             }
 
@@ -438,7 +457,7 @@ class HomeViewModel @Inject constructor(
                     boardMenuEnabled = false,
                     displayConfirmDialog = null,
                     displayBoardMenu = false,
-                    deletedBoard = board,
+                    deletedBoard = board.copy(selected = false),
                     deletedTimers = deletedTimers
                 )
             }

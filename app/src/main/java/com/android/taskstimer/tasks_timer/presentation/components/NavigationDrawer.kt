@@ -62,9 +62,7 @@ fun NavigationDrawer(
     editBoards: Boolean = true,
     createBoard: CreateBoardDialog?,
     newBoardDetails: NewBoardDetails,
-    currentBoardIndex: Int = 0,
 ) {
-
 
     ModalDrawerSheet(
         modifier = Modifier.testTag(TestTags.DRAWER),
@@ -134,7 +132,7 @@ fun NavigationDrawer(
                             )
                         },
                         icon = board.iconKey.icon,
-                        selected = index == currentBoardIndex
+                        selected = board.selected
                     )
 
                     NavDrawerItem(

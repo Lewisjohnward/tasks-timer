@@ -46,6 +46,8 @@ class TasksTimerManager @Inject constructor(
     private val _active = MutableStateFlow(RUNSTATE.STOPPED)
     private var timer: Job? = null
 
+    private var currentBoardId: Int? = null
+
     // TODO: PUT IN PREFERENCES DATASTORE
     private val playSoundAtTimerFinish = true
 
@@ -81,8 +83,18 @@ class TasksTimerManager @Inject constructor(
         coroutineScope.launch(
             context = singleThreadDispatcher
         ) {
+            // Handles null pointer exception when unselecting a deleted board
+            if (currentBoardId != null) {
+                try {
+                    val board = boardsRepo.getBoard(currentBoardId!!)
+                    boardsRepo.insertBoard(board.copy(selected = false))
+                } catch (_: Exception) {
+                }
+            }
             val timers = timersRepo.getTimers(boardId)
             val board = boardsRepo.getBoard(boardId)
+            currentBoardId = board.id
+            boardsRepo.insertBoard(board.copy(selected = true))
             _timers.update { timers }
             _board.update { board.name }
         }

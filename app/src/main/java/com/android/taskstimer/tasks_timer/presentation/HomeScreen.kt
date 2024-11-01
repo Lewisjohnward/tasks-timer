@@ -169,7 +169,6 @@ private fun HomeScreenContent(
                     navigateToSettings()
                 },
                 boards = uiState.boards,
-                currentBoardIndex = uiState.currentBoardIndex,
                 editBoards = uiState.editBoards,
                 createBoard = uiState.createBoard,
                 newBoardDetails = uiState.newBoardDetails

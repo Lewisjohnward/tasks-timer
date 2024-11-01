@@ -5,7 +5,8 @@ import com.android.taskstimer.core.presentation.ui.IconKey
 data class BoardItem(
     val id: Int = 1,
     val name: String = "",
-    val iconKey: IconKey = IconKey.DEFAULT
+    val iconKey: IconKey = IconKey.DEFAULT,
+    val selected: Boolean = false
 )
 
 data class BoardsWithTimersItem(
