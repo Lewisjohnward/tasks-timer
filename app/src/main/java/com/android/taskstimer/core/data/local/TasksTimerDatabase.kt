@@ -39,8 +39,8 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                         id = 1,
                         boardId = 1,
                         name = "Clean the floor",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "600",
+                        remainingTime = "600"
                     )
                 )
                 timerDao.insert(
@@ -48,8 +48,8 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                         id = 2,
                         boardId = 1,
                         name = "Unload the washing machine",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "300",
+                        remainingTime = "300"
                     )
                 )
                 boardDao.insert(
@@ -63,56 +63,40 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                     TimerEntity(
                         boardId = 2,
                         name = "Teach shake",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "450",
+                        remainingTime = "450"
                     )
                 )
                 timerDao.insert(
                     TimerEntity(
                         boardId = 2,
                         name = "Teach somersault",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "1200",
+                        remainingTime = "1200"
                     )
                 )
                 timerDao.insert(
                     TimerEntity(
                         boardId = 2,
                         name = "Teach stand on hind legs",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "300",
+                        remainingTime = "300"
                     )
                 )
                 timerDao.insert(
                     TimerEntity(
                         boardId = 2,
                         name = "Teach to sing",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "3900",
+                        remainingTime = "3900"
                     )
                 )
                 timerDao.insert(
                     TimerEntity(
                         boardId = 2,
                         name = "Teach spin",
-                        presetTime = "120",
-                        remainingTime = "120"
-                    )
-                )
-                timerDao.insert(
-                    TimerEntity(
-                        boardId = 2,
-                        name = "Teach to roll over",
-                        presetTime = "120",
-                        remainingTime = "120"
-                    )
-                )
-                timerDao.insert(
-                    TimerEntity(
-                        boardId = 2,
-                        name = "Teach to play dead",
-                        presetTime = "120",
-                        remainingTime = "120"
+                        presetTime = "65",
+                        remainingTime = "65"
                     )
                 )
                 boardDao.insert(
@@ -122,8 +106,45 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                         iconKey = IconKey.PETS
                     )
                 )
-
-
+                boardDao.insert(
+                    BoardEntity(
+                        id = 3,
+                        name = "Language Learning",
+                        iconKey = IconKey.BOOK
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 3,
+                        name = "Speechling",
+                        presetTime = "1200",
+                        remainingTime = "1200"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 3,
+                        name = "Numbers",
+                        presetTime = "300",
+                        remainingTime = "300"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 3,
+                        name = "Anki",
+                        presetTime = "1200",
+                        remainingTime = "1200"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 3,
+                        name = "Reading",
+                        presetTime = "7200",
+                        remainingTime = "7200"
+                    )
+                )
             }
         }
     }
