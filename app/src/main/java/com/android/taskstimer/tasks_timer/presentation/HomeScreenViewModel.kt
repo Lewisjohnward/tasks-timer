@@ -134,6 +134,7 @@ class HomeViewModel @Inject constructor(
         if (tasksTimerManager.state.value.active != RUNSTATE.STOPPED) return
         viewModelScope.launch {
             // TODO: IS THERE A BETTER WAY THAN LOOP ON FIRST LAUNCH?
+            // AVOIDS PROBLEM OF POPULATING ON FIRST LAUNCH
             var count = 0
             while (boardsRepo.getInitBoard() == null && count < 2) {
                 delay(100)
