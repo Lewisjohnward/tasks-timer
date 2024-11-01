@@ -120,18 +120,18 @@ class TimerStateManager @Inject constructor() {
 
     fun getInputValueAsSeconds(): String {
         var timeInSeconds = 0
-        state.value.forEach {inputState ->
-            if (inputState.side == Side.LEFT){
+        state.value.forEach { inputState ->
+            if (inputState.side == Side.LEFT) {
                 val time = 60 * 60 * inputState.value
                 timeInSeconds += time
                 return@forEach
             }
-            if (inputState.side == Side.MIDDLE){
+            if (inputState.side == Side.MIDDLE) {
                 val time = 60 * inputState.value
                 timeInSeconds += time
                 return@forEach
             }
-            if (inputState.side == Side.RIGHT){
+            if (inputState.side == Side.RIGHT) {
                 val time = inputState.value
                 timeInSeconds += time
                 return@forEach
@@ -192,10 +192,13 @@ class TimerStateManager @Inject constructor() {
         }
     }
 
-    fun reset(){
+    fun reset() {
         state.update { currentState ->
-            currentState.map {
-                it.copy(value = 0)
+            currentState.mapIndexed { index, inputState ->
+                if (index == 1) {
+                    inputState.copy(value = 10)
+                } else
+                    inputState.copy(value = 0)
             }
         }
     }
