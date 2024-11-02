@@ -142,8 +142,9 @@ class AppModule {
     @Singleton
     fun provideDeleteTimer(
         timersRepository: TimersRepository,
+        boardsRepository: BoardsRepository
     ): DeleteTimer {
-        return DeleteTimer(timersRepository)
+        return DeleteTimer(timersRepository, boardsRepository)
     }
 
     @Provides

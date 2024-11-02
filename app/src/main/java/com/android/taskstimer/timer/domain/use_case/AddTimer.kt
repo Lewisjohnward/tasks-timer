@@ -18,10 +18,24 @@ class AddTimer(
         withContext(singleThreadDispatcher) {
             val boards = boardsRepository.getAllBoardsFlow()
             if (boards.first().isEmpty()) {
-                boardsRepository.insertBoard(board = BoardItem(name = "Untitled"))
+                boardsRepository.insertBoard(
+                    board = BoardItem(
+                        name = "Untitled",
+                        totalSeconds = timer.presetTime.toInt(),
+                        timerCount = 1
+                    )
+                )
                 val untitledBoard = boards.first()[0]
                 timersRepository.insertTimer(timer.copy(boardId = untitledBoard.id))
             } else {
+                val board = boardsRepository.getBoard(timer.boardId)
+
+                boardsRepository.insertBoard(
+                    board.copy(
+                        totalSeconds = board.totalSeconds + timer.presetTime.toInt(),
+                        timerCount = board.timerCount + 1
+                    )
+                )
                 timersRepository.insertTimer(timer)
             }
         }
