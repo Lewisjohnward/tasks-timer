@@ -20,3 +20,5 @@ val Gainsboro = Color(0XFFD9D9D9)
 val ButtonShadowColorTop = Color(0x40FFFFFF)
 val ButtonShadowColorBottom = Color(0X2E000000)
 val TopBarShadow = Color.Black.copy(alpha = 0.3f)
+
+val BoardTimersTimeColor = Color.White.copy(alpha = 0.4f)

@@ -11,5 +11,7 @@ data class BoardEntity(
     val id: Int = 0,
     val name: String,
     val iconKey: IconKey,
-    val selected: Boolean = false
+    val timerCount: Int = 0,
+    val totalSeconds: Int = 0,
+    val selected: Boolean = false,
 )

@@ -9,7 +9,9 @@ fun BoardItem.toBoardEntity(): BoardEntity {
         id = id,
         name = name,
         iconKey = iconKey,
-        selected = selected
+        selected = selected,
+        timerCount = timerCount,
+        totalSeconds = totalSeconds
     )
 }
 
@@ -18,6 +20,8 @@ fun BoardEntity.toBoardItem(): BoardItem {
         name = name,
         id = id,
         iconKey = iconKey,
-        selected = selected
+        selected = selected,
+        timerCount = timerCount,
+        totalSeconds = totalSeconds
     )
 }

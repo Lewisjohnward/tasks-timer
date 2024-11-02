@@ -37,8 +37,10 @@ import androidx.compose.ui.unit.sp
 import com.android.taskstimer.core.domain.model.BoardItem
 import com.android.taskstimer.core.presentation.ui.settingsIcon
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
+import com.android.taskstimer.core.presentation.ui.theme.BoardTimersTimeColor
 import com.android.taskstimer.core.presentation.ui.timerIcon
 import com.android.taskstimer.core.presentation.util.TestTags
+import com.android.taskstimer.core.utils.Formatter
 import com.android.taskstimer.tasks_timer.presentation.CreateBoardDialog
 import com.android.taskstimer.tasks_timer.presentation.HomeScreenEvent
 import com.android.taskstimer.tasks_timer.presentation.NewBoardDetails
@@ -86,9 +88,10 @@ fun NavigationDrawer(
                 NavDrawerItem(
                     item = DrawerItem(
                         text = "Simple Timer",
+                        icon = timerIcon,
                         onClick = {},
-                        icon = timerIcon
-                    )
+                    ),
+                    label = { Text(text = "Simple Timer")}
                 )
             }
             Spacer(
@@ -146,7 +149,17 @@ fun NavigationDrawer(
                                     tint = Color.White
                                 )
                         },
-                        item = drawerItem
+                        item = drawerItem,
+                        label = {
+                            Column {
+                                Text(text = board.name)
+                                Text(
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    text = "${board.timerCount} timers, ${Formatter.formatTime(board.totalSeconds)}",
+                                    color = BoardTimersTimeColor
+                                )
+                            }
+                        }
                     )
                 }
                 if (editBoards) item {
@@ -186,9 +199,12 @@ fun NavigationDrawer(
             NavDrawerItem(
                 item = DrawerItem(
                     text = "Settings",
+                    icon = settingsIcon,
                     onClick = { navigateToSettings() },
-                    icon = settingsIcon
-                )
+                ),
+                label = {
+                    Text(text = "Settings")
+                }
             )
 
             if (createBoard != null) {
@@ -218,34 +234,28 @@ private fun NavDrawerItem(
     modifier: Modifier = Modifier,
     closeDrawer: () -> Unit = {},
     item: DrawerItem,
+    label: @Composable () -> Unit = {},
     dragHandle: @Composable () -> Unit = {}
 ) {
-        NavigationDrawerItem(
-            label = { Text(text = item.text) },
-            icon = { Icon(imageVector = item.icon, contentDescription = null) },
-            badge = {dragHandle()},
-            selected = item.selected,
-            shape = RoundedCornerShape(0.dp),
-            onClick = {
-                item.onClick()
-                closeDrawer()
-            },
-            colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = Color.White.copy(alpha = 0.075f),
-                selectedTextColor = Color.White,
-                selectedIconColor = Color.White,
-                unselectedContainerColor = Color.Transparent,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-            )
+    NavigationDrawerItem(
+        label = {
+            label()
+        },
+        icon = { Icon(imageVector = item.icon, contentDescription = null) },
+        badge = { dragHandle() },
+        selected = item.selected,
+        shape = RoundedCornerShape(0.dp),
+        onClick = {
+            item.onClick()
+            closeDrawer()
+        },
+        colors = NavigationDrawerItemDefaults.colors(
+            selectedContainerColor = Color.White.copy(alpha = 0.075f),
+            selectedTextColor = Color.White,
+            selectedIconColor = Color.White,
+            unselectedContainerColor = Color.Transparent,
+            unselectedIconColor = Color.White,
+            unselectedTextColor = Color.White,
         )
+    )
 }
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun NavigationDrawerPreview() {
-//    Surface(Modifier.fillMaxSize()) {
-//        NavigationDrawer(tasksTimerService = tasksTimerService)
-//    }
-//}

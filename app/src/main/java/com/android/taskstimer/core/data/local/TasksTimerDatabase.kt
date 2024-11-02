@@ -56,7 +56,9 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                     BoardEntity(
                         id = 1,
                         name = "Household Chores",
-                        iconKey = IconKey.CLEANING
+                        iconKey = IconKey.CLEANING,
+                        timerCount = 2,
+                        totalSeconds = 900
                     )
                 )
                 timerDao.insert(
@@ -103,14 +105,18 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                     BoardEntity(
                         id = 2,
                         name = "Train Bruno",
-                        iconKey = IconKey.PETS
+                        iconKey = IconKey.PETS,
+                        timerCount = 5,
+                        totalSeconds = 5915
                     )
                 )
                 boardDao.insert(
                     BoardEntity(
                         id = 3,
                         name = "Language Learning",
-                        iconKey = IconKey.BOOK
+                        iconKey = IconKey.BOOK,
+                        timerCount = 4,
+                        totalSeconds = 9900
                     )
                 )
                 timerDao.insert(
