@@ -6,13 +6,9 @@ sealed interface TimerEvent{
     data object AddTimer : TimerEvent
     data class UpdateTimerName(val name: String): TimerEvent
 
-
-
-    data class ChangeFocus(val side: Side): TimerEvent
+    data class ChangeFocus(val side: Side?): TimerEvent
     data object Increment : TimerEvent
     data object Decrement : TimerEvent
     data object Delete : TimerEvent
     data class InputValue(val value: Int) : TimerEvent
-
-
 }

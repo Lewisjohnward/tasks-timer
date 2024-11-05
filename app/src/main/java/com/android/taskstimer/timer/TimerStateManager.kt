@@ -202,4 +202,10 @@ class TimerStateManager @Inject constructor() {
             }
         }
     }
+
+    fun removeFocus() {
+        state.update { currentState ->
+            currentState.map { it.copy(inFocus = false) }
+        }
+    }
 }

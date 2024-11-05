@@ -73,7 +73,11 @@ class TimerViewModel @Inject constructor(
         when (event) {
             is TimerEvent.AddTimer ->  addTimer()
             is TimerEvent.UpdateTimerName -> updateTimer(event.name)
-            is TimerEvent.ChangeFocus -> timerStateManager.changeFocus(event.side)
+            is TimerEvent.ChangeFocus -> {
+                if(event.side != null)
+                timerStateManager.changeFocus(event.side)
+                else timerStateManager.removeFocus()
+            }
             TimerEvent.Increment -> timerStateManager.increment()
             TimerEvent.Decrement -> timerStateManager.decrement()
             is TimerEvent.InputValue -> timerStateManager.inputValue(event.value)

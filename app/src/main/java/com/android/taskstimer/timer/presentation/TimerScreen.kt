@@ -143,7 +143,10 @@ fun TimerScreen(
                 name = uiState.timer.name,
                 onEvent = onEvent,
                 isFocused = isFocused,
-                onFocus = { isFocused = true }
+                onFocus = {
+                    isFocused = true
+                    onEvent(TimerEvent.ChangeFocus(null))
+                }
             )
             TimeInput(
                 state = timerState,
