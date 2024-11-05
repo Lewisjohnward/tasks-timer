@@ -14,6 +14,7 @@ import com.android.taskstimer.tasks_timer.domain.use_case.DeleteBoard
 import com.android.taskstimer.tasks_timer.domain.use_case.DeleteTimer
 import com.android.taskstimer.tasks_timer.domain.use_case.GetBoardsFlow
 import com.android.taskstimer.tasks_timer.domain.use_case.InsertBoard
+import com.android.taskstimer.timer.domain.use_case.AddTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,6 +84,7 @@ class HomeViewModel @Inject constructor(
     private val getBoardsFlow: GetBoardsFlow,
     private val deleteBoard: DeleteBoard,
     private val deleteTimer: DeleteTimer,
+    private val addTimer: AddTimer,
     private val tasksTimerManager: TasksTimerManager,
     // TODO: THIS NEEDS TO BE A USECASE
     private val boardsRepo: BoardsRepository,
@@ -143,9 +145,9 @@ class HomeViewModel @Inject constructor(
             val board = boardsRepo.getInitBoard()
             if (board != null) {
                 // If there is a selected board load that
-                val selectedBoard = _boards.first().filter { b -> b.selected}
+                val selectedBoard = _boards.first().filter { b -> b.selected }
 
-                if (selectedBoard.isNotEmpty()){
+                if (selectedBoard.isNotEmpty()) {
                     val boardId = selectedBoard[0].id
                     _uiState.update {
                         it.copy(
@@ -165,7 +167,6 @@ class HomeViewModel @Inject constructor(
                     tasksTimerManager.loadBoard(board.id)
 
                 }
-
 
 
             }
@@ -353,7 +354,8 @@ class HomeViewModel @Inject constructor(
                 // TODO: DELETE LOGIC COULD GO INTO A MANAGER CLASS?
                 if (uiState.value.deletedTimer != null) {
                     viewModelScope.launch {
-                        timersRepo.insertTimer(uiState.value.deletedTimer!!)
+                        println(uiState.value.deletedTimer)
+                        addTimer.invoke(uiState.value.deletedTimer!!)
                         loadBoard()
                         _uiState.update {
                             it.copy(
