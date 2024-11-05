@@ -17,11 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,11 +84,15 @@ fun TimerScreen(
         navigateBack()
     }
 
+
+    val focusManager = LocalFocusManager.current
+    var isFocused by remember { mutableStateOf(true) }
+
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(lifecycleOwner.lifecycle){
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.navigationChannelFlow.collect { event ->
-                when(event) {
+                when (event) {
                     NavigationEvent.NavigateBack -> onNavigateBack()
                 }
             }
@@ -132,7 +141,9 @@ fun TimerScreen(
         ) {
             NameInput(
                 name = uiState.timer.name,
-                onEvent = onEvent
+                onEvent = onEvent,
+                isFocused = isFocused,
+                onFocus = { isFocused = true }
             )
             TimeInput(
                 state = timerState,
@@ -140,6 +151,8 @@ fun TimerScreen(
                 onFocus = {
                     keyboardController?.hide()
                     openNumpad()
+                    isFocused = false
+                    focusManager.clearFocus()
                 }
             )
         }

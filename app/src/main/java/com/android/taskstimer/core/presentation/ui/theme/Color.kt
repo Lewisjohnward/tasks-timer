@@ -22,3 +22,4 @@ val ButtonShadowColorBottom = Color(0X2E000000)
 val TopBarShadow = Color.Black.copy(alpha = 0.3f)
 
 val BoardTimersTimeColor = Color.White.copy(alpha = 0.4f)
+val HandleColor = Color(0xFF495D92)
