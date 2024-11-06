@@ -153,7 +153,7 @@ fun TimerScreen(
                 .padding(top = 80.dp, start = 10.dp, end = 10.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(120.dp)
+            verticalArrangement = Arrangement.spacedBy(40.dp)
         ) {
             NameInput(
                 name = uiState.timer.name,
