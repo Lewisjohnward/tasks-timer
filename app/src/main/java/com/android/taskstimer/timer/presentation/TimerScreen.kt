@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -60,6 +59,7 @@ fun TimerScreen(
 
 
     val uiState: TimerUiState by viewModel.uiState.collectAsState()
+    // TODO: THIS NEEDS TO BE COMBINED WITH UISTATE!
     val timerState: List<InputState> by viewModel.timerState.collectAsState()
     val onEvent = viewModel::onEvent
 
@@ -86,7 +86,7 @@ fun TimerScreen(
 
 
     val focusManager = LocalFocusManager.current
-    var isFocused by remember { mutableStateOf(true) }
+    var nameInputIsFocused by remember { mutableStateOf(true) }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner.lifecycle) {
@@ -97,6 +97,18 @@ fun TimerScreen(
                 }
             }
         }
+    }
+
+    fun focusNameInput() {
+        nameInputIsFocused = true
+        onEvent(TimerEvent.ChangeFocus(null))
+    }
+
+    fun focusTimeInput() {
+        keyboardController?.hide()
+        openNumpad()
+        nameInputIsFocused = false
+        focusManager.clearFocus()
     }
 
     BottomSheetScaffold(
@@ -142,21 +154,13 @@ fun TimerScreen(
             NameInput(
                 name = uiState.timer.name,
                 onEvent = onEvent,
-                isFocused = isFocused,
-                onFocus = {
-                    isFocused = true
-                    onEvent(TimerEvent.ChangeFocus(null))
-                }
+                isFocused = nameInputIsFocused,
+                onFocus = { focusNameInput() }
             )
             TimeInput(
                 state = timerState,
                 onEvent = onEvent,
-                onFocus = {
-                    keyboardController?.hide()
-                    openNumpad()
-                    isFocused = false
-                    focusManager.clearFocus()
-                }
+                onFocus = { focusTimeInput() }
             )
         }
     }

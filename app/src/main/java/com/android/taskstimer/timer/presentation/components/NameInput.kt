@@ -55,7 +55,11 @@ fun NameInput(
                 modifier = Modifier
                     .testTag(TestTags.INPUT_FIELD)
                     .focusRequester(focusRequester)
-                    .onFocusChanged { onFocus() },
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            onFocus()
+                        }
+                    },
                 value = name,
                 textStyle = TextStyle(
                     fontSize = 30.sp,
