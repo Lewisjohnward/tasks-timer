@@ -12,6 +12,7 @@ data class InputState(
     val value: Int = 0,
     val unit: String,
     val side: Side,
+    val valuesReceived: Int = 0,
     val wipeOnInput: Boolean = false
 )
 
@@ -51,9 +52,13 @@ class TimerStateManager @Inject constructor() {
             prevState.map { input ->
                 if (side == input.side) input.copy(
                     inFocus = true,
-                    wipeOnInput = true
+                    wipeOnInput = true,
+                    valuesReceived = 0
                 )
-                else input.copy(inFocus = false)
+                else input.copy(
+                    inFocus = false,
+                    valuesReceived = 0
+                )
             }
 
         }
@@ -84,32 +89,42 @@ class TimerStateManager @Inject constructor() {
     fun inputValue(value: Int) {
         var focusInput: Int? = null
         state.update { prevState ->
-            val updatedValues = prevState.mapIndexed map@{ index, it ->
+            val updatedValues = prevState.mapIndexed map@{ index, inputState ->
 
-                if (!it.inFocus) return@map it
+                if (!inputState.inFocus) return@map inputState
+                val updatedState = inputState.copy(valuesReceived =  inputState.valuesReceived + 1)
 
-                if (it.value == 0 || it.wipeOnInput) return@map it.copy(
+
+                if (inputState.value == 0 || inputState.wipeOnInput) return@map updatedState.copy(
                     value = value,
                     wipeOnInput = false
                 )
 
-                if (it.value / 10 == 0) {
+                if (inputState.value / 10 == 0) {
                     if (index < prevState.size - 1) focusInput = index + 1
-                    return@map it.copy(
-                        value = ((it.value * 10) + value),
+                    return@map updatedState.copy(
+                        value = ((inputState.value * 10) + value),
                     )
                 }
-
-                it.copy(value = value)
+                updatedState.copy(value = value)
             }
+
+            // Handle the case of input "01"
+            updatedValues.forEachIndexed map@{ index, inputState ->
+                if(!inputState.inFocus) return@map
+                if(inputState.valuesReceived == 2){
+                    if (index < prevState.size - 1) focusInput = index + 1
+                }
+            }
+
 
             val carriedValues = calculateCarryValues(updatedValues)
 
             val updatedFocus =
                 if (focusInput != null) {
                     carriedValues.mapIndexed map@{ index, it ->
-                        if (index != focusInput) return@map it.copy(inFocus = false)
-                        it.copy(inFocus = true)
+                        if (index != focusInput) return@map it.copy(inFocus = false, valuesReceived = 0)
+                        it.copy(inFocus = true, valuesReceived = 0)
                     }
                 } else carriedValues
 
@@ -161,8 +176,9 @@ class TimerStateManager @Inject constructor() {
 
     private fun calculateCarryValues(values: List<InputState>): List<InputState> {
         var carryValue: Carry? = null
-        val updatedValues = values.reversed().map {
-            if (it.value >= 60) {
+        val updatedValues = values.reversed().mapIndexed map@{index, it ->
+            // Allow the hours to be above 60
+            if (it.value >= 60 && index != values.size - 1) {
                 carryValue = Carry.INCREMENT
                 return@map it.copy(value = it.value - 60)
             }
