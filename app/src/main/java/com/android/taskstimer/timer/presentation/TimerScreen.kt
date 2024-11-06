@@ -39,6 +39,7 @@ import com.android.taskstimer.tasks_timer.presentation.components.TimerTopBar
 import com.android.taskstimer.timer.InputState
 import com.android.taskstimer.timer.presentation.components.NameInput
 import com.android.taskstimer.timer.presentation.components.Numpad
+import com.android.taskstimer.timer.presentation.components.Side
 import com.android.taskstimer.timer.presentation.components.TimeInput
 import kotlinx.coroutines.launch
 
@@ -88,17 +89,6 @@ fun TimerScreen(
     val focusManager = LocalFocusManager.current
     var nameInputIsFocused by remember { mutableStateOf(true) }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(lifecycleOwner.lifecycle) {
-        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.navigationChannelFlow.collect { event ->
-                when (event) {
-                    NavigationEvent.NavigateBack -> onNavigateBack()
-                }
-            }
-        }
-    }
-
     fun focusNameInput() {
         nameInputIsFocused = true
         onEvent(TimerEvent.ChangeFocus(null))
@@ -109,7 +99,21 @@ fun TimerScreen(
         openNumpad()
         nameInputIsFocused = false
         focusManager.clearFocus()
+        onEvent(TimerEvent.ChangeFocus(Side.MIDDLE))
     }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        focusTimeInput()
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.navigationChannelFlow.collect { event ->
+                when (event) {
+                    NavigationEvent.NavigateBack -> onNavigateBack()
+                }
+            }
+        }
+    }
+
 
     BottomSheetScaffold(
         sheetContent = {
