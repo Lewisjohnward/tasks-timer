@@ -354,7 +354,6 @@ class HomeViewModel @Inject constructor(
                 // TODO: DELETE LOGIC COULD GO INTO A MANAGER CLASS?
                 if (uiState.value.deletedTimer != null) {
                     viewModelScope.launch {
-                        println(uiState.value.deletedTimer)
                         addTimer.invoke(uiState.value.deletedTimer!!)
                         loadBoard()
                         _uiState.update {
@@ -372,11 +371,6 @@ class HomeViewModel @Inject constructor(
                         _uiState.value.deletedTimers.forEach { timer ->
                             timersRepo.insertTimer(timer)
                         }
-                        // TODO: WORKING HERE
-                        println(_uiState.value.deletedBoard)
-//                        println(boardsRepo.getAllBoardsFlow().first())
-                        println(uiState.value.boards)
-//                        loadBoard()
                         _uiState.update {
                             it.copy(
                                 deletedBoard = null,
