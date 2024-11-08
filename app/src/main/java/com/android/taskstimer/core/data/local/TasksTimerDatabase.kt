@@ -151,6 +151,39 @@ abstract class TasksTimerDatabase : RoomDatabase() {
                         remainingTime = "7200"
                     )
                 )
+                boardDao.insert(
+                    BoardEntity(
+                        id = 4,
+                        name = "Debug",
+                        iconKey = IconKey.CLEANING,
+                        timerCount = 3,
+                        totalSeconds = 45
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 4,
+                        name = "Short",
+                        presetTime = "5",
+                        remainingTime = "5"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 4,
+                        name = "Medium",
+                        presetTime = "10",
+                        remainingTime = "10"
+                    )
+                )
+                timerDao.insert(
+                    TimerEntity(
+                        boardId = 4,
+                        name = "Long",
+                        presetTime = "30",
+                        remainingTime = "30"
+                    )
+                )
             }
         }
     }
