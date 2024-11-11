@@ -120,6 +120,7 @@ class TasksTimerManager @Inject constructor(
                     if (playSoundAtTimerFinish) alertUserTimerFinished()
                     saveLastEndedAt()
                     if (isNotLastTimerInList()) {
+                        delay(1000L)
                         incrementCurrentTimer()
                     } else {
                         stopTimer()
