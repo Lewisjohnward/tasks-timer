@@ -44,11 +44,13 @@ import com.android.taskstimer.core.domain.model.formatTime
 import com.android.taskstimer.core.presentation.ui.theme.BackgroundDarkGray
 import com.android.taskstimer.core.presentation.ui.theme.ButtonShadowColorBottom
 import com.android.taskstimer.core.presentation.ui.theme.ButtonShadowColorTop
+import com.android.taskstimer.core.presentation.ui.theme.Gainsboro
 import com.android.taskstimer.core.presentation.ui.theme.Green
 import com.android.taskstimer.core.presentation.ui.theme.Red
 import com.android.taskstimer.core.presentation.ui.theme.SlateGray
 import com.android.taskstimer.core.presentation.util.TestTags
 import com.android.taskstimer.core.presentation.util.shadow
+import com.android.taskstimer.core.presentation.util.thenIf
 
 
 @Composable
@@ -89,6 +91,9 @@ fun Timer(
                 blurRadius = 5.dp
             )
             .background(BackgroundDarkGray)
+            .thenIf(
+                timerActive == RUNSTATE.RUNNING
+            ) { Modifier.border(2.dp, Gainsboro, RoundedCornerShape(0.dp)) }
             .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(0.dp))
             .padding(10.dp)
     ) {
