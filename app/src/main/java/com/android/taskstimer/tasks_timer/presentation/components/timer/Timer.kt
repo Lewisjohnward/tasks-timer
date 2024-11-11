@@ -167,7 +167,7 @@ private fun TimerDetails(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column{
+            Column {
                 Text(
                     text = time,
                     fontSize = 45.sp,
@@ -257,7 +257,7 @@ private fun ControlButton(
             .size(50.dp)
             .clip(MaterialTheme.shapes.medium)
             .background(color)
-            .clickable { onClick() }
+            .clickable { if (enabled) onClick() }
     ) {
         Box(
             contentAlignment = Alignment.Center,
