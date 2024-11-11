@@ -195,7 +195,7 @@ class HomeViewModel @Inject constructor(
 
     // TODO: PUT IN EVENTS
     fun resetTimer(timerIndex: Int) {
-        tasksTimerManager.resetTimer(timerIndex)
+        tasksTimerManager.resetSingleTimer(timerIndex)
     }
 
     fun onEvent(event: HomeScreenEvent) {
